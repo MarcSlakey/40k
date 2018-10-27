@@ -1,1 +1,1 @@
-This is a repository for vaious versions of the 40k sime, with and without gui.
+This is a repository for various versions of the 40k sime, with and without gui.
