@@ -13,3 +13,7 @@ class Unit(object):
 		self.leadership = leadership
 		self.save = save
 		self.invulnerable = invulnerable
+		self.weapons = []
+
+	def add_weapon(self, weapon):
+		self.weapons.append(weapon)
