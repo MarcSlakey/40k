@@ -18,6 +18,9 @@ class Unit(object):
 		self.invulnerable = invulnerable
 		self.weapons = []
 
+	def __str__(self):
+		return "{} has {} wounds".format(self.name, self.wounds)
+
 	def add_weapon(self, weapon):
 		self.weapons.append(weapon)
 
@@ -36,7 +39,7 @@ class Unit(object):
 			#TODO
 			pass
 
-		print('\n {} takes {} shots against {} with {}.'.format(self.name, shot_count, target_squad, weapon_used.name))
+		print('\n {} takes {} shots against {} with {}.'.format(self.name, shot_count, target_squad.name, weapon_used.name))
 
 		for i in range(shot_count):
 			print('Taking shot {}'.format(i))
