@@ -53,6 +53,12 @@ def create_ranged_weapon_by_name(name):
 	)
 
 
+def army_attack_army(army1, army2):
+	for squad in army1.squads_alive():
+		for unit in squad.units_alive():
+			unit.attack_with_weapon(0, army2.squads_alive()[0])
+
+
 def main():
 	blue = Army()
 	blue.add_squad(Squad())
@@ -64,7 +70,19 @@ def main():
 	red.squads[0].add_unit(create_unit_by_name('Initiate'))
 	red.squads[0].units[0].add_weapon(create_ranged_weapon_by_name('Bolter'))
 
-	red.squads[0].units[0].attack_with_weapon(0, blue.squads[0])
+	turn_count = 0
+	while blue.alive() and red.alive():
+		turn_count += 1
+		print('\nTurn {}'.format(turn_count))
+		print('BLUE TURN')
+		army_attack_army(blue, red)
+		if red.alive():
+			print('RED TURN')
+			army_attack_army(red, blue)
+
+
+
+
 
 if __name__ == '__main__':
 	get_workbook_data()

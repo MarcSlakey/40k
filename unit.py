@@ -36,7 +36,7 @@ class Unit(object):
 			#TODO
 			pass
 
-		print('{} takes {} shots against {} with {}.'.format(self.name, shot_count, target_squad, weapon_used.name))
+		print('\n {} takes {} shots against {} with {}.'.format(self.name, shot_count, target_squad, weapon_used.name))
 
 		for i in range(shot_count):
 			print('Taking shot {}'.format(i))
@@ -92,3 +92,5 @@ class Unit(object):
 
 		target_squad.save_against_wound(weapon)
 
+	def alive(self):
+		return self.wounds > 0

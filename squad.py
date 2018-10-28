@@ -13,4 +13,7 @@ class Squad(object):
 		self.units_alive()[0].unit_save_against_wound(weapon)
 
 	def units_alive(self):
-		return [unit for unit in self.units if unit.wounds > 0]
+		return [unit for unit in self.units if unit.alive()]
+
+	def alive(self):
+		return len(self.units_alive()) != 0
