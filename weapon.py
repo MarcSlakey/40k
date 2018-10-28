@@ -12,6 +12,10 @@ class Weapon(object):
 		self.wound_function = wound_function
 		self.save_function = save_function
 
+	#Makes print() of actual object show something other than the object name and memory location
+	def __str__(self):
+		return "{}, {}, {}".format(self.name, self.strength, self.damage)
+
 class RangedWeapon(Weapon):
 	"""docstring for RangedWeapon"""
 	def __init__(self, name, w_range, w_type, shot_dice, shots, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
@@ -27,4 +31,3 @@ class MeleeWeapon(Weapon):
 	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
 		#Run the __init__ function on yourself of the super/parent of the MeleeWeapon class (which is the Weapon class)
 		super(MeleeWeapon, self).__init__(name, strength, ap, damage_dice, damage, hit_function, wound_function, save_function)
-		
