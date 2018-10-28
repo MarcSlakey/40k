@@ -64,6 +64,7 @@ def army_attack_army(army1, army2):
 def main():
 	blue = Army()
 	blue.add_squad(Squad())
+	blue.add_squad(Squad())
 	# blue.squads[0].add_unit(create_unit_by_name('Initiate'))
 	# blue.squads[0].units[0].add_weapon(create_ranged_weapon_by_name('Bolter'))
 
@@ -72,7 +73,13 @@ def main():
 		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
 		blue.squads[0].add_unit(init)
 
+	for i in range(5):
+		init = create_unit_by_name('Initiate')
+		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
+		blue.squads[1].add_unit(init)
+
 	red = Army()
+	red.add_squad(Squad())
 	red.add_squad(Squad())
 	# red.squads[0].add_unit(create_unit_by_name('Ork Boy'))
 	# red.squads[0].units[0].add_weapon(create_ranged_weapon_by_name('Shoota'))
@@ -82,15 +89,26 @@ def main():
 		ork.add_weapon(create_ranged_weapon_by_name('Shoota'))
 		red.squads[0].add_unit(ork)
 
+	for i in range(2):
+		ork = create_unit_by_name('Flash Gitz')
+		ork.add_weapon(create_ranged_weapon_by_name('Snazzgun'))
+		red.squads[1].add_unit(ork)
+
 	turn_count = 0
 	while blue.alive() and red.alive():
 		turn_count += 1
 		print('\nTurn {}'.format(turn_count))
+		print("Blue team")
+		print(blue)
+		print("\nred team")
+		print(red)
+		print("start turn\n")
 		print('BLUE TURN')
 		army_attack_army(blue, red)
 		if red.alive():
 			print('RED TURN')
 			army_attack_army(red, blue)
+		print("end turn\n")
 
 	print()
 
