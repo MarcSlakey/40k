@@ -6,7 +6,7 @@ import random
 
 class Squad(object):
 
-	""" Cla
+	"""
 	
 	Attributes:
 		name (str): squad's name, used solely for output 
