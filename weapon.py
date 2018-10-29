@@ -27,7 +27,7 @@ class Weapon(object):
 	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
 		"""
 
-		All parameter values are pulled from excel workbook/sheets defined in shooting_sim.py
+		All parameter values are pulled from excel workbook/sheets defined in shooting_sim.py.
 		"""
 		self.name = name
 		self.strength = strength
