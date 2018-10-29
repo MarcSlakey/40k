@@ -1,12 +1,30 @@
+"""Summary
+
+Majority of dice rolling occurs within this module.
 """
-Majority of dice rolling occurs within this class's functions
-"""
-				
+
 import random
 from weapon import *
 
 class Unit(object):
-	"""docstring for Unit"""
+
+	"""Summary
+	
+	Attributes:
+		name (str): unit's name
+		move (int): maximum move distance in one turn (in inches)
+		weapon_skill (int): minimum roll required to successfully hit a target with a melee weapon
+		ballistic_skill (int): minimum roll required to successfully hit a target with a ranged weapon
+		strength (int): used to determine minimum roll required successfully wound in melee combat
+		toughness (int): used to determine minimum roll required to be wounded (melee or ranged)
+		wounds (int): health counter
+		attacks (int): number of attacks in melee combat
+		leadership (int): used to determine outcome of morale tests
+		save (int): minimum roll required to successfully save against a wound (melee or ranged)
+		invulnerable (int): invulnerable save stat; used instead of regular save if (invulnerable roll) < (save + (armor piercing))
+
+	"""
+	
 	def __init__(self, name, move, weapon_skill, ballistic_skill, strength, toughness, wounds, attacks, leadership, save, invulnerable):
 		super(Unit, self).__init__()
 		self.name = name
@@ -22,15 +40,22 @@ class Unit(object):
 		self.invulnerable = invulnerable
 		self.weapons = []
 
-	#Operator overloading: runs this function on print(Unit) or str()
-	#Prints the number of wounds left on a unit
 	def __str__(self):
+		"""Operator overloading: runs this function on print(Unit) or str().
+
+		Prints the number of wounds left on a unit
+		"""
 		return "{} has {} wounds".format(self.name, self.wounds)
 
 	def add_weapon(self, weapon):
+		"""Adds a weapon to a given unit's list of weapons"""
 		self.weapons.append(weapon)
 
 	def attack_with_weapon(self, weapon_index, target_squad):
+		"""Initiates an attack against the next 
+
+
+		"""
 		weapon_used = self.weapons[weapon_index]
 		if isinstance(weapon_used, RangedWeapon):
 			if weapon_used.shot_dice == 0:
@@ -51,6 +76,7 @@ class Unit(object):
 			self.single_shot(weapon_used, target_squad)
 
 	def single_shot(self, weapon, target_squad):
+		"""Summary."""
 		roll = random.randint(1,6)
 		if roll < self.ballistic_skill:
 			print('  Failed to hit.')
@@ -79,6 +105,7 @@ class Unit(object):
 		target_squad.save_against_wound(weapon)
 
 	def unit_save_against_wound(self, weapon):
+		"""Summary."""
 		roll = random.randint(1,6)
 		if (self.invulnerable == None) or (self.invulnerable <= self.save):
 			if roll >= self.save + weapon.ap:
@@ -91,12 +118,13 @@ class Unit(object):
 
 		if weapon.damage_dice == 0:
 			self.wounds -= weapon.damage
-			print('  {} took {} damage from {}!'.format(self.name, weapon.damage, weapon.name))
+			print('!  {} took {} damage from {}!'.format(self.name, weapon.damage, weapon.name))
 		else:
 			for i in range(weapon.damage_dice):
 				roll = random.randint(1, weapon.damage)
 				self.wounds -= roll
-				print('  {} took {} damage from {}!'.format(self.name, roll, weapon.name))
+				print('!  {} took {} damage from {}!'.format(self.name, roll, weapon.name))
 
 	def alive(self):
+		"""Summary."""
 		return self.wounds > 0

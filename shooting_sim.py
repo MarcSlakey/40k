@@ -1,5 +1,13 @@
+"""40k small-scale battle simulator
 
-#Something broke :(
+Allows for custom creation of two armies with any amount of squads and units.
+Structured with nested classes: Army > Squad > Unit > Weapon.
+Units are individually assigned weapons (currently no limit).
+Units are automatically targetted and killed in the order in which they were created.
+Additionally, units fire their weapons in the order in which they were created.
+Which army moves first can be changed just above main()
+"""
+
 import os 					#Allows clearing command prompt output with clear()
 import sys					#Allows sys.exit()
 import random				#Allows dice rolling
@@ -22,6 +30,9 @@ def find_string_in_column(sheet, name, column, starting_row=0):
 	return [x.value for x in sheet.columns[column]].index(name, starting_row)
 
 def create_unit_by_name(name):
+	"""Creates 
+
+	"""
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(unit_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
@@ -65,9 +76,10 @@ def army_attack_army(army1, army2):
 				return
 			unit.attack_with_weapon(0, army2.squads_alive()[0])
 
-"""
+"""Main loop; runs army creation and loops until at least one army has no more units left.
+
 Define squads and units in main().
-army1/army2.add_squad(Squad('Squad Name')) to make new squad.
+(army1/army2).add_squad(Squad('Name')) to make new squad.
 Must make new "for" loop for each type of unit within a given squad.
 Squads and units take damage in order of creation (first created are first to take damage)
 """
@@ -105,12 +117,16 @@ def main():
 	#Change first move advantage here
 	first_move_army = army1
 	second_move_army = army2
-	#Time delay (in seconds) between screens
-	sleep_time = 6
+
 
 	#Start of actual turn loop
 	print('STARTING SIMULATION')
 
+
+	#Time delay (in seconds) between output screens
+	sleep_time = 6
+
+	#Turn loop; runs until one army has no more units.
 	turn_count = 0
 	while army1.alive() and army2.alive():
 		clear()

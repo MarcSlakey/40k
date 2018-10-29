@@ -1,8 +1,18 @@
-#This is the weapon class for the basic 40k sim
+"""Summary
+
+"""
+
 from time import sleep		#Allows delay
 
 class Weapon(object):
-	"""docstring for Weapon"""
+
+	"""Summary.
+	
+	Attributes:
+		name
+
+	"""
+	
 	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
 		self.name = name
 		self.strength = strength
@@ -13,9 +23,11 @@ class Weapon(object):
 		self.wound_function = wound_function
 		self.save_function = save_function
 
-	#Operator overloading: runs this function on print(Weapon) or str()
-	#Prints the name, strength, and damage of a weapon
 	def __str__(self):
+		"""Operator overloading: runs this function on print(Weapon) or str().
+
+		Prints the name, strength, and damage of a weapon
+		"""
 		return "{}, {}, {}".format(self.name, self.strength, self.damage)
 
 class RangedWeapon(Weapon):
