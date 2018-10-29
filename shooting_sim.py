@@ -1,3 +1,5 @@
+
+#Something broke :(
 import os 					#Allows clearing command prompt output with clear()
 import sys					#Allows sys.exit()
 import random				#Allows dice rolling
@@ -137,11 +139,11 @@ def main():
 	print()
 
 	if army2.alive():
-		print("{} TEAM WON!".format(army2.name.upper())
+		print("{} TEAM WON!".format(army2.name.upper()))
 		print(army2)
 
 	if army1.alive():
-		print("{} TEAM WON!".format(army1.name..upper())
+		print("{} TEAM WON!".format(army1.name.upper()))
 		print(army1)
 
 
