@@ -150,16 +150,15 @@ def main():
 			army_attack_army(second_move_army, first_move_army)
 			sleep(sleep_time)
 		print('\n--------------END OF TURN {}--------------'.format(turn_count))
-		sleep(2)
+		sleep(sleep_time)
 
-	print()
-
+	clear()
 	if army2.alive():
-		print("{} TEAM WON!".format(army2.name.upper()))
+		print("{} WIN (TURN {})!".format(army2.name.upper(), turn_count))
 		print(army2)
 
 	if army1.alive():
-		print("{} TEAM WON!".format(army1.name.upper()))
+		print("{} WIN (TURN {})!".format(army1.name.upper(), turn_count))
 		print(army1)
 
 
