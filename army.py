@@ -13,6 +13,12 @@ class Army(object):
 	"""
 
 	def __init__(self, name='Army Name'):
+		"""The constructor for Army class
+		
+		Parameters:
+			name (str): army's name, used solely for output 
+			squads (Squad): list of this army's Squad objects
+		"""
 		self.name = name
 		self.squads = []
 

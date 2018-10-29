@@ -1,5 +1,9 @@
 """Summary
 
+Classes:
+	Weapon
+	RangedWeapon
+	MeleeWeapon
 """
 
 from time import sleep		#Allows delay
@@ -9,11 +13,22 @@ class Weapon(object):
 	"""Summary.
 	
 	Attributes:
-		name
+		name (str): weapon's name
+		strength (int): used to determine minimum roll required successfully wound
+		ap (int): armor piercing value; used to determine the minimum roll required to save against a wound
+		damage_dice (int): number of dice used to roll damage calculation; 0 indicates the damage value is static (no dice are used)
+		damage (int): indicates number of sides of the dice used to roll for damage; simply indicates damage inflicted if damage_dice = 0 
+		hit_function: placeholder
+		wound_function: placeholder
+		save_function: placeholder
 
 	"""
 	
 	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
+		"""
+
+		All parameter values are pulled from excel workbook/sheets defined in shooting_sim.py
+		"""
 		self.name = name
 		self.strength = strength
 		self.ap = ap

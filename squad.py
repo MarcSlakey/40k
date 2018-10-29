@@ -15,9 +15,11 @@ class Squad(object):
 	"""
 	
 	def __init__(self, name=''):
-		"""Summary.
+		"""The constructor for Army class
 
-
+		Parameters:
+			name (str): squad'ss name, used solely for output 
+			squads (Squad): list of this squad's Unit objects
 		"""
 		self.name = name
 		self.units = []

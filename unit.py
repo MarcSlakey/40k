@@ -1,6 +1,9 @@
 """Summary
 
 Majority of dice rolling occurs within this module.
+
+Classes:
+	Unit
 """
 
 import random
@@ -8,7 +11,7 @@ from weapon import *
 
 class Unit(object):
 
-	"""Summary
+	"""Unit class
 	
 	Attributes:
 		name (str): unit's name
@@ -26,6 +29,10 @@ class Unit(object):
 	"""
 	
 	def __init__(self, name, move, weapon_skill, ballistic_skill, strength, toughness, wounds, attacks, leadership, save, invulnerable):
+		"""
+
+		All parameter values are pulled from excel workbook/sheets defined in shooting_sim.py.
+		"""
 		super(Unit, self).__init__()
 		self.name = name
 		self.move = move
