@@ -1,4 +1,5 @@
 #This is the weapon class for the basic 40k sim
+from time import sleep		#Allows delay
 
 class Weapon(object):
 	"""docstring for Weapon"""
@@ -12,7 +13,8 @@ class Weapon(object):
 		self.wound_function = wound_function
 		self.save_function = save_function
 
-	#Makes print() of actual object show something other than the object name and memory location
+	#Operator overloading: runs this function on print(Weapon) or str()
+	#Prints the name, strength, and damage of a weapon
 	def __str__(self):
 		return "{}, {}, {}".format(self.name, self.strength, self.damage)
 

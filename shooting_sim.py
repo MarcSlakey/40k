@@ -1,11 +1,14 @@
+import os 					#Allows clearing command prompt output with clear()
 import sys					#Allows sys.exit()
 import random				#Allows dice rolling
 import openpyxl				#Module for interacting with excel spreadsheet
+from time import sleep		#Allows delay
 from unit import Unit
 from weapon import *
 from squad import Squad
 from army import Army
 
+clear = lambda: os.system('cls')
 
 def get_workbook_data(workbook = '40k_sim_workbook.xlsx'):
 	wb = openpyxl.load_workbook(workbook)
@@ -60,65 +63,86 @@ def army_attack_army(army1, army2):
 				return
 			unit.attack_with_weapon(0, army2.squads_alive()[0])
 
-
+"""
+Define squads and units in main().
+army1/army2.add_squad(Squad('Squad Name')) to make new squad.
+Must make new "for" loop for each type of unit within a given squad.
+Squads and units take damage in order of creation (first created are first to take damage)
+"""
 def main():
-	blue = Army()
-	blue.add_squad(Squad())
-	blue.add_squad(Squad())
-	# blue.squads[0].add_unit(create_unit_by_name('Initiate'))
-	# blue.squads[0].units[0].add_weapon(create_ranged_weapon_by_name('Bolter'))
+	clear()
+	#Army creation stage; Army() expects 1 'name' argument
+	army1 = Army('Black Templars')
+	army1.add_squad(Squad('Crusader Squad(1)'))
+	army1.add_squad(Squad('Crusader Squad(2)'))
 
 	for i in range(5):
 		init = create_unit_by_name('Initiate')
 		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
-		blue.squads[0].add_unit(init)
+		army1.squads[0].add_unit(init)
 
 	for i in range(5):
 		init = create_unit_by_name('Initiate')
 		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
-		blue.squads[1].add_unit(init)
+		army1.squads[1].add_unit(init)
 
-	red = Army()
-	red.add_squad(Squad())
-	red.add_squad(Squad())
-	# red.squads[0].add_unit(create_unit_by_name('Ork Boy'))
-	# red.squads[0].units[0].add_weapon(create_ranged_weapon_by_name('Shoota'))
+	army2 = Army('Orks')
+	army2.add_squad(Squad('Boyz'))
+	army2.add_squad(Squad('Flash Gitz'))
 
 	for i in range(10):
 		ork = create_unit_by_name('Ork Boy')
 		ork.add_weapon(create_ranged_weapon_by_name('Shoota'))
-		red.squads[0].add_unit(ork)
+		army2.squads[0].add_unit(ork)
 
 	for i in range(2):
-		ork = create_unit_by_name('Flash Gitz')
+		ork = create_unit_by_name('Flash Git')
 		ork.add_weapon(create_ranged_weapon_by_name('Snazzgun'))
-		red.squads[1].add_unit(ork)
+		army2.squads[1].add_unit(ork)
+
+	#Change first move advantage here
+	first_move_army = army1
+	second_move_army = army2
+	#Time delay (in seconds) between screens
+	sleep_time = 6
+
+	#Start of actual turn loop
+	print('STARTING SIMULATION')
 
 	turn_count = 0
-	while blue.alive() and red.alive():
+	while army1.alive() and army2.alive():
+		clear()
 		turn_count += 1
-		print('\nTurn {}'.format(turn_count))
-		print("Blue team")
-		print(blue)
-		print("\nred team")
-		print(red)
-		print("start turn\n")
-		print('BLUE TURN')
-		army_attack_army(blue, red)
-		if red.alive():
-			print('RED TURN')
-			army_attack_army(red, blue)
-		print("end turn\n")
+		print('\n--------------REPORT: TURN {}--------------'.format(turn_count))
+		sleep(2)
+		print("{} report:".format(army1.name))
+		print(army1)
+		print("\n{} report:".format(army2.name))
+		print(army2)
+		sleep(sleep_time)
+		print("starting turn...")
+		sleep(2)
+		clear()
+		print('\n--------------{} TURN {}--------------'.format(first_move_army.name.upper(), turn_count))
+		army_attack_army(first_move_army, second_move_army)
+		sleep(sleep_time)
+		if army2.alive():
+			clear()
+			print('\n--------------{} TURN {}--------------'.format(second_move_army.name.upper(), turn_count))
+			army_attack_army(second_move_army, first_move_army)
+			sleep(sleep_time)
+		print('\n--------------END OF TURN {}--------------'.format(turn_count))
+		sleep(2)
 
 	print()
 
-	if red.alive():
-		print("RED TEAM WON")
-		print(red)
+	if army2.alive():
+		print("{} TEAM WON!".format(army2.name.upper())
+		print(army2)
 
-	if blue.alive():
-		print("BLUE TEAM WON")
-		print(blue)
+	if army1.alive():
+		print("{} TEAM WON!".format(army1.name..upper())
+		print(army1)
 
 
 

@@ -1,3 +1,7 @@
+"""
+Majority of dice rolling occurs within this class's functions
+"""
+				
 import random
 from weapon import *
 
@@ -18,6 +22,8 @@ class Unit(object):
 		self.invulnerable = invulnerable
 		self.weapons = []
 
+	#Operator overloading: runs this function on print(Unit) or str()
+	#Prints the number of wounds left on a unit
 	def __str__(self):
 		return "{} has {} wounds".format(self.name, self.wounds)
 
@@ -39,38 +45,15 @@ class Unit(object):
 			#TODO
 			pass
 
-		print('\n {} takes {} shots against {} with {}.'.format(self.name, shot_count, target_squad.name, weapon_used.name))
-
+		print('\n{} takes {} shots against {} with {}.'.format(self.name, shot_count, target_squad.name, weapon_used.name))
 		for i in range(shot_count):
-			print('Taking shot {}'.format(i))
+			print('Taking shot {}'.format(i+1))
 			self.single_shot(weapon_used, target_squad)
-
-	def unit_save_against_wound(self, weapon):
-		roll = random.randint(1,6)
-		if (self.invulnerable == None) or (self.invulnerable <= self.save):
-			if roll >= self.save + weapon.ap:
-				print('{} saved against {} wound.'.format(self.name, weapon.name))
-				return
-		else:
-			if roll >= self.invulnerable:
-				print('{} saved against {} wound.'.format(self.name, weapon.name))
-				return
-
-		if weapon.damage_dice == 0:
-			self.wounds -= weapon.damage
-			print('{} took {} damage from {} .'.format(self.name, weapon.damage, weapon.name))
-		else:
-			for i in range(weapon.damage_dice):
-				roll = random.randint(1, weapon.damage)
-				self.wounds -= roll
-				print('{} took {} damage from {} .'.format(self.name, roll, weapon.name))
-
-
 
 	def single_shot(self, weapon, target_squad):
 		roll = random.randint(1,6)
 		if roll < self.ballistic_skill:
-			print('{} missed single shot with {}.'.format(self.name, weapon.name))
+			print('  Failed to hit.')
 			return
 
 		# target_squad.hit_with_weapon(weapon)
@@ -90,10 +73,30 @@ class Unit(object):
 			wound_roll = 6
 
 		if roll < wound_roll:
-			print('{} single shot with {} failed to wound.'.format(self.name, weapon.name))
+			print('  Failed to wound.')
 			return
 
 		target_squad.save_against_wound(weapon)
+
+	def unit_save_against_wound(self, weapon):
+		roll = random.randint(1,6)
+		if (self.invulnerable == None) or (self.invulnerable <= self.save):
+			if roll >= self.save + weapon.ap:
+				print('  {} saved against {} wound.'.format(self.name, weapon.name))
+				return
+		else:
+			if roll >= self.invulnerable:
+				print('  {} saved against {} wound.'.format(self.name, weapon.name))
+				return
+
+		if weapon.damage_dice == 0:
+			self.wounds -= weapon.damage
+			print('  {} took {} damage from {}!'.format(self.name, weapon.damage, weapon.name))
+		else:
+			for i in range(weapon.damage_dice):
+				roll = random.randint(1, weapon.damage)
+				self.wounds -= roll
+				print('  {} took {} damage from {}!'.format(self.name, roll, weapon.name))
 
 	def alive(self):
 		return self.wounds > 0
