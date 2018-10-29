@@ -76,6 +76,17 @@ def army_attack_army(army1, army2):
 				return
 			unit.attack_with_weapon(0, army2.squads_alive()[0])
 
+
+def countdown_timer(sleep_time):
+	count = sleep_time
+	print('\n')
+	for i in range(sleep_time):
+		print('Changing screens in: {}'.format(count), end='\r', flush=True)
+		count -= 1
+		sleep(1)
+
+
+
 """Main loop; runs army creation and loops until at least one army has no more units left.
 
 Define squads and units in main().
@@ -84,7 +95,9 @@ Must make new "for" loop for each type of unit within a given squad.
 Squads and units take damage in order of creation (first created are first to take damage)
 """
 def main():
+
 	clear()
+
 	#Army creation stage; Army() expects 1 'name' argument
 	army1 = Army('Black Templars')
 	army1.add_squad(Squad('Crusader Squad(1)'))
@@ -118,41 +131,44 @@ def main():
 	first_move_army = army1
 	second_move_army = army2
 
+	#Time delay (in seconds) between output screens
+	sleep_time = 6			
 
 	#Start of actual turn loop
 	print('STARTING SIMULATION')
-
-
-	#Time delay (in seconds) between output screens
-	sleep_time = 6
 
 	#Turn loop; runs until one army has no more units.
 	turn_count = 0
 	while army1.alive() and army2.alive():
 		clear()
 		turn_count += 1
+
 		print('\n--------------REPORT: TURN {}--------------'.format(turn_count))
 		sleep(2)
 		print("{} report:".format(army1.name))
 		print(army1)
 		print("\n{} report:".format(army2.name))
 		print(army2)
-		sleep(sleep_time)
-		print("starting turn...")
+		countdown_timer(sleep_time)
+		print("\nstarting turn...")
 		sleep(2)
 		clear()
+
 		print('\n--------------{} TURN {}--------------'.format(first_move_army.name.upper(), turn_count))
 		army_attack_army(first_move_army, second_move_army)
-		sleep(sleep_time)
+		countdown_timer(sleep_time)
+		clear()
+
 		if army2.alive():
-			clear()
 			print('\n--------------{} TURN {}--------------'.format(second_move_army.name.upper(), turn_count))
 			army_attack_army(second_move_army, first_move_army)
-			sleep(sleep_time)
+			countdown_timer(sleep_time)
+			clear()
+		
 		print('\n--------------END OF TURN {}--------------'.format(turn_count))
-		sleep(sleep_time)
+		countdown_timer(sleep_time)
+		clear()
 
-	clear()
 	if army2.alive():
 		print("{} WIN (TURN {})!".format(army2.name.upper(), turn_count))
 		print(army2)
