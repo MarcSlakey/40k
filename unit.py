@@ -1,5 +1,4 @@
-"""Summary
-
+"""Unit module
 Majority of dice rolling occurs within this module.
 
 Classes:
@@ -13,6 +12,8 @@ class Unit(object):
 
 	"""Unit class
 	
+	Unit objects are stored in a list in Squad objects.
+
 	Attributes:
 		name (str): unit's name
 		move (int): maximum move distance in one turn (in inches)
@@ -29,7 +30,7 @@ class Unit(object):
 	"""
 	
 	def __init__(self, name, move, weapon_skill, ballistic_skill, strength, toughness, wounds, attacks, leadership, save, invulnerable):
-		"""
+		"""The constructor for Unit class objects
 
 		All parameter values are pulled from excel workbook/sheets defined in shooting_sim.py.
 		"""
@@ -59,9 +60,11 @@ class Unit(object):
 		self.weapons.append(weapon)
 
 	def attack_with_weapon(self, weapon_index, target_squad):
-		"""Initiates an attack against the next 
+		"""Initiates an attack against the next valid target in the opposing army.
 
+		First determines how many shots the weapon has, then 
 
+		If a unit has more than one weapon, it will fire them in the order in which they were created.
 		"""
 		weapon_used = self.weapons[weapon_index]
 		if isinstance(weapon_used, RangedWeapon):

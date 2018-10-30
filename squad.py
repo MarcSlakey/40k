@@ -1,4 +1,4 @@
-"""Summary
+"""Squad module
 
 """
 
@@ -8,6 +8,8 @@ class Squad(object):
 
 	"""
 	
+	Squad objects are stored in a list in Army objects.
+
 	Attributes:
 		name (str): squad's name, used solely for output 
 		squads (Unit): list of this squad's Unit-class objects
@@ -15,7 +17,7 @@ class Squad(object):
 	"""
 	
 	def __init__(self, name=''):
-		"""The constructor for Army class
+		"""The constructor for Squad class
 
 		Parameters:
 			name (str): squad'ss name, used solely for output 

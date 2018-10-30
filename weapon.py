@@ -1,4 +1,4 @@
-"""Summary
+"""Weapon module
 
 Classes:
 	Weapon
@@ -12,6 +12,8 @@ class Weapon(object):
 
 	"""Summary.
 	
+	Weapon objects are stored in a list in Unit objects.
+	
 	Attributes:
 		name (str): weapon's name
 		strength (int): used to determine minimum roll required successfully wound
@@ -24,8 +26,8 @@ class Weapon(object):
 
 	"""
 	
-	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
-		"""
+	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None, damage_function=None):
+		"""The constructor for Weapon class objects
 
 		All parameter values are pulled from excel workbook/sheets defined in shooting_sim.py.
 		"""
@@ -37,6 +39,7 @@ class Weapon(object):
 		self.hit_function = hit_function
 		self.wound_function = wound_function
 		self.save_function = save_function
+		self.damage_function = damage_function
 
 	def __str__(self):
 		"""Operator overloading: runs this function on print(Weapon) or str().
@@ -47,7 +50,7 @@ class Weapon(object):
 
 class RangedWeapon(Weapon):
 	"""docstring for RangedWeapon"""
-	def __init__(self, name, w_range, w_type, shot_dice, shots, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
+	def __init__(self, name, w_range, w_type, shot_dice, shots, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None, damage_function=None):
 		#Run the __init__ function on yourself of the super/parent of the RangedWeapon class (which is the Weapon class)
 		super(RangedWeapon, self).__init__(name, strength, ap, damage_dice, damage, hit_function, wound_function, save_function)
 		self.w_range = w_range
@@ -57,6 +60,6 @@ class RangedWeapon(Weapon):
 
 class MeleeWeapon(Weapon):
 	"""docstring for MeleeWeapon"""
-	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None):
+	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None, damage_function=None):
 		#Run the __init__ function on yourself of the super/parent of the MeleeWeapon class (which is the Weapon class)
 		super(MeleeWeapon, self).__init__(name, strength, ap, damage_dice, damage, hit_function, wound_function, save_function)

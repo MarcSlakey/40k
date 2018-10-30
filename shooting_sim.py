@@ -1,12 +1,24 @@
 """40k small-scale battle simulator
 
 Allows for custom creation of two armies with any amount of squads and units.
-Structured with nested classes: Army > Squad > Unit > Weapon.
+Structured with nested classe objects: Army > Squad > Unit > Weapon.
+Armies, squads, units, and weapons are all chosen in the main() function of this module.
 Units are individually assigned weapons (currently no limit).
 Units are automatically targetted and killed in the order in which they were created.
 Additionally, units fire their weapons in the order in which they were created.
 Which army moves first can be changed just above main()
+
+Currently only handles one of the four 40k turn phases: the shooting phase.
+
+Functions:
+	get_workbook_data
+	find_string_in_column: searches relevant excel sheet for the unit/weapon name and returns the row # where that name was found
+	create_unit_by_name: uses find_string_in_column() to generate a Unit object
+	create_ranged_weapon_by_name: uses find_string_in_column() to generate a Weapon object
+	army_attack_army: Makes each unit in a given army fire its weapon until either every unit has fired all of its shots or the enemy army is dead
+	countdown_timer: counts down the time until the program will proceed to the next information screen
 """
+
 
 import os 					#Allows clearing command prompt output with clear()
 import sys					#Allows sys.exit()
@@ -108,11 +120,6 @@ def main():
 		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
 		army1.squads[0].add_unit(init)
 
-	for i in range(5):
-		init = create_unit_by_name('Initiate')
-		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
-		army1.squads[1].add_unit(init)
-
 	army2 = Army('Orks')
 	army2.add_squad(Squad('Boyz'))
 	army2.add_squad(Squad('Flash Gitz'))
@@ -121,11 +128,6 @@ def main():
 		ork = create_unit_by_name('Ork Boy')
 		ork.add_weapon(create_ranged_weapon_by_name('Shoota'))
 		army2.squads[0].add_unit(ork)
-
-	for i in range(2):
-		ork = create_unit_by_name('Flash Git')
-		ork.add_weapon(create_ranged_weapon_by_name('Snazzgun'))
-		army2.squads[1].add_unit(ork)
 
 	#Change first move advantage here
 	first_move_army = army1
