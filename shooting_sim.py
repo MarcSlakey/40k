@@ -98,6 +98,11 @@ def create_ranged_weapon_by_name(name):
 
 
 def army_attack_army(army1, army2):
+	"""Makes all of one army's units attack the opposing army's squads.
+
+	Iterates through Squads, Units, and Weapons in creation order.
+	Units will attack with all their weapons. (This assumes armies are only attacking in ranged phase) 
+	"""
 	for squad in army1.squads_alive():
 		for unit in squad.units_alive():
 			for i in range(len(unit.weapons)):			#There's probably a better way to do this
