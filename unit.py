@@ -26,6 +26,7 @@ class Unit(object):
 		leadership (int): used to determine outcome of morale tests
 		save (int): minimum roll required to successfully save against a wound (melee or ranged)
 		invulnerable (int): invulnerable save stat; used instead of regular save if (invulnerable roll) < (save + (armor piercing))
+		weapons (Weapon): list of a unit's Weapon objects
 
 	"""
 	
@@ -62,9 +63,7 @@ class Unit(object):
 	def attack_with_weapon(self, weapon_index, target_squad):
 		"""Initiates an attack against the next valid target in the opposing army.
 
-		First determines how many shots the weapon has, then 
-
-		If a unit has more than one weapon, it will fire them in the order in which they were created.
+		First determines how many shots the weapon has, then fires those shots one by one at the target. 
 		"""
 		weapon_used = self.weapons[weapon_index]
 		if isinstance(weapon_used, RangedWeapon):

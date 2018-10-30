@@ -32,18 +32,28 @@ from army import Army
 
 clear = lambda: os.system('cls')
 
+
 def get_workbook_data(workbook = '40k_sim_workbook.xlsx'):
 	wb = openpyxl.load_workbook(workbook)
 	global unit_sheet, ranged_weapon_sheet
 	ranged_weapon_sheet = wb.get_sheet_by_name('Templar Ranged Weapons')
 	unit_sheet = wb.get_sheet_by_name('Templar Units')
 
+
 def find_string_in_column(sheet, name, column, starting_row=0):
+	'''Finds the given string ('name') in the relevant Excel sheet and returns its row number.
+	
+	Works by using .index(search_term, search_start_position).
+	(not 100% that that is how this works)
+	'''
 	return [x.value for x in sheet.columns[column]].index(name, starting_row)
 
-def create_unit_by_name(name):
-	"""Creates 
 
+def create_unit_by_name(name):
+	"""Creates a unit object and populates it.
+
+	Uses find_string_in_column() to locate the given unit's name in the relevant Excel sheet, creates a Unit object named
+		the same as the search term, and populates it with the rest of the contents of the term's row.
 	"""
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
@@ -63,7 +73,13 @@ def create_unit_by_name(name):
 		invulnerable = unit_row[10].value
 	)
 
+
 def create_ranged_weapon_by_name(name):
+	"""Creates a RangedWeapon object and populates it.
+
+	Uses find_string_in_column() to locate the given weapon's name in the relevant Excel sheet, creates a RangedWeapon object named
+		the same as the search term, and populates it with the rest of the contents of the term's row.
+	"""
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(ranged_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
@@ -84,9 +100,10 @@ def create_ranged_weapon_by_name(name):
 def army_attack_army(army1, army2):
 	for squad in army1.squads_alive():
 		for unit in squad.units_alive():
-			if not army2.alive():
-				return
-			unit.attack_with_weapon(0, army2.squads_alive()[0])
+			for i in range(len(unit.weapons)):			#There's probably a better way to do this
+				if not army2.alive():
+					return
+				unit.attack_with_weapon(i, army2.squads_alive()[0])
 
 
 def countdown_timer(sleep_time):
@@ -96,7 +113,6 @@ def countdown_timer(sleep_time):
 		print('Changing screens in: {}'.format(count), end='\r', flush=True)
 		count -= 1
 		sleep(1)
-
 
 
 """Main loop; runs army creation and loops until at least one army has no more units left.
@@ -113,11 +129,11 @@ def main():
 	#Army creation stage; Army() expects 1 'name' argument
 	army1 = Army('Black Templars')
 	army1.add_squad(Squad('Crusader Squad(1)'))
-	army1.add_squad(Squad('Crusader Squad(2)'))
 
-	for i in range(5):
+	for i in range(10):
 		init = create_unit_by_name('Initiate')
 		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
+		init.add_weapon(create_ranged_weapon_by_name('Bolt pistol'))
 		army1.squads[0].add_unit(init)
 
 	army2 = Army('Orks')
@@ -129,12 +145,17 @@ def main():
 		ork.add_weapon(create_ranged_weapon_by_name('Shoota'))
 		army2.squads[0].add_unit(ork)
 
+	for i in range(2):
+		ork = create_unit_by_name('Flash Git')
+		ork.add_weapon(create_ranged_weapon_by_name('Snazzgun'))
+		army2.squads[1].add_unit(ork)
+
 	#Change first move advantage here
 	first_move_army = army1
 	second_move_army = army2
 
 	#Time delay (in seconds) between output screens
-	sleep_time = 6			
+	sleep_time = 6		
 
 	#Start of actual turn loop
 	print('STARTING SIMULATION')
