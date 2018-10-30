@@ -1,7 +1,12 @@
-"""data_creation module
+"""Data creation module
 
+Locates necessary unit and weapon data by name and then creates as well as populates objects based on those names.
 
-
+Functions:
+	get_workbook_data
+	find_string_in_column: searches relevant excel sheet for the unit/weapon name and returns the row # where that name was found
+	create_unit_by_name: uses find_string_in_column() to generate a Unit object
+	create_ranged_weapon_by_name: uses find_string_in_column() to generate a Weapon object
 """
 
 import openpyxl			#Module for interacting with excel spreadsheet
@@ -71,3 +76,20 @@ def create_ranged_weapon_by_name(name):
 		damage = weapon_row[8].value
 	)
 
+def create_melee_weapon_by_name(name):
+	"""Creates a MeleeWeapon object and populates it.
+
+	Uses find_string_in_column() to locate the given weapon's name in the relevant Excel sheet, creates a RangedWeapon object named
+		the same as the search term, and populates it with the rest of the contents of the term's row.
+	"""
+	NAME_COLUMN = 0
+	SEARCH_START_ROW = 2
+	name_row = find_string_in_column(ranged_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
+	weapon_row = ranged_weapon_sheet.rows[name_row]
+	return RangedWeapon(
+		name = weapon_row[0].value,
+		strength = weapon_row[1].value,
+		ap = weapon_row[2].value,
+		damage_dice = weapon_row[3].value,
+		damage = weapon_row[4].value
+	)

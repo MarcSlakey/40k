@@ -11,10 +11,6 @@ Which army moves first can be changed just above main()
 Currently only handles one of the four 40k turn phases: the shooting phase.
 
 Functions:
-	get_workbook_data
-	find_string_in_column: searches relevant excel sheet for the unit/weapon name and returns the row # where that name was found
-	create_unit_by_name: uses find_string_in_column() to generate a Unit object
-	create_ranged_weapon_by_name: uses find_string_in_column() to generate a Weapon object
 	army_attack_army: Makes each unit in a given army fire its weapon until either every unit has fired all of its shots or the enemy army is dead
 	countdown_timer: counts down the time until the program will proceed to the next information screen
 """
