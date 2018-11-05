@@ -62,7 +62,7 @@ class Game:
 			self.selected_model.dest_x = self.selected_model.x
 			self.selected_model.dest_y = self.selected_model.y
 			self.selected_model.max_move = self.selected_model.original_max_move
-			print("Max_move after reresset: {}.".format(self.selected_model.max_move))
+			print("Max_move after reset: {}.".format(self.selected_model.max_move))
 			print("Sprite location after reset: ({},{})".format(self.selected_model.x, self.selected_model.y))
 
 	#Game Loop - Event Handling
