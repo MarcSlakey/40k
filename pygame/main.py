@@ -1,19 +1,12 @@
-"""Selection Test
-
-Expands upon the shoot_test to allow selection between multiple models.
+"""40k Pygame
 
 Three Sprites are spawned, two named model1 and model2, and the other named target.
 
 Left clicking a sprite selects it, left clicking empty space deselects it. 
-
-
+	Selecting a model causes three circles to be drawn: yellow for move distance, red for weapon range, and green to highlight the selected sprite.
 Right click moves the model to the clicked location if it within the remaining move distance.
 Space resets the selected model to its original position and restores its max move distance.
-Middle click will attempt to delete the target.
-If model is within shooting range of target, target will be killed. If it is not in range, it will not. 
-
-The sprite's weapon range is set in sprites.py.
-Displays this value as a circle whose radius is weapon range.
+Middle click will attempt to delete the target. If the model selected is within shooting range of target, the target will be killed.
 """
 
 import pygame
@@ -25,17 +18,16 @@ from sprites import *
 class Game:
 	def __init__(self):
 		#Initialize program, game window, etc.
-		pygame.init()				#Always needed to initialize pygame
+		pygame.init()				#Always needed 
 		pygame.mixer.init()			#Always needed if you want any sound
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 		pygame.display.set_caption(TITLE)
 		self.clock = pygame.time.Clock()		#Creates a new Clock object that can be used to track an amount of time.
 		self.running = True						#		Provides several functions to help control a game's framerate.
 
+	#Initialize a new game
 	def new(self):
-		#Start a new game
-		print(pygame.MOUSEBUTTONUP)
-
+		
 		self.all_sprites = pygame.sprite.Group() 	#All-inclusive group of sprites, simplifies updating and drawing
 		self.model_sprites = pygame.sprite.Group()
 
@@ -51,14 +43,27 @@ class Game:
 		self.selected_model = None
 		self.run()
 
+	#Main Game Loop
 	def run(self):
-		#Game Loop
 		self.playing = True
 		while self.playing:
 			self.clock.tick(FPS)	#Update the clock. Should be called once per "frame" (game loop?)
-			self.events()
+			self.events()		#Meat of the program
 			self.update()
 			self.draw()
+
+	#Sets sprites back to their starting positions when the spacebar is pressed
+	def reset_moves(self):
+		keys = pygame.key.get_pressed()
+		if self.selected_model != None and keys[pygame.K_SPACE]:
+			if self.selected_model.x != self.selected_model.original_pos[0] and self.selected_model.y != self.selected_model.original_pos[1]:
+				print("\nSprite at ({},{}) reset to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
+																				self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
+				#sloppy fix to move-reset bug; sometimes space needed to be pressed several times to reset the model's position
+				while self.selected_model.x != self.selected_model.original_pos[0] or self.selected_model.y != self.selected_model.original_pos[1]:
+					self.selected_model.x = self.selected_model.original_pos[0]
+					self.selected_model.y = self.selected_model.original_pos[1]
+					self.selected_model.max_move = self.selected_model.original_max_move
 
 	def events(self):
 		#Game Loop - Event Handling
@@ -69,13 +74,7 @@ class Game:
 				self.running = False
 
 			elif event.type == pygame.KEYDOWN:
-				keys = pygame.key.get_pressed()
-				if self.selected_model != None and keys[pygame.K_SPACE]:
-					print("\nSprite at ({},{}) reset to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
-																						self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
-					self.selected_model.x = self.selected_model.original_pos[0]
-					self.selected_model.y = self.selected_model.original_pos[1]
-					self.selected_model.max_move = self.selected_model.original_max_move
+				self.reset_moves()
 
 
 			elif event.type == pygame.MOUSEBUTTONUP:
@@ -86,10 +85,14 @@ class Game:
 								self.selected_model = self.model
 
 				elif self.selected_model != None:
-					if event.button == 1:		#mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
-						self.selected_model = None
+					if event.button == 1:	
+						for self.model in self.model_sprites:
+							if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+								self.selected_model = self.model
+							else:	#commenting these 2 lines out allows selection of new sprite while one is selected; ideally want that as well as deselection functionality
+								self.selected_model = None
 
-					elif event.button == 2: 	#mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+					elif event.button == 2:
 						shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 						shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
 						shot_distance = find_hypotenuse(shot_x, shot_y)
@@ -97,7 +100,7 @@ class Game:
 							if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
 								self.target.kill()
 
-					elif event.button == 3: 	#mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+					elif event.button == 3:
 						self.selected_model.dest_x = pygame.mouse.get_pos()[0]
 						self.selected_model.dest_y = pygame.mouse.get_pos()[1]
 				
@@ -136,7 +139,7 @@ class Game:
 g = Game()
 g.show_start_screen()
 
-while g.running:		#self.running always starts as True on __init__
+while g.running:		#self.running always starts as True on Game __init__
 	g.new()
 	g.show_go_screen()
 

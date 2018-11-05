@@ -1,14 +1,14 @@
 """40k small-scale battle simulator
 
 Allows for custom creation of two armies with any amount of squads and units.
-Structured with nested classe objects: Army > Squad > Unit > Weapon.
+Structured with nested class objects: Army > Squad > Unit > Weapon.
 Armies, squads, units, and weapons are all chosen in the main() function of this module.
 Units are individually assigned weapons (currently no limit).
 Units are automatically targetted and killed in the order in which they were created.
 Additionally, units fire their weapons in the order in which they were created.
 Which army moves first can be changed just above main()
 
-Currently only handles one of the four 40k turn phases: the shooting phase.
+Currently only handles one of the five 40k turn phases: the shooting phase.
 
 Functions:
 	army_attack_army: Makes each unit in a given army fire its weapon until either every unit has fired all of its shots or the enemy army is dead

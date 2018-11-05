@@ -18,10 +18,10 @@ class Model(pygame.sprite.Sprite):
 		self.image.fill(color)
 		self.rect = self.image.get_rect()
 		self.vx, self.vy = (0, 0)
-		self.x = x * TILESIZE		#spawn x coordinate; allows initializing with a tile number which is converted to pixels
+		self.x = x * TILESIZE		#spawn x coordinate; allows initializing with a tile number which is then converted to pixels
 		self.y = y * TILESIZE 		#spawn y coordinate
 		self.pos = self.x, self.y
-		self.original_pos = (self.x, self.y)	#tuple holding the start pos
+		self.original_pos = (self.x, self.y)
 		self.dest_x = 0
 		self.dest_y = 0
 		self.shot_dest_x = 0
@@ -57,4 +57,3 @@ class Model(pygame.sprite.Sprite):
 		elif current_move > self.max_move:
 			self.dest_x = self.x
 			self.dest_y = self.y
-
