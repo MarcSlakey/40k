@@ -18,19 +18,19 @@ from sprites import *
 class Game:
 	#Initialize program, game window, etc.
 	def __init__(self):
-		pygame.init()				#Always needed 
-		pygame.mixer.init()			#Always needed if you want any sound
+		pygame.init() 
+		pygame.mixer.init()
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 		pygame.display.set_caption(TITLE)
-		self.clock = pygame.time.Clock()		#Creates a new Clock object that can be used to track an amount of time.
-		self.running = True						#		Provides several functions to help control a game's framerate.
+		self.clock = pygame.time.Clock()
+		self.running = True
 
 	#Initialize a new game
 	def new(self):
-		self.all_sprites = pygame.sprite.Group() 	#All-inclusive group of sprites, simplifies updating and drawing
+		self.all_sprites = pygame.sprite.Group() 	
 		self.model_sprites = pygame.sprite.Group()
 
-		self.model1 = Model(self, 10, 10, YELLOW)			#Spawns a single model sprite at given tile coordinates
+		self.model1 = Model(self, 10, 10, YELLOW)	#Spawns a single model sprite at given tile coordinates
 		self.model2 = Model(self, 10, 12, YELLOW)
 		self.model3 = Model(self, 10, 14, YELLOW)
 		self.model1.add(self.model_sprites)
@@ -46,26 +46,26 @@ class Game:
 	def run(self):
 		self.playing = True
 		while self.playing:
-			self.clock.tick(FPS)	#Update the clock. Should be called once per "frame" (game loop?)
-			self.events()				#Meat of the program
+			self.clock.tick(FPS)
+			self.events()			
 			self.update()
 			self.draw()
 
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self):
-		keys = pygame.key.get_pressed()
-		if self.selected_model != None and keys[pygame.K_SPACE]:
-			if self.selected_model.x != self.selected_model.original_pos[0] and self.selected_model.y != self.selected_model.original_pos[1]:
-				self.selected_model.x = self.selected_model.original_pos[0]
-				self.selected_model.y = self.selected_model.original_pos[1]
-				self.selected_model.max_move = self.selected_model.original_max_move
-				print("\nSprite at ({},{}) reset to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
-																				self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
-				print("\nMax move reset to {}".format(self.selected_model.original_max_move))
+		if self.selected_model.x != self.selected_model.original_pos[0] and self.selected_model.y != self.selected_model.original_pos[1]:
+			print("\nSprite at ({},{}) reseting to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
+																			self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
+			print("Max_move before reset: {}".format(self.selected_model.max_move))
+			self.selected_model.x = self.selected_model.original_pos[0]
+			self.selected_model.y = self.selected_model.original_pos[1]
+			self.selected_model.max_move = self.selected_model.original_max_move
+			print("Max_move after reset: {}.".format(self.selected_model.max_move))
+			print("Sprite location after reset: ({},{})".format(self.selected_model.x, self.selected_model.y))
 
 	#Game Loop - Event Handling
 	def events(self):
-		for event in pygame.event.get():	#event.get() returns a list of all events currently in the queue and also removes all these events from the queue
+		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				if self.playing:
 					self.playing = False
@@ -73,7 +73,9 @@ class Game:
 
 			#Keyboard event handling
 			elif event.type == pygame.KEYDOWN:
-				self.reset_moves()
+				keys = pygame.key.get_pressed()
+				if self.selected_model != None and keys[pygame.K_SPACE]:
+					self.reset_moves()
 
 			#Mouse event handling
 			elif event.type == pygame.MOUSEBUTTONUP:
@@ -121,7 +123,7 @@ class Game:
 	def draw_radii(self):
 		pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), self.selected_model.max_move, 1)		#Draw surface, color, location, radius, width
 		pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, 1)
-		pygame.draw.circle(self.screen, GREEN, (self.selected_model.x, self.selected_model.y), 32, 1)
+		pygame.draw.circle(self.screen, GREEN, (self.selected_model.x, self.selected_model.y), 25, 3)
 
 	#Game Loop - Draw
 	def draw(self):
@@ -129,8 +131,8 @@ class Game:
 		self.draw_grid()
 		if self.selected_model != None:
 			self.draw_radii()
-		self.all_sprites.draw(self.screen)		#Draw every sprite in the group all_sprites
-		pygame.display.flip()	#*AFTER* drawing everything, flip the display
+		self.all_sprites.draw(self.screen)		
+		pygame.display.flip()	
 
 	def show_start_screen(self):
 		pass
