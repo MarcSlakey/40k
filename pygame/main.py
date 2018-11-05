@@ -61,7 +61,7 @@ class Game:
 				self.selected_model.max_move = self.selected_model.original_max_move
 				print("\nSprite at ({},{}) reset to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
 																				self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
-				print("\nMax move reset to {}".format(selected_model.original_max_move))
+				print("\nMax move reset to {}".format(self.selected_model.original_max_move))
 
 	#Game Loop - Event Handling
 	def events(self):
