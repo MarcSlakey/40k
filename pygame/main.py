@@ -59,11 +59,9 @@ class Game:
 			if self.selected_model.x != self.selected_model.original_pos[0] and self.selected_model.y != self.selected_model.original_pos[1]:
 				print("\nSprite at ({},{}) reset to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
 																				self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
-				#sloppy fix to move-reset bug; sometimes space needed to be pressed several times to reset the model's position
-				while self.selected_model.x != self.selected_model.original_pos[0] or self.selected_model.y != self.selected_model.original_pos[1]:
-					self.selected_model.x = self.selected_model.original_pos[0]
-					self.selected_model.y = self.selected_model.original_pos[1]
-					self.selected_model.max_move = self.selected_model.original_max_move
+				self.selected_model.x = self.selected_model.original_pos[0]
+				self.selected_model.y = self.selected_model.original_pos[1]
+				self.selected_model.max_move = self.selected_model.original_max_move
 
 	def events(self):
 		#Game Loop - Event Handling
