@@ -12,7 +12,7 @@ class Weapon(object):
 
 	"""Summary.
 	
-	Weapon objects are stored in a list in Unit objects.
+	Weapon objects are stored in a list in Model objects.
 	
 	Attributes:
 		name (str): weapon's name
@@ -63,4 +63,4 @@ class MeleeWeapon(Weapon):
 	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None, damage_function=None, attacks_function=None):
 		#Run the __init__ function on yourself of the super/parent of the MeleeWeapon class (which is the Weapon class)
 		super(MeleeWeapon, self).__init__(name, strength, ap, damage_dice, damage, hit_function, wound_function, save_function)
-		self.attacks_function = attacks_function	#Special attacks_function placeholder since melee weapons can modify a unit's attack stat
+		self.attacks_function = attacks_function	#Special attacks_function placeholder since melee weapons can modify a model's attack stat

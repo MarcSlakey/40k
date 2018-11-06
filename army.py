@@ -4,11 +4,11 @@
 
 class Army(object):
 
-	"""Class for squad objects.
+	"""Class for unit objects.
 	
 	Attributes:
 		name (str): army's name, used solely for output 
-		squads (Squad): list of this army's Squad-class objects
+		units (Unit): list of this army's Unit-class objects
 
 	"""
 
@@ -17,27 +17,27 @@ class Army(object):
 		
 		Parameters:
 			name (str): army's name, used solely for output 
-			squads (Squad): list of this army's Squad objects
+			units (Unit): list of this army's Unit objects
 		"""
 		self.name = name
-		self.squads = []
+		self.units = []
 
 	#Operator overloading: runs this function on print(Army) or str()
-	#Ultimately prints the number of squads alive within the army as well as the units alive within each of those squads
+	#Ultimately prints the number of units alive within the army as well as the models alive within each of those units
 	def __str__(self):
-		text = 'Army has {} squad(s) left\n'.format(len(self.squads_alive()))
-		for squad in self.squads_alive():
-			text += "  {}".format(squad)
+		text = 'Army has {} unit(s) left\n'.format(len(self.units_alive()))
+		for unit in self.units_alive():
+			text += "  {}".format(unit)
 		return text
 
-	def add_squad(self, squad):
-		self.squads.append(squad)
+	def add_unit(self, unit):
+		self.units.append(unit)
 
-	#Returns the number of squads in the army with at least one unit alive
-	def squads_alive(self):
-		return [squad for squad in self.squads if squad.alive()]
+	#Returns the number of units in the army with at least one model alive
+	def units_alive(self):
+		return [unit for unit in self.units if unit.alive()]
 
-	#Returns true if any squads in the army are alive
+	#Returns true if any units in the army are alive
 	def alive(self):
-		return len(self.squads_alive()) != 0
+		return len(self.units_alive()) != 0
 

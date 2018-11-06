@@ -1,23 +1,23 @@
 """Data creation module
 
-Locates necessary unit and weapon data by name and then creates as well as populates objects based on those names.
+Locates necessary model and weapon data by name and then creates as well as populates objects based on those names.
 
 Functions:
 	get_workbook_data
-	find_string_in_column: searches relevant excel sheet for the unit/weapon name and returns the row # where that name was found
-	create_unit_by_name: uses find_string_in_column() to generate a Unit object
+	find_string_in_column: searches relevant excel sheet for the model/weapon name and returns the row # where that name was found
+	create_model_by_name: uses find_string_in_column() to generate a Model object
 	create_ranged_weapon_by_name: uses find_string_in_column() to generate a Weapon object
 """
 
 import openpyxl			#Module for interacting with excel spreadsheet
-from unit import Unit
+from model import Model
 from weapon import *
 
 def get_workbook_data(workbook = '40k_sim_workbook.xlsx'):
 	wb = openpyxl.load_workbook(workbook)
-	global unit_sheet, ranged_weapon_sheet
+	global model_sheet, ranged_weapon_sheet
 	ranged_weapon_sheet = wb.get_sheet_by_name('Templar Ranged Weapons')
-	unit_sheet = wb.get_sheet_by_name('Templar Units')
+	model_sheet = wb.get_sheet_by_name('Templar Models')
 
 
 def find_string_in_column(sheet, name, column, starting_row=0):
@@ -29,28 +29,28 @@ def find_string_in_column(sheet, name, column, starting_row=0):
 	return [x.value for x in sheet.columns[column]].index(name, starting_row)
 
 
-def create_unit_by_name(name):
-	"""Creates a unit object and populates it.
+def create_model_by_name(name):
+	"""Creates a model object and populates it.
 
-	Uses find_string_in_column() to locate the given unit's name in the relevant Excel sheet, creates a Unit object named
+	Uses find_string_in_column() to locate the given model's name in the relevant Excel sheet, creates a Model object named
 		the same as the search term, and populates it with the rest of the contents of the term's row.
 	"""
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
-	name_row = find_string_in_column(unit_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
-	unit_row = unit_sheet.rows[name_row]
-	return Unit(
-		name = unit_row[0].value,
-		move = unit_row[1].value,
-		weapon_skill = unit_row[2].value,
-		ballistic_skill = unit_row[3].value,
-		strength = unit_row[4].value,
-		toughness = unit_row[5].value,
-		wounds = unit_row[6].value,
-		attacks = unit_row[7].value,
-		leadership = unit_row[8].value,
-		save = unit_row[9].value,
-		invulnerable = unit_row[10].value
+	name_row = find_string_in_column(model_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
+	model_row = model_sheet.rows[name_row]
+	return Model(
+		name = model_row[0].value,
+		move = model_row[1].value,
+		weapon_skill = model_row[2].value,
+		ballistic_skill = model_row[3].value,
+		strength = model_row[4].value,
+		toughness = model_row[5].value,
+		wounds = model_row[6].value,
+		attacks = model_row[7].value,
+		leadership = model_row[8].value,
+		save = model_row[9].value,
+		invulnerable = model_row[10].value
 	)
 
 

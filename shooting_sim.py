@@ -1,17 +1,17 @@
 """40k small-scale battle simulator
 
-Allows for custom creation of two armies with any amount of squads and units.
-Structured with nested class objects: Army > Squad > Unit > Weapon.
-Armies, squads, units, and weapons are all chosen in the main() function of this module.
-Units are individually assigned weapons (currently no limit).
-Units are automatically targetted and killed in the order in which they were created.
-Additionally, units fire their weapons in the order in which they were created.
+Allows for custom creation of two armies with any amount of units and models.
+Structured with nested class objects: Army > Unit > Model > Weapon.
+Armies, units, models, and weapons are all chosen in the main() function of this module.
+Models are individually assigned weapons (currently no limit).
+Models are automatically targetted and killed in the order in which they were created.
+Additionally, models fire their weapons in the order in which they were created.
 Which army moves first can be changed just above main()
 
 Currently only handles one of the five 40k turn phases: the shooting phase.
 
 Functions:
-	army_attack_army: Makes each unit in a given army fire its weapon until either every unit has fired all of its shots or the enemy army is dead
+	army_attack_army: Makes each model in a given army fire its weapon until either every model has fired all of its shots or the enemy army is dead
 	countdown_timer: counts down the time until the program will proceed to the next information screen
 """
 
@@ -20,9 +20,9 @@ import os 					#Allows clearing command prompt output with clear()
 import sys					#Allows sys.exit()
 import random				#Allows dice rolling
 from time import sleep		#Allows delay
-from unit import Unit
+from model import Model
 from weapon import *
-from squad import Squad
+from unit import Unit
 from army import Army
 from data_creation import *
 
@@ -30,17 +30,17 @@ clear = lambda: os.system('cls')
 
 
 def army_attack_army(army1, army2):
-	"""Makes all of one army's units attack the opposing army's squads.
+	"""Makes all of one army's models attack the opposing army's units.
 
-	Iterates through Squads, Units, and Weapons in creation order.
-	Units will attack with all their weapons. (This assumes armies are only attacking in ranged phase) 
+	Iterates through Units, Models, and Weapons in creation order.
+	Models will attack with all their weapons. (This assumes armies are only attacking in ranged phase) 
 	"""
-	for squad in army1.squads_alive():
-		for unit in squad.units_alive():
-			for i in range(len(unit.weapons)):			#There's probably a better way to do this
+	for unit in army1.units_alive():
+		for model in unit.models_alive():
+			for i in range(len(model.weapons)):			#There's probably a better way to do this
 				if not army2.alive():
 					return
-				unit.attack_with_weapon(i, army2.squads_alive()[0])
+				model.attack_with_weapon(i, army2.units_alive()[0])
 
 
 def countdown_timer(sleep_time):
@@ -52,12 +52,12 @@ def countdown_timer(sleep_time):
 		sleep(1)
 
 
-"""Main loop; runs army creation and loops until at least one army has no more units left.
+"""Main loop; runs army creation and loops until at least one army has no more models left.
 
-Define squads and units in main().
-(army1/army2).add_squad(Squad('Name')) to make new squad.
-Must make new "for" loop for each type of unit within a given squad.
-Squads and units take damage in order of creation (first created are first to take damage)
+Define units and models in main().
+(army1/army2).add_unit(Unit('Name')) to make new unit.
+Must make new "for" loop for each type of model within a given unit.
+Units and models take damage in order of creation (first created are first to take damage)
 """
 def main():
 
@@ -65,26 +65,26 @@ def main():
 
 	#Army creation stage; Army() expects 1 'name' argument
 	army1 = Army('Black Templars')
-	army1.add_squad(Squad('Crusader Squad(1)'))
+	army1.add_unit(Unit('Crusader Unit(1)'))
 
 	for i in range(10):
-		init = create_unit_by_name('Initiate')
+		init = create_model_by_name('Initiate')
 		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
-		army1.squads[0].add_unit(init)
+		army1.units[0].add_model(init)
 
 	army2 = Army('Orks')
-	army2.add_squad(Squad('Boyz'))
-	army2.add_squad(Squad('Flash Gitz'))
+	army2.add_unit(Unit('Boyz'))
+	army2.add_unit(Unit('Flash Gitz'))
 
 	for i in range(10):
-		ork = create_unit_by_name('Ork Boy')
+		ork = create_model_by_name('Ork Boy')
 		ork.add_weapon(create_ranged_weapon_by_name('Shoota'))
-		army2.squads[0].add_unit(ork)
+		army2.units[0].add_model(ork)
 
 	for i in range(2):
-		ork = create_unit_by_name('Flash Git')
+		ork = create_model_by_name('Flash Git')
 		ork.add_weapon(create_ranged_weapon_by_name('Snazzgun'))
-		army2.squads[1].add_unit(ork)
+		army2.units[1].add_model(ork)
 
 	#Change first move advantage here
 	first_move_army = army1
@@ -96,7 +96,7 @@ def main():
 	#Start of actual turn loop
 	print('STARTING SIMULATION')
 
-	#Turn loop; runs until one army has no more units.
+	#Turn loop; runs until one army has no more models.
 	turn_count = 0
 	while army1.alive() and army2.alive():
 		clear()
