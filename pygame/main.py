@@ -99,13 +99,11 @@ class Game:
 				#If a model is selected, LMB deselects it, RMB moves it, and Middle mouse button shoots.
 				elif self.selected_model != None:
 					if event.button == 1:	#LMB
+						self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
 						for self.model in self.selectable_models:
-							#This line doesn't work (not sure why); should allow selecting a different sprite while one is already selected
 							if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 								self.selected_model = self.model
-							#Commenting this else out allows selection of new sprite while one is selected, but removes deselection
-							else:	
-								self.selected_model = None
+							
 
 					elif event.button == 2:	#Middle mouse button
 						shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
