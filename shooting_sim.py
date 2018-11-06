@@ -90,6 +90,7 @@ def main():
 	first_move_army = army1
 	second_move_army = army2
 
+
 	#Time delay (in seconds) between output screens
 	sleep_time = 6		
 
@@ -102,30 +103,27 @@ def main():
 		clear()
 		turn_count += 1
 
-		print('\n--------------REPORT: TURN {}--------------'.format(turn_count))
-		sleep(2)
-		print("{} report:".format(army1.name))
+		print('\n--------------START OF TURN REPORT: TURN {}--------------'.format(turn_count))
+		print("\n{} report:".format(army1.name))
 		print(army1)
 		print("\n{} report:".format(army2.name))
 		print(army2)
-		countdown_timer(sleep_time)
-		print("\nstarting turn...")
-		sleep(2)
+		input("\nPress Enter key to continue...")
 		clear()
 
-		print('\n--------------{} TURN {}--------------'.format(first_move_army.name.upper(), turn_count))
+		print('\n-------------------{} TURN {}-------------------'.format(first_move_army.name.upper(), turn_count))
 		army_attack_army(first_move_army, second_move_army)
-		countdown_timer(sleep_time)
+		input("\n\nPress Enter key to continue...")
 		clear()
 
 		if army2.alive():
-			print('\n--------------{} TURN {}--------------'.format(second_move_army.name.upper(), turn_count))
+			print('\n-------------------{} TURN {}-------------------'.format(second_move_army.name.upper(), turn_count))
 			army_attack_army(second_move_army, first_move_army)
-			countdown_timer(sleep_time)
+			input("\n\nPress Enter key to continue...")
 			clear()
 		
-		print('\n--------------END OF TURN {}--------------'.format(turn_count))
-		countdown_timer(sleep_time)
+		print('\n-------------------END OF TURN {}-------------------'.format(turn_count))
+		input("\n\nPress Enter key to continue...")
 		clear()
 
 	if army2.alive():
