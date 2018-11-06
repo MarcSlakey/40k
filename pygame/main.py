@@ -28,16 +28,24 @@ class Game:
 	#Initialize a new game
 	def new(self):
 		self.all_sprites = pygame.sprite.Group() 	
-		self.model_sprites = pygame.sprite.Group()
+		self.selectable_models = pygame.sprite.Group()
+		self.targets = pygame.sprite.Group()
 
 		self.model1 = Model(self, 10, 10, YELLOW)	#Spawns a single model sprite at given tile coordinates
 		self.model2 = Model(self, 10, 12, YELLOW)
 		self.model3 = Model(self, 10, 14, YELLOW)
-		self.model1.add(self.model_sprites)
-		self.model2.add(self.model_sprites)
-		self.model3.add(self.model_sprites)
+		self.model1.add(self.selectable_models)
+		self.model2.add(self.selectable_models)
+		self.model3.add(self.selectable_models)
 
-		self.target = Model(self, 30, 20, RED)
+		self.target1 = Model(self, 30, 20, RED)
+		self.target2 = Model(self, 30, 18, RED)
+		self.target3 = Model(self, 30, 16, RED)
+		self.target4 = Model(self, 30, 14, RED)
+		self.target1.add(self.targets)
+		self.target2.add(self.targets)
+		self.target3.add(self.targets)
+		self.target4.add(self.targets)
 
 		self.selected_model = None
 		self.run()
@@ -84,14 +92,14 @@ class Game:
 				#If a model is not selected, LMB selects a model.
 				if self.selected_model == None:
 					if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
-						for self.model in self.model_sprites:
+						for self.model in self.selectable_models:
 							if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 								self.selected_model = self.model
 
 				#If a model is selected, LMB deselects it, RMB moves it, and Middle mouse button shoots.
 				elif self.selected_model != None:
 					if event.button == 1:	#LMB
-						for self.model in self.model_sprites:
+						for self.model in self.selectable_models:
 							#This line doesn't work (not sure why); should allow selecting a different sprite while one is already selected
 							if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 								self.selected_model = self.model
@@ -104,8 +112,9 @@ class Game:
 						shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
 						shot_distance = find_hypotenuse(shot_x, shot_y)
 						if shot_distance <= self.selected_model.weapon_range:
-							if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
-								self.target.kill()
+							for self.target in self.targets:
+								if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
+									self.target.kill()
 
 					elif event.button == 3: #RMB
 						self.selected_model.dest_x = pygame.mouse.get_pos()[0]
