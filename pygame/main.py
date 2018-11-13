@@ -27,9 +27,12 @@ class Game:
 
 	#Initialize a new game
 	def new(self):
+		self.phases = ["move phase", "shoot_phase"]
+		self.current_phase = "move_phase"
 		self.all_sprites = pygame.sprite.Group() 	
 		self.selectable_models = pygame.sprite.Group()
 		self.targets = pygame.sprite.Group()
+		self.selected_model = None
 
 		self.model1 = Model(self, 10, 10, YELLOW)	#Spawns a single model sprite at given tile coordinates
 		self.model2 = Model(self, 10, 12, YELLOW)
@@ -47,7 +50,6 @@ class Game:
 		self.target3.add(self.targets)
 		self.target4.add(self.targets)
 
-		self.selected_model = None
 		self.run()
 
 	#Main Game Loop
@@ -75,48 +77,49 @@ class Game:
 
 	#Game Loop - Event Handling
 	def events(self):
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				if self.playing:
-					self.playing = False
-				self.running = False
+		if self.current_phase == "move_phase":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					if self.playing:
+						self.playing = False
+					self.running = False
 
-			#Keyboard event handling
-			elif event.type == pygame.KEYDOWN:
-				keys = pygame.key.get_pressed()
-				if self.selected_model != None and keys[pygame.K_SPACE]:
-					self.reset_moves()
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+					if self.selected_model != None and keys[pygame.K_SPACE]:
+						self.reset_moves()
 
-			#Mouse event handling
-			elif event.type == pygame.MOUSEBUTTONUP:
-				#If a model is not selected, LMB selects a model.
-				if self.selected_model == None:
-					if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
-						for self.model in self.selectable_models:
-							if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-								self.selected_model = self.model
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					#If a model is not selected, LMB selects a model.
+					if self.selected_model == None:
+						if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+							for self.model in self.selectable_models:
+								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.selected_model = self.model
 
-				#If a model is selected, LMB deselects it, RMB moves it, and Middle mouse button shoots.
-				elif self.selected_model != None:
-					if event.button == 1:	#LMB
-						self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
-						for self.model in self.selectable_models:
-							if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-								self.selected_model = self.model
-							
+					#If a model is selected, LMB deselects it, RMB moves it, and Middle mouse button shoots.
+					elif self.selected_model != None:
+						if event.button == 1:	#LMB
+							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
+							for self.model in self.selectable_models:
+								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.selected_model = self.model
+								
 
-					elif event.button == 2:	#Middle mouse button
-						shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
-						shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-						shot_distance = find_hypotenuse(shot_x, shot_y)
-						if shot_distance <= self.selected_model.weapon_range:
-							for self.target in self.targets:
-								if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
-									self.target.kill()
+						elif event.button == 2:	#Middle mouse button
+							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
+							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
+							shot_distance = find_hypotenuse(shot_x, shot_y)
+							if shot_distance <= self.selected_model.weapon_range:
+								for self.target in self.targets:
+									if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
+										self.target.kill()
 
-					elif event.button == 3: #RMB
-						self.selected_model.dest_x = pygame.mouse.get_pos()[0]
-						self.selected_model.dest_y = pygame.mouse.get_pos()[1]
+						elif event.button == 3: #RMB
+							self.selected_model.dest_x = pygame.mouse.get_pos()[0]
+							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
 				
 	#Game Loop - Update
 	def update(self):
@@ -136,11 +139,22 @@ class Game:
 
 	#Game Loop - Draw
 	def draw(self):
-		self.screen.fill(BLACK)
+		self.screen.fill(BLACK)	
 		self.draw_grid()
+
+		def text_objects(text, font):
+			textSurface = font.render(text, True, WHITE)
+			return textSurface, textSurface.get_rect()
+
+		largeText = pygame.font.Font('freesansbold.ttf', 32)
+		TextSurf, TextRect = text_objects("Current phase: {}".format(self.current_phase), largeText)
+		TextRect.center = ((WIDTH/2), 16)
+		self.screen.blit(TextSurf, TextRect)
+
+		self.all_sprites.draw(self.screen)	
 		if self.selected_model != None:
 			self.draw_radii()
-		self.all_sprites.draw(self.screen)		
+			
 		pygame.display.flip()	
 
 	def show_start_screen(self):
