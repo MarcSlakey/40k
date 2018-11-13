@@ -11,17 +11,43 @@ def find_hypotenuse(x, y):
 	return hypotenuse
 
 class Model(pygame.sprite.Sprite):
+
+	"""Model class
+	
+	Model sprite.
+
+	Attributes:
+		groups: sets the list of groups that contain this sprite
+		image:
+		rect:
+		x: spawn x coordinate; allows initializing with a tile number which is then converted to pixels
+		y: same as above
+		rect.center:
+		original_pos:
+		radius: Standard melee detection radius; cohesion detection is twice this radius
+		dest_x: stores mouse click location during movements
+		dest_y: same as above
+		shot_dest_x: placeholder attribute that allows crude shooting; should probably be in a different class later
+		shot_dest_y: same as above
+		weapon_range: same as above
+		max_move: a model's moves are subtracted from this value during the move phase
+		original_max_move: stores the max_move so it can be reset 
+
+	"""
+	
 	def __init__(self, game, x, y, color):
-		self.groups = [game.all_sprites]	#Sets the list of groups that contain this sprite
+		self.groups = [game.all_sprites]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
-		self.image = pygame.Surface((TILESIZE, TILESIZE))			#makes the image the same size as the tiles
+		self.image = pygame.Surface((TILESIZE, TILESIZE))
 		self.image.fill(color)
 		self.rect = self.image.get_rect()
 		self.vx, self.vy = (0, 0)
-		self.x = x * TILESIZE		#spawn x coordinate; allows initializing with a tile number which is then converted to pixels
-		self.y = y * TILESIZE 		#spawn y coordinate
+		self.x = x * TILESIZE
+		self.y = y * TILESIZE
 		self.rect.center = (self.x, self.y)
 		self.original_pos = (self.x, self.y)
+		self.radius	= 64	
+		#pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
 		self.dest_x = self.x
 		self.dest_y = self.y
 		self.shot_dest_x = 0
