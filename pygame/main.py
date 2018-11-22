@@ -34,17 +34,17 @@ class Game:
 		self.targets = pygame.sprite.Group()
 		self.selected_model = None
 
-		self.model1 = Model(self, 10, 10, YELLOW)	#Spawns a single model sprite at given tile coordinates
-		self.model2 = Model(self, 10, 12, YELLOW)
-		self.model3 = Model(self, 10, 14, YELLOW)
+		self.model1 = Model(self, 10, 10, TILESIZE//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
+		self.model2 = Model(self, 10, 12, TILESIZE//2, YELLOW)
+		self.model3 = Model(self, 10, 14, TILESIZE//2, YELLOW)
 		self.model1.add(self.selectable_models)
 		self.model2.add(self.selectable_models)
 		self.model3.add(self.selectable_models)
 
-		self.target1 = Model(self, 30, 20, RED)
-		self.target2 = Model(self, 30, 18, RED)
-		self.target3 = Model(self, 30, 16, RED)
-		self.target4 = Model(self, 30, 14, RED)
+		self.target1 = Model(self, 15, 16, TILESIZE//2, RED)
+		self.target2 = Model(self, 15, 14, TILESIZE//2, RED)
+		self.target3 = Model(self, 15, 12, TILESIZE//2, RED)
+		self.target4 = Model(self, 15, 10, TILESIZE//2, RED)
 		self.target1.add(self.targets)
 		self.target2.add(self.targets)
 		self.target3.add(self.targets)
@@ -151,11 +151,14 @@ class Game:
 		TextRect.center = ((WIDTH/2), 16)
 		self.screen.blit(TextSurf, TextRect)
 
-		self.all_sprites.draw(self.screen)	
+		self.all_sprites.draw(self.screen)
+		for sprite in self.all_sprites:
+			pygame.draw.circle(self.screen, LIGHTGREY, sprite.rect.center, sprite.radius)
 		if self.selected_model != None:
 			self.draw_radii()
 			
-		pygame.display.flip()	
+		pygame.display.update()
+		
 
 	def show_start_screen(self):
 		pass
