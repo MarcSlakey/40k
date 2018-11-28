@@ -10,21 +10,27 @@ def find_hypotenuse(x, y):
 	hypotenuse = sqrt(x*x + y*y)
 	return hypotenuse
 
+def one_inch_scale():		#Scales the collision circle to the one inch out from the model's base
+	pass
+
 class Model(pygame.sprite.Sprite):
 
 	"""Model class
 	
-	Model sprite.
+	Model sprite object. Basic game unit used to represent a single tabletop model. 
 
 	Attributes:
+		game: game to which this sprite belongs
+		name: string name of sprite
 		groups: sets the list of groups that contain this sprite
 		image:
 		rect:
 		x: spawn coordinates; allows initializing with a tile number which is then converted to pixels
 		y: same as above
-		rect.center:
-		original_pos:
-		radius: Standard melee detection radius; cohesion detection is twice this radius
+		rect.center: the location of the sprite's center point
+		original_pos: tuple to store the sprite's spawn location
+		moving: boolean representing whether or not the model is currently eligible for movement with mouse.
+		radius: represents the model's base in the tabletop game
 		dest_x: stores mouse click location during movements
 		dest_y: same as above
 		shot_dest_x: placeholder attribute that allows crude shooting; should probably be in a different class later
@@ -35,22 +41,22 @@ class Model(pygame.sprite.Sprite):
 
 	"""
 	
-	def __init__(self, game, x, y, radius, color):
+	def __init__(self, game, name, x, y, radius, color):
 		self.game = game
+		self.name = name
 		self.groups = [game.all_sprites]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
 		#self.image.fill(color)
 		self.rect = self.image.get_rect()
+		self.base_radius = radius
 		self.radius	= radius
 		self.vx, self.vy = (0, 0)
 		self.x = x * TILESIZE
 		self.y = y * TILESIZE
 		self.rect.center = (self.x, self.y)
 		self.original_pos = (self.x, self.y)
-
-		pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
-		
+		self.moving = False
 		self.dest_x = self.x
 		self.dest_y = self.y
 		self.shot_dest_x = 0
@@ -60,36 +66,42 @@ class Model(pygame.sprite.Sprite):
 		self.original_max_move = (self.max_move)
 		print("\nSprite created. at {},{}.".format(self.x, self.y))	
 
+	#def 
+
 	def update(self):
 		temp_x = self.x	
 		temp_y = self.y
 		current_move = 0
 
-		for sprite in self.game.targets:
-			if sprite.rect.collidepoint(self.dest_x, self.dest_y):
-				return
+		if self.moving == True:
+			self.dest_x = pygame.mouse.get_pos()[0]
+			self.dest_y = pygame.mouse.get_pos()[1]
+			
 
 		if self.dest_x != self.x and self.dest_y != self.y:
 			delta_x = self.x - self.dest_x
 			delta_y = self.y - self.dest_y
 			current_move = find_hypotenuse(delta_x, delta_y)
 		
-			if current_move <= self.max_move and self.max_move > 0:
+			if self.max_move > 0 and current_move <= self.max_move:
 				self.x = int(self.dest_x)
 				self.y = int(self.dest_y)
 				self.rect.center = (self.x, self.y)
 				self.max_move -= int(current_move)
-				"""
-				for sprite_x in self.game.targets:
-					if pygame.sprite.collide_circle(self, sprite_x):
-						self.x = temp_x
-						self.y = temp_y
-						self.rect.center = (self.x, self.y)
-						print("Collision!")
-						self.max_move -= int(current_move)
-						self.dest_x = self.x
-						self.dest_y = self.y
-				"""
+				
+				for sprite_x in self.game.all_sprites:
+					if sprite_x != self:
+						if pygame.sprite.collide_circle(self, sprite_x):
+							#print("Collision with between self and {}".format(sprite_x.name))
+							pygame.mouse.set_pos(temp_x, temp_y)
+							self.x = temp_x
+							self.y = temp_y
+							self.rect.center = (self.x, self.y)
+							self.max_move += int(current_move)
+							self.dest_x = self.x
+							self.dest_y = self.y
+
+				
 			else:
 				self.dest_x = self.x
 				self.dest_y = self.y
