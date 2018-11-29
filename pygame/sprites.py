@@ -68,6 +68,24 @@ class Model(pygame.sprite.Sprite):
 
 	#def 
 
+	def get_angle(origin, destination):
+	    """Returns angle in radians from origin to destination.
+	    This is the angle that you would get if the points were
+	    on a cartesian grid. Arguments of (0,0), (1, -1)
+	    return .25pi(45 deg) rather than 1.75pi(315 deg).
+	    """
+	    x_dist = destination[0] - origin[0]
+	    y_dist = destination[1] - origin[1]
+	    return atan2(-y_dist, x_dist) % (2 * pi)
+
+	def project(pos, angle, distance):
+	    """Returns tuple of pos projected distance at angle
+	    adjusted for pygame's y-axis.
+	    """
+	    return (pos[0] + (cos(angle) * distance),
+	            pos[1] - (sin(angle) * distance))
+
+
 	def update(self):
 		temp_x = self.x	
 		temp_y = self.y
