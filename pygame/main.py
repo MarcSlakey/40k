@@ -19,7 +19,7 @@ class Game:
 	#Initialize program, game window, etc.
 	def __init__(self):
 		pygame.init() 
-		pygame.mixer.init()
+		#pygame.mixer.init()
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 		pygame.display.set_caption(TITLE)
 		self.clock = pygame.time.Clock()
