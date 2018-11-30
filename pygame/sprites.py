@@ -2,7 +2,7 @@ import pygame
 from math import *
 from settings import *
 
-#vect = pygame.math.Vector2		#Pygame's vector functions (Vector2 indicates)
+vec = pygame.math.Vector2		#Pygame's vector functions (Vector2 indicates)
 								#	Example usage: self.vel = pygame.math.Vector2(x, y)
 								#	or with this assignment, self.vel = vect(x, y)
 
@@ -60,29 +60,12 @@ class Model(pygame.sprite.Sprite):
 		self.shot_dest_x = 0
 		self.shot_dest_y = 0
 		self.weapon_range = 500
+		self.rot = 0
+		self.vel = vec(0,0)
+		self.acc = vec(0,0)
 		self.max_move = 320
 		self.original_max_move = (self.max_move)
 		print("\nSprite created. at {},{}.".format(self.x, self.y))	
-
-	#def 
-
-	def get_angle(origin, destination):
-	    """Returns angle in radians from origin to destination.
-	    This is the angle that you would get if the points were
-	    on a cartesian grid. Arguments of (0,0), (1, -1)
-	    return .25pi(45 deg) rather than 1.75pi(315 deg).
-	    """
-	    x_dist = destination[0] - origin[0]
-	    y_dist = destination[1] - origin[1]
-	    return atan2(-y_dist, x_dist) % (2 * pi)
-
-	def project(pos, angle, distance):
-	    """Returns tuple of pos projected distance at angle
-	    adjusted for pygame's y-axis.
-	    """
-	    return (pos[0] + (cos(angle) * distance),
-	            pos[1] - (sin(angle) * distance))
-
 
 	def update(self):
 		temp_x = self.x	
@@ -91,23 +74,34 @@ class Model(pygame.sprite.Sprite):
 		if self.dest_x != self.x and self.dest_y != self.y:
 			delta_x = self.x - self.dest_x
 			delta_y = self.y - self.dest_y
+			print("Current coordinates: {},{}".format(self.x, self.y))
+			print("Target coordinate: {},{}".format(self.dest_x, self.dest_y))
+			print("delta_x: {} pixels".format(delta_x))
+			print("delta_y: {} pixels".format(delta_y))
 			current_move = find_hypotenuse(delta_x, delta_y)
 		
 			if self.max_move > 0 and current_move <= self.max_move:
-				self.x = int(self.dest_x)
-				self.y = int(self.dest_y)
+				model_pos = vec(self.x, self.y)
+				dest_pos = vec(self.dest_x, self.dest_y)
+				self.rot = (dest_pos - model_pos).angle_to(vec(1,0))
+				self.acc = vec(MODEL_SPEED, 0).rotate(-self.rot)
+				self.acc += self.vel * -.5
+				self.vel += self.acc
+				self.x += int(self.vel[0])
+				self.y += int(self.vel[1])
 				self.rect.center = (self.x, self.y)
-				self.max_move -= int(current_move)
+				print("Rot: {}, Acc: {}, Vel: {}".format(self.rot, self.vel, self.acc))
+				if self.x != temp_x or self.y != temp_y:
+					self.max_move -= find_hypotenuse(self.vel[0], self.vel[1])
 				
 				for sprite_x in self.game.all_sprites:
 					if sprite_x != self:
 						if pygame.sprite.collide_circle(self, sprite_x):
 							#print("Collision with between self and {}".format(sprite_x.name))
-							pygame.mouse.set_pos(temp_x, temp_y)
 							self.x = temp_x
 							self.y = temp_y
 							self.rect.center = (self.x, self.y)
-							self.max_move += int(current_move)
+							self.max_move += MODEL_SPEED
 							self.dest_x = self.x
 							self.dest_y = self.y
 
