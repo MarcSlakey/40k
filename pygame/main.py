@@ -88,19 +88,9 @@ class Game:
 				elif event.type == pygame.KEYDOWN:
 					keys = pygame.key.get_pressed()
 					if self.selected_model != None and keys[pygame.K_SPACE]:
-						if self.selected_model.moving == False:
-							self.reset_moves()
+						self.reset_moves()
 
 				#Mouse event handling
-				elif event.type == pygame.MOUSEBUTTONDOWN:
-					if self.selected_model != None:
-						if event.button == 3: #RMB
-							if self.selected_model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-								if self.selected_model.moving == False:
-									self.selected_model.moving = True
-								else:
-									self.selected_model.moving = False
-
 				elif event.type == pygame.MOUSEBUTTONUP:
 					#If a model is not selected, LMB selects a model.
 					if self.selected_model == None:
@@ -127,6 +117,10 @@ class Game:
 									if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
 										self.target.kill()
 
+
+						elif event.button == 3: #RMB
+							self.selected_model.dest_x = pygame.mouse.get_pos()[0]
+							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
 				
 				
 	#Game Loop - Update
@@ -163,8 +157,6 @@ class Game:
 			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius)
 		if self.selected_model != None:
 			pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius)
-			if self.selected_model.moving == True:
-				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius)
 
 		if self.selected_model != None:
 			self.draw_radii()

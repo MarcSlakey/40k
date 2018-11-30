@@ -6,7 +6,7 @@ The large yellow circle that appears on model selection shows remaining move dis
 
 Controls:
 LMB on a model (circle) to select it. A model will turn green to indicate that it is selected.
-RMB on selected model to activate move mode. Model then follows the mouse, subtracting move points as it is moved. A model will turn yellow to show that it is in "move mode".
+RMB 
 Spacebar while a model is selected (but not in move mode) will reset it to its original position.
 Middle click while a model is selected will delete a target model if that model is in range.
 

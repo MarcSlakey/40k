@@ -29,7 +29,6 @@ class Model(pygame.sprite.Sprite):
 		y: same as above
 		rect.center: the location of the sprite's center point
 		original_pos: tuple to store the sprite's spawn location
-		moving: boolean representing whether or not the model is currently eligible for movement with mouse.
 		radius: represents the model's base in the tabletop game
 		dest_x: stores mouse click location during movements
 		dest_y: same as above
@@ -56,7 +55,6 @@ class Model(pygame.sprite.Sprite):
 		self.y = y * TILESIZE
 		self.rect.center = (self.x, self.y)
 		self.original_pos = (self.x, self.y)
-		self.moving = False
 		self.dest_x = self.x
 		self.dest_y = self.y
 		self.shot_dest_x = 0
@@ -90,12 +88,6 @@ class Model(pygame.sprite.Sprite):
 		temp_x = self.x	
 		temp_y = self.y
 		current_move = 0
-
-		if self.moving == True:
-			self.dest_x = pygame.mouse.get_pos()[0]
-			self.dest_y = pygame.mouse.get_pos()[1]
-			
-
 		if self.dest_x != self.x and self.dest_y != self.y:
 			delta_x = self.x - self.dest_x
 			delta_y = self.y - self.dest_y
