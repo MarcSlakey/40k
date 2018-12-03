@@ -2,7 +2,7 @@ import pygame
 from math import *
 from settings import *
 
-vec = pygame.math.Vector2		#Pygame's vector functions (Vector2 indicates)
+vec = pygame.math.Vector2		#Pygame's vector functions (Vector2 indicates 2-dimensional vector)
 								#	Example usage: self.vel = pygame.math.Vector2(x, y)
 								#	or with this assignment, self.vel = vect(x, y)
 
@@ -60,6 +60,7 @@ class Model(pygame.sprite.Sprite):
 		self.shot_dest_x = 0
 		self.shot_dest_y = 0
 		self.weapon_range = 500
+		self.speed = 1
 		self.rot = 0
 		self.vel = vec(0,0)
 		self.acc = vec(0,0)
@@ -72,28 +73,46 @@ class Model(pygame.sprite.Sprite):
 		temp_y = self.y
 		current_move = 0
 		if self.dest_x != self.x and self.dest_y != self.y:
+			print("\n\n-------NEW STEP-------")
+			print("Pre-move coord: ({},{})".format(self.x, self.y))
 			delta_x = self.x - self.dest_x
 			delta_y = self.y - self.dest_y
+			current_move = find_hypotenuse(delta_x, delta_y)
+			"""
 			print("Current coordinates: {},{}".format(self.x, self.y))
 			print("Target coordinate: {},{}".format(self.dest_x, self.dest_y))
 			print("delta_x: {} pixels".format(delta_x))
 			print("delta_y: {} pixels".format(delta_y))
-			current_move = find_hypotenuse(delta_x, delta_y)
-		
+			print("delta hypot: {} pixels".format(current_move))
+			"""
+			
+			#Attempts to move the model if the desired move is within the unit's max move
 			if self.max_move > 0 and current_move <= self.max_move:
 				model_pos = vec(self.x, self.y)
 				dest_pos = vec(self.dest_x, self.dest_y)
-				self.rot = (dest_pos - model_pos).angle_to(vec(1,0))
-				self.acc = vec(MODEL_SPEED, 0).rotate(-self.rot)
-				self.acc += self.vel * -.5
+				self.rot = (dest_pos - model_pos).angle_to(vec(1,0))	#Calculates the angle between desired vector and basic x vector
+				self.acc = vec(self.speed, 0).rotate(-self.rot)		#Sets the acceleration vector's to angle and magnitude
+				self.acc += self.vel * -.4	#Friction coefficient; the higher the velocity, the higher this number is.
 				self.vel += self.acc
-				self.x += int(self.vel[0])
-				self.y += int(self.vel[1])
+
+				print("\nRot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
+				print("Vel Hypotenuse calc: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
+
+				pixels_x = int(self.vel[0])
+				pixels_y = int(self.vel[1])
+
+				self.x += pixels_x
+				self.y += pixels_y
 				self.rect.center = (self.x, self.y)
-				print("Rot: {}, Acc: {}, Vel: {}".format(self.rot, self.vel, self.acc))
-				if self.x != temp_x or self.y != temp_y:
-					self.max_move -= find_hypotenuse(self.vel[0], self.vel[1])
-				
+
+				#Max move reduced if model moved at all
+				if self.x != temp_x or self.y != temp_y:	
+					self.max_move -= find_hypotenuse(pixels_x, pixels_y)
+					print("\nMax move reduced by {}".format(find_hypotenuse(pixels_x, pixels_x)))
+
+				print("\nPost-move coord: ({},{})".format(self.x, self.y))
+
+				#Collision detection
 				for sprite_x in self.game.all_sprites:
 					if sprite_x != self:
 						if pygame.sprite.collide_circle(self, sprite_x):
@@ -101,12 +120,13 @@ class Model(pygame.sprite.Sprite):
 							self.x = temp_x
 							self.y = temp_y
 							self.rect.center = (self.x, self.y)
-							self.max_move += MODEL_SPEED
+							self.max_move += self.speed
 							self.dest_x = self.x
 							self.dest_y = self.y
 
 				
 			else:
+				print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
 				self.dest_x = self.x
 				self.dest_y = self.y
 

@@ -64,7 +64,7 @@ class Game:
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self):
 		if self.selected_model.x != self.selected_model.original_pos[0] and self.selected_model.y != self.selected_model.original_pos[1]:
-			print("\nSprite at ({},{}) reseting to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
+			print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
 																			self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
 			print("Max_move before reset: {}".format(self.selected_model.max_move))
 			self.selected_model.x = self.selected_model.original_pos[0]
@@ -135,7 +135,8 @@ class Game:
 
 	#Draws various useful circles: max move, weapon range, and a selection indicator
 	def draw_radii(self):
-		pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)		#Draw surface, color, location, radius, width
+		if self.selected_model.max_move >= 1:
+			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)		#Draw surface, color, location, radius, width
 		pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, 1)
 
 	#Game Loop - Draw

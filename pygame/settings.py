@@ -20,5 +20,3 @@ TILESIZE = 25 	#should always represent 1" in gameplay; for reference: 25.4 mm /
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
-#Move Settings
-MODEL_SPEED = 2
