@@ -36,6 +36,7 @@ class Game:
 	#Initialize a new game
 	def new(self):
 		self.load_data()
+		self.turn_count = 1
 		self.phases = ["move phase", "shoot_phase"]
 		self.current_phase = "move_phase"
 		self.all_sprites = pygame.sprite.Group() 
@@ -93,6 +94,7 @@ class Game:
 			for sprite in self.selectable_models:
 				sprite.max_move = sprite.original_max_move
 				sprite.original_pos = (sprite.x, sprite.y)
+			self.turn_count += 1	
 
 
 	#Game Loop - Event Handling
@@ -184,14 +186,6 @@ class Game:
 		def text_objects(text, font):
 			textSurface = font.render(text, True, WHITE)
 			return textSurface, textSurface.get_rect()
-
-		"""
-		#Placeholder "Current Phase" Text 
-		largeText = pygame.font.Font('freesansbold.ttf', 32)
-		TextSurf, TextRect = text_objects("Current phase: {}".format(self.current_phase), largeText)
-		TextRect.center = ((WIDTH/2), 16)
-		self.screen.blit(TextSurf, TextRect)
-		"""
 		
 		self.draw_sprites()
 
@@ -220,8 +214,22 @@ class Game:
 
 		#Draws useful radii on model selection
 		if self.selected_model != None:
-			self.draw_radii()
-			
+			self.draw_radii()	
+
+		#Turn count display text
+		largeText = pygame.font.Font('freesansbold.ttf', 32)
+		TextSurf, TextRect = text_objects("Turn #{}".format(self.turn_count), largeText)
+		TextRect.center = ((WIDTH/8), 14)
+		self.screen.blit(TextSurf, TextRect)
+
+		"""
+		#Placeholder "Current Phase" Text 
+		largeText = pygame.font.Font('freesansbold.ttf', 32)
+		TextSurf, TextRect = text_objects("Current phase: {}".format(self.current_phase), largeText)
+		TextRect.center = ((WIDTH/2), 16)
+		self.screen.blit(TextSurf, TextRect)
+		"""
+
 		pygame.display.update()
 		
 
