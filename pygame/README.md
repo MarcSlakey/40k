@@ -10,7 +10,7 @@ Note: "python3" might be "python" or "py" instead depending on your version of p
 Once both are installed, change directory to the pygame folder and run main.py.
 "main.py", "settings.py", and "sprites.py" must all be in the same folder.
 
-Controls:
+CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
 "RMB" commands the selected model to move the clicked location.
 "Middle click" while a model is selected will delete the moused-over target model if that model is in range.
@@ -18,7 +18,7 @@ Controls:
 "Enter/Return" will refresh all selectable models' move distance if they have maintained unit cohesion (this is a rudimentary simulation of a new move phase)
 
 
-Game basics:
+GAME BASICS:
 The white-filled circles are selectable tabletop "models".
 The red-filled circles are non-selectable "target models".
 The large yellow circle that appears on model selection shows remaining move distance. The red one shows the model's shooting range.
