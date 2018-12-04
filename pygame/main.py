@@ -34,17 +34,17 @@ class Game:
 		self.targets = pygame.sprite.Group()
 		self.selected_model = None
 
-		self.model1 = Model(self, "model1", 10, 10, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
+		self.model1 = Model(self, "model1", 10, 6, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
 		self.model2 = Model(self, "model2", 10, 12, 25//2, YELLOW)
-		self.model3 = Model(self, "model3", 10, 14, 25//2, YELLOW)
+		self.model3 = Model(self, "model3", 10, 18, 25//2, YELLOW)
 		self.model1.add(self.selectable_models)
 		self.model2.add(self.selectable_models)
 		self.model3.add(self.selectable_models)
 
-		self.target1 = Model(self, "target1", 15, 16, 25//2, RED)
+		self.target1 = Model(self, "target1", 15, 17, 25//2, RED)
 		self.target2 = Model(self, "target2", 15, 14, 25//2, RED)
-		self.target3 = Model(self, "target3", 15, 12, 25//2, RED)
-		self.target4 = Model(self, "target4", 15, 10, 25//2, RED)
+		self.target3 = Model(self, "target3", 15, 11, 25//2, RED)
+		self.target4 = Model(self, "target4", 15, 8, 25//2, RED)
 		self.target1.add(self.targets)
 		self.target2.add(self.targets)
 		self.target3.add(self.targets)
@@ -127,21 +127,32 @@ class Game:
 	def update(self):
 		self.all_sprites.update()
 
+	#Draws reference grid
 	def draw_grid(self):
 		for x in range(0, WIDTH, TILESIZE):		#draws horizontal lines
 			pygame.draw.line(self.screen, LIGHTGREY, (x, 0 ), (x, HEIGHT))
 		for y in range(0, HEIGHT, TILESIZE):		#draws horizontal lines
 			pygame.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
-	#Draws various useful circles: max move, weapon range, and a selection indicator
+	#Draws various useful circles: max move, weapon range
 	def draw_radii(self):
 		if self.selected_model.max_move >= 1:
-			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)		#Draw surface, color, location, radius, width
+			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)
+
 		pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, 1)
+		pygame.draw.circle(self.screen, GREEN, (self.selected_model.x, self.selected_model.y), self.selected_model.true_cohesion_radius, 1)
 
 	def draw_sprites(self):
 		self.all_sprites.draw(self.screen)
 
+	#Total Unit Cohesion Checker
+	def draw_cohesion_indicator(self):
+		pygame.draw.circle(self.screen, RED, (WIDTH//2, 0), 50, 0)	
+		unit_cohesions = []
+		for sprite in self.selectable_models:
+			unit_cohesions.append(sprite.cohesion)
+		if all(unit_cohesions):
+			pygame.draw.circle(self.screen, GREEN, (WIDTH//2, 0), 50, 0)
 
 	#Game Loop - Draw
 	def draw(self):
@@ -161,14 +172,30 @@ class Game:
 		"""
 		
 		self.draw_sprites()
+
+		#Model base radii
 		for sprite in self.all_sprites:
 			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
 
+		#Melee radius (one inch)
 		for sprite in self.targets:
-			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.true_melee_radius, 1)
-		if self.selected_model != None:
-			pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
 
+		
+		#Cohesion radius (two inches)
+		#for sprite in self.selectable_models:
+		#	pygame.draw.circle(self.screen, GREEN, sprite.rect.center, sprite.true_cohesion_radius, 1)
+
+		
+		#Selected model indicator
+		if self.selected_model != None:
+			pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
+			if self.selected_model.cohesion:
+				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
+		self.draw_cohesion_indicator()
+
+		#Draws useful radii on model selection
 		if self.selected_model != None:
 			self.draw_radii()
 			

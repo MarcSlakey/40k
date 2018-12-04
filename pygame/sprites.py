@@ -49,15 +49,24 @@ class Model(pygame.sprite.Sprite):
 		#self.image.fill(color)
 		self.rect = self.image.get_rect()
 		self.radius = radius 		#represents the model's base size
-		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 	#the coefficient by which the radius can be mulitplied to achieve the radius + one inch
+
+		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + 1/2 inch
 		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius
-		self.melee_radius = int(self.radius * self.melee_ratio)		#gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
-		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#gives the "true" 1" melee radius
+		self.melee_radius = int(self.radius * self.melee_ratio)				#gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
+		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#the "true" 1" melee radius
+
+		self.cohesion_ratio = (self.radius + TILESIZE)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + one inch
+		self.true_cohesion_ratio = (self.radius + 2*TILESIZE)/self.radius
+		self.cohesion_radius = int(self.radius * self.cohesion_ratio)		#gives half the cohesion radius (1 inch) to each sprite to simulate 2" cohesion radius
+		self.true_cohesion_radius = int(self.radius * self.true_cohesion_ratio) #the "true" 2" cohesion radius
+		self.cohesion = True
+
 		self.vx, self.vy = (0, 0)
 		self.x = x * TILESIZE
 		self.y = y * TILESIZE
 		self.rect.center = (self.x, self.y)
 		self.original_pos = (self.x, self.y)
+
 		self.dest_x = self.x
 		self.dest_y = self.y
 		self.shot_dest_x = 0
@@ -69,12 +78,13 @@ class Model(pygame.sprite.Sprite):
 		self.acc = vec(0,0)
 		self.max_move = 320
 		self.original_max_move = (self.max_move)
-		print("\nSprite created. at {},{}.".format(self.x, self.y))	
+		print("\nSprite created at {},{}.".format(self.x, self.y))	
 
 	def update(self):
 		temp_x = self.x	
 		temp_y = self.y
 		current_move = 0
+		self.cohesion = False
 
 		def revert_move():
 			self.x = temp_x
@@ -158,5 +168,6 @@ class Model(pygame.sprite.Sprite):
 			self.dest_y = self.y
 			self.rect.center = (self.x, self.y)
 
-		
-
+		for sprite in self.game.selectable_models:
+			if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
+				self.cohesion = True
