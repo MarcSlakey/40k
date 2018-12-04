@@ -54,9 +54,9 @@ class Game:
 				elif tile == 'X':
 					Model(self, "target", col, row, 25//2, RED).add(self.targets)
 
-		self.model1 = Model(self, "model1", 2, 2, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
-		self.model2 = Model(self, "model2", 4, 2, 25//2, YELLOW)
-		self.model3 = Model(self, "model3", 6, 2, 25//2, YELLOW)
+		self.model1 = Model(self, "model1", 6, 4, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
+		self.model2 = Model(self, "model2", 8, 4, 25//2, YELLOW)
+		self.model3 = Model(self, "model3", 10, 4, 25//2, YELLOW)
 		self.model1.add(self.selectable_models)
 		self.model2.add(self.selectable_models)
 		self.model3.add(self.selectable_models)
