@@ -85,6 +85,16 @@ class Game:
 			print("Max_move after reset: {}.".format(self.selected_model.max_move))
 			print("Sprite location after reset: ({},{})".format(self.selected_model.x, self.selected_model.y))
 
+	def refresh_moves(self):
+		unit_cohesions = []
+		for sprite in self.selectable_models:
+			unit_cohesions.append(sprite.cohesion)
+		if all(unit_cohesions):
+			for sprite in self.selectable_models:
+				sprite.max_move = sprite.original_max_move
+				sprite.original_pos = (sprite.x, sprite.y)
+
+
 	#Game Loop - Event Handling
 	def events(self):
 		if self.current_phase == "move_phase":
@@ -99,6 +109,8 @@ class Game:
 					keys = pygame.key.get_pressed()
 					if self.selected_model != None and keys[pygame.K_SPACE]:
 						self.reset_moves()
+					elif self.selected_model != None and keys[pygame.K_RETURN]:
+						self.refresh_moves()
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
