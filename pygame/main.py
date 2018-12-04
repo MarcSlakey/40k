@@ -164,7 +164,6 @@ class Game:
 			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)
 
 		pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, 1)
-		pygame.draw.circle(self.screen, GREEN, (self.selected_model.x, self.selected_model.y), self.selected_model.true_cohesion_radius, 1)
 
 	def draw_sprites(self):
 		self.all_sprites.draw(self.screen)
@@ -209,6 +208,9 @@ class Game:
 			#Melee radius (one inch)
 			for sprite in self.targets:
 				pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+			for sprite in self.selectable_models:
+				if sprite != self.selected_model:
+					pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
 
 		self.draw_cohesion_indicator()
 
