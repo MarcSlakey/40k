@@ -34,17 +34,17 @@ class Game:
 		self.targets = pygame.sprite.Group()
 		self.selected_model = None
 
-		self.model1 = Model(self, "model1", 10, 10, TILESIZE//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
-		self.model2 = Model(self, "model2", 10, 12, TILESIZE//2, YELLOW)
-		self.model3 = Model(self, "model3", 10, 14, TILESIZE//2, YELLOW)
+		self.model1 = Model(self, "model1", 10, 10, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
+		self.model2 = Model(self, "model2", 10, 12, 25//2, YELLOW)
+		self.model3 = Model(self, "model3", 10, 14, 25//2, YELLOW)
 		self.model1.add(self.selectable_models)
 		self.model2.add(self.selectable_models)
 		self.model3.add(self.selectable_models)
 
-		self.target1 = Model(self, "target1", 15, 16, TILESIZE//2, RED)
-		self.target2 = Model(self, "target2", 15, 14, TILESIZE//2, RED)
-		self.target3 = Model(self, "target3", 15, 12, TILESIZE//2, RED)
-		self.target4 = Model(self, "target4", 15, 10, TILESIZE//2, RED)
+		self.target1 = Model(self, "target1", 15, 16, 25//2, RED)
+		self.target2 = Model(self, "target2", 15, 14, 25//2, RED)
+		self.target3 = Model(self, "target3", 15, 12, 25//2, RED)
+		self.target4 = Model(self, "target4", 15, 10, 25//2, RED)
 		self.target1.add(self.targets)
 		self.target2.add(self.targets)
 		self.target3.add(self.targets)
@@ -63,7 +63,7 @@ class Game:
 
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self):
-		if self.selected_model.x != self.selected_model.original_pos[0] and self.selected_model.y != self.selected_model.original_pos[1]:
+		if self.selected_model.x != self.selected_model.original_pos[0] or self.selected_model.y != self.selected_model.original_pos[1]:
 			print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
 																			self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
 			print("Max_move before reset: {}".format(self.selected_model.max_move))
@@ -139,6 +139,10 @@ class Game:
 			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)		#Draw surface, color, location, radius, width
 		pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, 1)
 
+	def draw_sprites(self):
+		self.all_sprites.draw(self.screen)
+
+
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(BLACK)	
@@ -148,16 +152,22 @@ class Game:
 			textSurface = font.render(text, True, WHITE)
 			return textSurface, textSurface.get_rect()
 
+		"""
+		#Placeholder "Current Phase" Text 
 		largeText = pygame.font.Font('freesansbold.ttf', 32)
 		TextSurf, TextRect = text_objects("Current phase: {}".format(self.current_phase), largeText)
 		TextRect.center = ((WIDTH/2), 16)
 		self.screen.blit(TextSurf, TextRect)
-
-		self.all_sprites.draw(self.screen)
+		"""
+		
+		self.draw_sprites()
 		for sprite in self.all_sprites:
-			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius)
+			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
+
+		for sprite in self.targets:
+			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.true_melee_radius, 1)
 		if self.selected_model != None:
-			pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius)
+			pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
 		if self.selected_model != None:
 			self.draw_radii()

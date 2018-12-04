@@ -48,8 +48,11 @@ class Model(pygame.sprite.Sprite):
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
 		#self.image.fill(color)
 		self.rect = self.image.get_rect()
-		self.base_radius = radius
-		self.radius	= radius
+		self.radius = radius 		#represents the model's base size
+		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 	#the coefficient by which the radius can be mulitplied to achieve the radius + one inch
+		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius
+		self.melee_radius = int(self.radius * self.melee_ratio)		#gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
+		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#gives the "true" 1" melee radius
 		self.vx, self.vy = (0, 0)
 		self.x = x * TILESIZE
 		self.y = y * TILESIZE
@@ -72,6 +75,12 @@ class Model(pygame.sprite.Sprite):
 		temp_x = self.x	
 		temp_y = self.y
 		current_move = 0
+
+		def revert_move():
+			self.x = temp_x
+			self.y = temp_y
+			print("Coordinates reverted to ({},{})".format(self.x, self.y))
+
 		if self.dest_x != self.x and self.dest_y != self.y:
 			print("\n\n-------NEW STEP-------")
 			print("Pre-move coord: ({},{})".format(self.x, self.y))
@@ -85,7 +94,7 @@ class Model(pygame.sprite.Sprite):
 			print("delta_y: {} pixels".format(delta_y))
 			print("delta hypot: {} pixels".format(current_move))
 			"""
-			
+
 			#Attempts to move the model if the desired move is within the unit's max move
 			if self.max_move > 0 and current_move <= self.max_move:
 				model_pos = vec(self.x, self.y)
@@ -96,34 +105,48 @@ class Model(pygame.sprite.Sprite):
 				self.vel += self.acc
 
 				print("\nRot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
-				print("Vel Hypotenuse calc: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
+				print("Velocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
 
 				pixels_x = int(self.vel[0])
 				pixels_y = int(self.vel[1])
+				distance_moved = find_hypotenuse(pixels_x, pixels_y)
 
 				self.x += pixels_x
 				self.y += pixels_y
 				self.rect.center = (self.x, self.y)
 
-				#Max move reduced if model moved at all
-				if self.x != temp_x or self.y != temp_y:	
-					self.max_move -= find_hypotenuse(pixels_x, pixels_y)
-					print("\nMax move reduced by {}".format(find_hypotenuse(pixels_x, pixels_x)))
-
-				print("\nPost-move coord: ({},{})".format(self.x, self.y))
+				
 
 				#Collision detection
 				for sprite_x in self.game.all_sprites:
 					if sprite_x != self:
 						if pygame.sprite.collide_circle(self, sprite_x):
-							#print("Collision with between self and {}".format(sprite_x.name))
-							self.x = temp_x
-							self.y = temp_y
+							print("\n!Collision with between self and {}!".format(sprite_x.name))
+							revert_move()
 							self.rect.center = (self.x, self.y)
-							self.max_move += self.speed
 							self.dest_x = self.x
 							self.dest_y = self.y
 
+				for sprite_x in self.game.targets:
+					if sprite_x != self:
+						if pygame.sprite.collide_circle_ratio(sprite_x.melee_ratio)(self, sprite_x):
+							print("\n!Collision with between self and {}!".format(sprite_x.name))
+							revert_move()
+							self.rect.center = (self.x, self.y)
+							self.dest_x = self.x
+							self.dest_y = self.y
+
+				#Max move reduced if model moved at all
+				if self.x != temp_x or self.y != temp_y:	
+					self.max_move -= distance_moved
+					print("\nSuccessful move!")
+					print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
+					print("\nPost-move coord: ({},{})".format(self.x, self.y))
+				else:
+					print("\nFailed move.")
+					print("Coordinates unchanged.")
+
+				
 				
 			else:
 				print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
