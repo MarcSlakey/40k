@@ -1,4 +1,4 @@
-Pygame adaptation of Warhammer 40k tabletop game.
+Pygame adaptation of the Warhammer 40k tabletop game.
 
 Python and pygame are required to run this program. Python 2.7 or newer is recommended.
 To install python, visit https://www.python.org/downloads/.

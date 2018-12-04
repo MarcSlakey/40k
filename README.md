@@ -1,15 +1,21 @@
-This is a repository for various versions of the 40k sim.
+This is a repository for my various 40k sim projects.
+
+There are two separate programs in this repository: a text-based Warhammer 40k shooting phase simulator, and a pygame adaptation of the full tabletop game.
+The body of this readme is dedicated to the text-based sim. To learn about the pygame sim, see the README.md inside the pygame folder.
 
 TEXT-BASED 40K SHOOTING SIMULATOR
 
 BASIC CONCEPTS:
-
 This simulator creates two armies defined in the body of "shooting_sim.py" and has them take turns shooting at one another until all of one army's models are dead. There is no movement.
 
-To run the text-based simulator, run "python shooting_sim.py" in command line.
-Pressing "Enter" at any screen of the sim will make the program proceed to the next screen/step.
+Python is required to run this program. Python 2.7 or newer is recommended.
+To install python, visit https://www.python.org/downloads/.
 
-Army hierarchy follows tabletop 40k naming conventions: Army-->Units(squads)-->Models(individuals)
+To run just the text-based simulator, download the entire repository (the pygame folder is not needed).
+Navigate to the folder's location on your computer in command line and then run "python shooting_sim.py".
+Note: "python" might be "py" or "python3" instead depending on your version of python.
+
+Pressing "Enter" at any screen of the sim will make the program proceed to the next screen/step.
 
 The sim will always start with an army report for both armies that displays each unit in each of the two armies, the models in each unit, and their total wounds (health). This screen is repeated at the start of each turn.
 The basic turn screen shows a breakdown of each model's shooting attacks for a given turn. 
@@ -18,11 +24,12 @@ There are no "morale" losses implemented yet, so outcomes involving low morale u
 
 
 OPTIONS AND ARMY EDITING":
-
 Editing the options/armies requires adding/subtracting code from "shooting_sim.py".
 
 Armies are defined in the main() function of the "shooting_sim.py" file. 
 The name of the armies can be edited there; for example: army1 = Army('Black Templars')
+
+Army hierarchy follows tabletop 40k naming conventions: Army-->Units(squads)-->Models(individuals)
 
 To add units to an army, copy-paste this just under the similar lines in main(): 
 	armyX.add_unit(Unit('ABC')) 
@@ -46,7 +53,6 @@ Find the model/weapon you want in the Excel file, and use its exact name in this
 
 
 MISCELLANEOUS NOTES:
-
 Models technically shoot one by one, and damage is allocated in order of model creation in the program (that is, models that are initialized first in an army take damage first). For example, in the default Ork army, the "Flash Gitz" will not take damage until all of the "Ork Boyz" are dead. 
 This can be used to create realistic target priorities. The main weakness of this structure is that specialized weapons suffer from not being able to pick optimal targets, but as long as the armies are relatively small or homogeneous the outcomes should be reflective of tabletop outcomes. 
 
