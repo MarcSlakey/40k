@@ -41,10 +41,10 @@ class Model(pygame.sprite.Sprite):
 	"""
 	
 	def __init__(self, game, name, x, y, radius, color):
+		self.groups = [game.all_sprites, game.all_models]	
+		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.game = game
 		self.name = name
-		self.groups = [game.all_sprites]	
-		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
 		#self.image.fill(color)
 		self.rect = self.image.get_rect()
@@ -127,24 +127,34 @@ class Model(pygame.sprite.Sprite):
 
 				
 
-				#Collision detection
-				for sprite_x in self.game.all_sprites:
+				#Model base collision
+				for sprite_x in self.game.all_models:
 					if sprite_x != self:
 						if pygame.sprite.collide_circle(self, sprite_x):
-							print("\n!Collision with between self and {}!".format(sprite_x.name))
+							print("\n!Collision with between self and model!")
 							revert_move()
 							self.rect.center = (self.x, self.y)
 							self.dest_x = self.x
 							self.dest_y = self.y
 
+				#Melee collision
 				for sprite_x in self.game.targets:
 					if sprite_x != self:
 						if pygame.sprite.collide_circle_ratio(sprite_x.melee_ratio)(self, sprite_x):
-							print("\n!Collision with between self and {}!".format(sprite_x.name))
+							print("\n!Collision with between self and enemy melee radius!")
 							revert_move()
 							self.rect.center = (self.x, self.y)
 							self.dest_x = self.x
 							self.dest_y = self.y
+
+				#Terrain collision
+				for sprite_x in self.game.walls:
+					if pygame.sprite.collide_rect(self, sprite_x):
+						print("\n!Collision with between self and terrain!")
+						revert_move()
+						self.rect.center = (self.x, self.y)
+						self.dest_x = self.x
+						self.dest_y = self.y
 
 				#Max move reduced if model moved at all
 				if self.x != temp_x or self.y != temp_y:	
@@ -171,3 +181,17 @@ class Model(pygame.sprite.Sprite):
 		for sprite in self.game.selectable_models:
 			if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
 				self.cohesion = True
+
+
+class Wall(pygame.sprite.Sprite):
+	def __init__(self, game, x, y):
+		self.groups = [game.all_sprites, game.walls]	
+		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
+		self.game = game
+		self.image = pygame.Surface((TILESIZE, TILESIZE))
+		self.image.fill(LIGHTGREY)
+		self.rect = self.image.get_rect()
+		self.x = x
+		self.y = y
+		self.rect.x = x * TILESIZE
+		self.rect.y = y * TILESIZE

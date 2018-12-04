@@ -2,8 +2,8 @@
 
 #Create and set Window size and FPS constants
 TITLE = "40k pygame"
-WIDTH = 1024	# 16 * 64 or 32 * 32 or 64 * 16 		Values that are even divisible by 16, 32, or 64 to ensure complete squares with 
-HEIGHT = 768	# 16 * 48  or 32 * 24 or 64 * 12			map sizes listed (ex: 16 tiles by 64 tiles).
+WIDTH = 1500	#Should be evenly divisible by TILESIZE value below 
+HEIGHT = 800	
 FPS = 60		#locks the FPS
 
 #define simple color constants

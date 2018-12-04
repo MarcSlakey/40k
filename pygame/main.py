@@ -11,6 +11,7 @@ Middle click while hovering the mouse over the target model will delete it if th
 
 import pygame
 import random
+from os import path
 from settings import *
 from sprites import *
 
@@ -25,30 +26,39 @@ class Game:
 		self.clock = pygame.time.Clock()
 		self.running = True
 
+	def load_data(self):
+		game_folder = path.dirname(__file__)
+		self.map_data = []
+		with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+			for line in f:
+				self.map_data.append(line)
+
 	#Initialize a new game
 	def new(self):
+		self.load_data()
 		self.phases = ["move phase", "shoot_phase"]
 		self.current_phase = "move_phase"
-		self.all_sprites = pygame.sprite.Group() 	
+		self.all_sprites = pygame.sprite.Group() 
+		self.all_models = pygame.sprite.Group()
 		self.selectable_models = pygame.sprite.Group()
+		self.walls = pygame.sprite.Group()
 		self.targets = pygame.sprite.Group()
 		self.selected_model = None
 
-		self.model1 = Model(self, "model1", 10, 6, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
-		self.model2 = Model(self, "model2", 10, 12, 25//2, YELLOW)
-		self.model3 = Model(self, "model3", 10, 18, 25//2, YELLOW)
+		#Create wall sprites from map.txt
+		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
+			for col, tile in enumerate(tiles):
+				if tile == '1':
+					Wall(self, col, row)
+				elif tile == 'X':
+					Model(self, "target", col, row, 25//2, RED).add(self.targets)
+
+		self.model1 = Model(self, "model1", 2, 2, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
+		self.model2 = Model(self, "model2", 4, 2, 25//2, YELLOW)
+		self.model3 = Model(self, "model3", 6, 2, 25//2, YELLOW)
 		self.model1.add(self.selectable_models)
 		self.model2.add(self.selectable_models)
 		self.model3.add(self.selectable_models)
-
-		self.target1 = Model(self, "target1", 15, 17, 25//2, RED)
-		self.target2 = Model(self, "target2", 15, 14, 25//2, RED)
-		self.target3 = Model(self, "target3", 15, 11, 25//2, RED)
-		self.target4 = Model(self, "target4", 15, 8, 25//2, RED)
-		self.target1.add(self.targets)
-		self.target2.add(self.targets)
-		self.target3.add(self.targets)
-		self.target4.add(self.targets)
 
 		self.run()
 
@@ -174,18 +184,19 @@ class Game:
 		self.draw_sprites()
 
 		#Model base radii
-		for sprite in self.all_sprites:
+		for sprite in self.selectable_models:
 			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
+		for sprite in self.targets:
+			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
+
 
 		#Melee radius (one inch)
 		for sprite in self.targets:
 			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
-
 		
 		#Cohesion radius (two inches)
 		#for sprite in self.selectable_models:
 		#	pygame.draw.circle(self.screen, GREEN, sprite.rect.center, sprite.true_cohesion_radius, 1)
-
 		
 		#Selected model indicator
 		if self.selected_model != None:
