@@ -3,6 +3,7 @@ This is a repository for my various 40k sim projects.
 There are two separate programs in this repository: a text-based Warhammer 40k shooting phase simulator, and a pygame adaptation of the full tabletop game.
 The body of this readme is dedicated to the text-based sim. To learn about the pygame sim, see the README.md inside the pygame folder.
 
+
 TEXT-BASED 40K SHOOTING SIMULATOR
 
 BASIC CONCEPTS:
@@ -23,7 +24,7 @@ The basic turn screen shows a breakdown of each model's shooting attacks for a g
 There are no "morale" losses implemented yet, so outcomes involving low morale units are not reflective of tabletop outcomes.
 
 
-OPTIONS AND ARMY EDITING":
+OPTIONS AND ARMY EDITING:
 Editing the options/armies requires adding/subtracting code from "shooting_sim.py".
 
 Armies are defined in the main() function of the "shooting_sim.py" file. 
@@ -56,5 +57,5 @@ MISCELLANEOUS NOTES:
 Models technically shoot one by one, and damage is allocated in order of model creation in the program (that is, models that are initialized first in an army take damage first). For example, in the default Ork army, the "Flash Gitz" will not take damage until all of the "Ork Boyz" are dead. 
 This can be used to create realistic target priorities. The main weakness of this structure is that specialized weapons suffer from not being able to pick optimal targets, but as long as the armies are relatively small or homogeneous the outcomes should be reflective of tabletop outcomes. 
 
-A copy of this sim could be used to sim a single small fight phase blob, but would lose accuracy with too many models due to the complex melee targetting rules.
+A copy of this sim could be used to sim a single small fight phase blob, but would lose accuracy with too many models due to the complex tabletop melee targetting rules.
 
