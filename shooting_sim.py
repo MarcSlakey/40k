@@ -68,23 +68,23 @@ def main():
 	army1.add_unit(Unit('Crusader Unit(1)'))
 
 	for i in range(10):
-		init = create_model_by_name('Initiate')
-		init.add_weapon(create_ranged_weapon_by_name('Bolter'))
-		army1.units[0].add_model(init)
+		model = create_model_by_name('Initiate')
+		model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+		army1.units[0].add_model(model)
 
 	army2 = Army('Orks')
 	army2.add_unit(Unit('Boyz'))
 	army2.add_unit(Unit('Flash Gitz'))
 
 	for i in range(10):
-		ork = create_model_by_name('Ork Boy')
-		ork.add_weapon(create_ranged_weapon_by_name('Shoota'))
-		army2.units[0].add_model(ork)
+		model = create_model_by_name('Ork Boy')
+		model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+		army2.units[0].add_model(model)
 
 	for i in range(2):
-		ork = create_model_by_name('Flash Git')
-		ork.add_weapon(create_ranged_weapon_by_name('Snazzgun'))
-		army2.units[1].add_model(ork)
+		model = create_model_by_name('Flash Git')
+		model.add_weapon(create_ranged_weapon_by_name('Snazzgun'))
+		army2.units[1].add_model(model)
 
 	#Change first move advantage here
 	first_move_army = army1
@@ -92,7 +92,7 @@ def main():
 
 
 	#Time delay (in seconds) between output screens
-	sleep_time = 6		
+	#sleep_time = 6		
 
 	#Start of actual turn loop
 	print('STARTING SIMULATION')

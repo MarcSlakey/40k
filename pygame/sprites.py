@@ -2,7 +2,7 @@ import pygame
 from math import *
 from settings import *
 
-#vect = pygame.math.Vector2		#Pygame's vector functions (Vector2 indicates)
+vec = pygame.math.Vector2		#Pygame's vector functions (Vector2 indicates 2-dimensional vector)
 								#	Example usage: self.vel = pygame.math.Vector2(x, y)
 								#	or with this assignment, self.vel = vect(x, y)
 
@@ -10,21 +10,26 @@ def find_hypotenuse(x, y):
 	hypotenuse = sqrt(x*x + y*y)
 	return hypotenuse
 
+def one_inch_scale():		#Scales the collision circle to the one inch out from the model's base
+	pass
+
 class Model(pygame.sprite.Sprite):
 
 	"""Model class
 	
-	Model sprite.
+	Model sprite object. Basic game unit used to represent a single tabletop model. 
 
 	Attributes:
+		game: game to which this sprite belongs
+		name: string name of sprite
 		groups: sets the list of groups that contain this sprite
 		image:
 		rect:
 		x: spawn coordinates; allows initializing with a tile number which is then converted to pixels
 		y: same as above
-		rect.center:
-		original_pos:
-		radius: Standard melee detection radius; cohesion detection is twice this radius
+		rect.center: the location of the sprite's center point
+		original_pos: tuple to store the sprite's spawn location
+		radius: represents the model's base in the tabletop game
 		dest_x: stores mouse click location during movements
 		dest_y: same as above
 		shot_dest_x: placeholder attribute that allows crude shooting; should probably be in a different class later
@@ -35,27 +40,33 @@ class Model(pygame.sprite.Sprite):
 
 	"""
 	
-	def __init__(self, game, x, y, radius, color):
+	def __init__(self, game, name, x, y, radius, color):
 		self.game = game
+		self.name = name
 		self.groups = [game.all_sprites]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
 		#self.image.fill(color)
 		self.rect = self.image.get_rect()
-		self.radius	= radius
+		self.radius = radius 		#represents the model's base size
+		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 	#the coefficient by which the radius can be mulitplied to achieve the radius + one inch
+		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius
+		self.melee_radius = int(self.radius * self.melee_ratio)		#gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
+		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#gives the "true" 1" melee radius
 		self.vx, self.vy = (0, 0)
 		self.x = x * TILESIZE
 		self.y = y * TILESIZE
 		self.rect.center = (self.x, self.y)
 		self.original_pos = (self.x, self.y)
-
-		pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
-		
 		self.dest_x = self.x
 		self.dest_y = self.y
 		self.shot_dest_x = 0
 		self.shot_dest_y = 0
 		self.weapon_range = 500
+		self.speed = 1
+		self.rot = 0
+		self.vel = vec(0,0)
+		self.acc = vec(0,0)
 		self.max_move = 320
 		self.original_max_move = (self.max_move)
 		print("\nSprite created. at {},{}.".format(self.x, self.y))	
@@ -65,32 +76,80 @@ class Model(pygame.sprite.Sprite):
 		temp_y = self.y
 		current_move = 0
 
-		for sprite in self.game.targets:
-			if sprite.rect.collidepoint(self.dest_x, self.dest_y):
-				return
+		def revert_move():
+			self.x = temp_x
+			self.y = temp_y
+			print("Coordinates reverted to ({},{})".format(self.x, self.y))
 
 		if self.dest_x != self.x and self.dest_y != self.y:
+			print("\n\n-------NEW STEP-------")
+			print("Pre-move coord: ({},{})".format(self.x, self.y))
 			delta_x = self.x - self.dest_x
 			delta_y = self.y - self.dest_y
 			current_move = find_hypotenuse(delta_x, delta_y)
-		
-			if current_move <= self.max_move and self.max_move > 0:
-				self.x = int(self.dest_x)
-				self.y = int(self.dest_y)
+			"""
+			print("Current coordinates: {},{}".format(self.x, self.y))
+			print("Target coordinate: {},{}".format(self.dest_x, self.dest_y))
+			print("delta_x: {} pixels".format(delta_x))
+			print("delta_y: {} pixels".format(delta_y))
+			print("delta hypot: {} pixels".format(current_move))
+			"""
+
+			#Attempts to move the model if the desired move is within the unit's max move
+			if self.max_move > 0 and current_move <= self.max_move:
+				model_pos = vec(self.x, self.y)
+				dest_pos = vec(self.dest_x, self.dest_y)
+				self.rot = (dest_pos - model_pos).angle_to(vec(1,0))	#Calculates the angle between desired vector and basic x vector
+				self.acc = vec(self.speed, 0).rotate(-self.rot)		#Sets the acceleration vector's to angle and magnitude
+				self.acc += self.vel * -.4	#Friction coefficient; the higher the velocity, the higher this number is.
+				self.vel += self.acc
+
+				print("\nRot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
+				print("Velocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
+
+				pixels_x = int(self.vel[0])
+				pixels_y = int(self.vel[1])
+				distance_moved = find_hypotenuse(pixels_x, pixels_y)
+
+				self.x += pixels_x
+				self.y += pixels_y
 				self.rect.center = (self.x, self.y)
-				self.max_move -= int(current_move)
-				"""
+
+				
+
+				#Collision detection
+				for sprite_x in self.game.all_sprites:
+					if sprite_x != self:
+						if pygame.sprite.collide_circle(self, sprite_x):
+							print("\n!Collision with between self and {}!".format(sprite_x.name))
+							revert_move()
+							self.rect.center = (self.x, self.y)
+							self.dest_x = self.x
+							self.dest_y = self.y
+
 				for sprite_x in self.game.targets:
-					if pygame.sprite.collide_circle(self, sprite_x):
-						self.x = temp_x
-						self.y = temp_y
-						self.rect.center = (self.x, self.y)
-						print("Collision!")
-						self.max_move -= int(current_move)
-						self.dest_x = self.x
-						self.dest_y = self.y
-				"""
+					if sprite_x != self:
+						if pygame.sprite.collide_circle_ratio(sprite_x.melee_ratio)(self, sprite_x):
+							print("\n!Collision with between self and {}!".format(sprite_x.name))
+							revert_move()
+							self.rect.center = (self.x, self.y)
+							self.dest_x = self.x
+							self.dest_y = self.y
+
+				#Max move reduced if model moved at all
+				if self.x != temp_x or self.y != temp_y:	
+					self.max_move -= distance_moved
+					print("\nSuccessful move!")
+					print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
+					print("\nPost-move coord: ({},{})".format(self.x, self.y))
+				else:
+					print("\nFailed move.")
+					print("Coordinates unchanged.")
+
+				
+				
 			else:
+				print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
 				self.dest_x = self.x
 				self.dest_y = self.y
 
