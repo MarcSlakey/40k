@@ -40,13 +40,11 @@ class Model(pygame.sprite.Sprite):
 
 	"""
 	
-	def __init__(self, game, name, x, y, radius, color):
+	def __init__(self, game, x, y, name, move, weapon_skill, ballistic_skill, strength, toughness, wounds, attacks, leadership, save, invulnerable, radius):
 		self.groups = [game.all_sprites, game.all_models]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.game = game
-		self.name = name
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
-		#self.image.fill(color)
 		self.rect = self.image.get_rect()
 		self.radius = radius 		#represents the model's base size
 
@@ -71,14 +69,26 @@ class Model(pygame.sprite.Sprite):
 		self.dest_y = self.y
 		self.shot_dest_x = 0
 		self.shot_dest_y = 0
-		self.weapon_range = 500
+		#self.weapon_range = 24*TILESIZE
 		self.speed = 1
 		self.rot = 0
 		self.vel = vec(0,0)
 		self.acc = vec(0,0)
-		self.max_move = 320
+
+		self.name = name
+		self.max_move = move*TILESIZE
 		self.original_max_move = (self.max_move)
-		print("\nSprite created at {},{}.".format(self.x, self.y))	
+		self.weapon_skill = weapon_skill
+		self.ballistic_skill = ballistic_skill
+		self.strength = strength
+		self.toughness = toughness
+		self.wounds = wounds
+		self.attacks = attacks
+		self.leadership = leadership
+		self.save = save
+		self.invulnerable = invulnerable
+		self.weapons = []
+
 
 	def update(self):
 		temp_x = self.x	
@@ -161,6 +171,7 @@ class Model(pygame.sprite.Sprite):
 					self.max_move -= distance_moved
 					print("\nSuccessful move!")
 					print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
+					print("Max move Remaining: {}".format(self.max_move))
 					print("\nPost-move coord: ({},{})".format(self.x, self.y))
 				else:
 					print("\nFailed move.")

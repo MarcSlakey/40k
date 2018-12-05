@@ -14,7 +14,12 @@ import random
 from os import path
 from settings import *
 from sprites import *
+from weapon import *
+from unit import Unit
+from army import Army
+from data_creation import *
 
+get_workbook_data()
 
 class Game:
 	#Initialize program, game window, etc.
@@ -46,21 +51,34 @@ class Game:
 		self.targets = pygame.sprite.Group()
 		self.selected_model = None
 
-		#Create wall sprites from map.txt
+		#Create walls, enemies from map.txt
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
 					Wall(self, col, row)
 				elif tile == 'X':
-					Model(self, "target", col, row, 25//2, RED).add(self.targets)
+					model = create_model_by_name('Initiate', self, col, row)
+					model.add(self.targets)
 
+
+		self.army1 = Army('Black Templars')
+		self.army1.add_unit(Unit('Crusader Unit(1)'))
+
+		for i in range(3):
+			x = 4 + i * 2
+			model = create_model_by_name('Initiate', self, x, 4)
+			#model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+			self.army1.units[0].add_model(model)
+			model.add(self.selectable_models)
+
+		"""	
 		self.model1 = Model(self, "model1", 6, 4, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
 		self.model2 = Model(self, "model2", 8, 4, 25//2, YELLOW)
 		self.model3 = Model(self, "model3", 10, 4, 25//2, YELLOW)
 		self.model1.add(self.selectable_models)
 		self.model2.add(self.selectable_models)
 		self.model3.add(self.selectable_models)
-
+		"""
 		self.run()
 
 	#Main Game Loop
@@ -160,10 +178,11 @@ class Game:
 
 	#Draws various useful circles: max move, weapon range
 	def draw_radii(self):
-		if self.selected_model.max_move >= 1:
-			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)
+		thickness = 1
+		if self.selected_model.max_move >= thickness:
+			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), thickness)
 
-		pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, 1)
+		#pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, thickness)
 
 	def draw_sprites(self):
 		self.all_sprites.draw(self.screen)
