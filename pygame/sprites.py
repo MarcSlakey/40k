@@ -76,7 +76,7 @@ class Model(pygame.sprite.Sprite):
 		self.acc = vec(0,0)
 
 		self.name = name
-		self.max_move = move*TILESIZE
+		self.max_move = move
 		self.original_max_move = (self.max_move)
 		self.weapon_skill = weapon_skill
 		self.ballistic_skill = ballistic_skill
@@ -88,6 +88,11 @@ class Model(pygame.sprite.Sprite):
 		self.save = save
 		self.invulnerable = invulnerable
 		self.weapons = []
+		
+
+	def add_weapon(self, weapon):
+		"""Adds a weapon to a given model's list of weapons"""
+		self.weapons.append(weapon)
 
 
 	def update(self):

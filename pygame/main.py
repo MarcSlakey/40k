@@ -70,6 +70,7 @@ class Game:
 			#model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 			self.army1.units[0].add_model(model)
 			model.add(self.selectable_models)
+			model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 
 		"""	
 		self.model1 = Model(self, "model1", 6, 4, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
@@ -154,7 +155,7 @@ class Game:
 							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
 							shot_distance = find_hypotenuse(shot_x, shot_y)
-							if shot_distance <= self.selected_model.weapon_range:
+							if shot_distance <= self.selected_model.weapons[0].w_range:
 								for self.target in self.targets:
 									if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
 										self.target.kill()
@@ -182,7 +183,7 @@ class Game:
 		if self.selected_model.max_move >= thickness:
 			pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), thickness)
 
-		#pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapon_range, thickness)
+		pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), self.selected_model.weapons[0].w_range, thickness)
 
 	def draw_sprites(self):
 		self.all_sprites.draw(self.screen)
