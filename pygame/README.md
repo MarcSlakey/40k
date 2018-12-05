@@ -10,13 +10,18 @@ Note: "python3" might be "python" or "py" instead depending on your version of p
 Once both are installed, change directory to the pygame folder and run main.py.
 "main.py", "settings.py", and "sprites.py" must all be in the same folder.
 
-CONTROLS:
+MOVE PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
 "RMB" commands the selected model to move the clicked location.
-"Middle click" while a model is selected will delete the moused-over target model if that model is in range.
 "Spacebar" while a model is selected will reset it to its previous position.
-"Enter/Return" will refresh all selectable models' move distance if they have maintained unit cohesion (this is a rudimentary simulation of a new move phase)
+"Enter/Return" will progress the game to the shooting phase if unit cohesion has been maintained
+"Home" will reset to a new game.
 
+SHOOTING PHASE CONTROLS:
+"LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
+"RMB" while a model is selected will delete the moused-over target model if that model is in range.
+"Enter/Return" will progress the game to the next turn and begin a new movement phase.
+"Home" will reset to a new game.
 
 GAME BASICS:
 The white-filled circles are selectable tabletop "models".
