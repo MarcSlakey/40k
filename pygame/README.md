@@ -19,7 +19,7 @@ MOVE PHASE CONTROLS:
 
 SHOOTING PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
-"RMB" while a model is selected will delete the moused-over target model if that model is in range.
+"RMB" while a model is selected will delete the moused-over target model if that model is in range of the selected model.
 "Enter/Return" will progress the game to the next turn and begin a new movement phase.
 "Home" will reset to a new game.
 
@@ -29,22 +29,22 @@ The red-filled circles are non-selectable "target models".
 The large yellow circle that appears on model selection shows remaining move distance. The red one shows the model's shooting range.
 The selected model will turn from yellow to green when within 2 squares of a model in its unit to indicate that it is currently maintaining "unit cohesion" (see MOVE PHASE RULES below).
 The large red semi-circle on the top of the screen will turn green if unit cohesion between the selectable models is established.
-Only the "move phase" is implemented. Rudimentary shooting is lumped into this phase.
 
 MOVE PHASE RULES:
-Each model can only travel a set distance. 
+Each model can only travel a set distance per turn. 
 Models cannot pass through each other.
 Additionally, models may not be moved within 1" (one tile size) of an enemy model (represented by a red radius around each enemy).
 Models that are part of a unit must maintain "unit cohesion." That is, they must end their move phase within 2" of another member of their unit.
 
 
 CURRENTLY IMPLEMENTED:
-Move phase
-Rudimentary shooting 
+Movement Phase
+
+IN PROGRESS:
+Shooting Phase
 
 FUTURE WORK:
 Psychic Phase
-Shooting Phase
 Charge Phase
 Fight Phase
 Morale Phase
