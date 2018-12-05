@@ -116,7 +116,7 @@ class Model(pygame.sprite.Sprite):
 			"""
 
 			#Attempts to move the model if the desired move is within the unit's max move
-			if self.max_move > 0 and current_move <= self.max_move:
+			if self.max_move > 0:
 				model_pos = vec(self.x, self.y)
 				dest_pos = vec(self.dest_x, self.dest_y)
 				self.rot = (dest_pos - model_pos).angle_to(vec(1,0))	#Calculates the angle between desired vector and basic x vector
