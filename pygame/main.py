@@ -128,11 +128,13 @@ class Game:
 				#Keyboard event handling
 				elif event.type == pygame.KEYDOWN:
 					keys = pygame.key.get_pressed()
-					if self.selected_model != None and keys[pygame.K_HOME]:
+					if keys[pygame.K_HOME]:
 						g.new()
+
 					elif self.selected_model != None and keys[pygame.K_SPACE]:
 						self.reset_moves()
-					elif self.selected_model != None and keys[pygame.K_RETURN]:
+
+					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
 							self.current_phase = "Shooting Phase"
 	
@@ -172,13 +174,13 @@ class Game:
 				elif event.type == pygame.KEYDOWN:
 					keys = pygame.key.get_pressed()
 
-					if self.selected_model != None and keys[pygame.K_HOME]:
+					if keys[pygame.K_HOME]:
 						g.new()
 
-					elif self.selected_model != None and keys[pygame.K_SPACE]:
+					elif keys[pygame.K_SPACE]:
 						pass
 
-					elif self.selected_model != None and keys[pygame.K_RETURN]:
+					elif keys[pygame.K_RETURN]:
 						self.refresh_moves()
 						self.turn_count += 1
 						self.current_phase = "Movement Phase"
@@ -230,19 +232,28 @@ class Game:
 	def draw_sprites(self):
 		self.all_sprites.draw(self.screen)
 
+		for sprite in self.selectable_models:
+			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
+
+		for sprite in self.targets:
+			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
+
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
-		pygame.draw.circle(self.screen, RED, (WIDTH//2, 0), 30, 0)	
+		pygame.draw.circle(self.screen, RED, (40, 0), 30, 0)	
 		unit_cohesions = []
 		for sprite in self.selectable_models:
 			unit_cohesions.append(sprite.cohesion)
 		if all(unit_cohesions):
-			pygame.draw.circle(self.screen, GREEN, (WIDTH//2, 0), 30, 0)
+			pygame.draw.circle(self.screen, GREEN, (40, 0), 30, 0)
 
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(BLACK)	
 		self.draw_grid()
+
+		largeText = pygame.font.Font('freesansbold.ttf', 32)
+		mediumText = pygame.font.Font('freesansbold.ttf', 20)
 
 		def text_objects(text, font):
 			textSurface = font.render(text, True, WHITE)
@@ -251,10 +262,7 @@ class Game:
 		self.draw_sprites()
 
 		#Model base radii
-		for sprite in self.selectable_models:
-			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
-		for sprite in self.targets:
-			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
+
 		
 		#Cohesion radius (two inches)
 		#for sprite in self.selectable_models:
@@ -283,6 +291,25 @@ class Game:
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
 
+			#Controls Info Text		
+			TextSurf, TextRect = text_objects("|LMB: select model|", mediumText)
+			TextRect.midleft = ((WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
+
+			TextSurf, TextRect = text_objects("|RMB: move model|", mediumText)
+			TextRect.midleft = ((6*WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
+
+			TextSurf, TextRect = text_objects("|SPACEBAR: reset selected model's move|", mediumText)
+			TextRect.midleft = ((12*WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
+
+			TextSurf, TextRect = text_objects("|RETURN: progress to next phase|", mediumText)
+			TextRect.midleft = ((24*WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
+
+
+
 		elif self.current_phase == "Shooting Phase":
 			if self.selected_model != None:
 				#Selected model indicator
@@ -291,18 +318,39 @@ class Game:
 				#Weapon range radius
 				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
 
+			#Controls Info Text		
+			TextSurf, TextRect = text_objects("|LMB: select model|", mediumText)
+			TextRect.midleft = ((WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
 
-		#Turn count display text
-		largeText = pygame.font.Font('freesansbold.ttf', 32)
+			TextSurf, TextRect = text_objects("|RMB: delete target|", mediumText)
+			TextRect.midleft = ((6*WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
+
+			TextSurf, TextRect = text_objects("|SPACEBAR: N/A|", mediumText)
+			TextRect.midleft = ((12*WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
+
+			TextSurf, TextRect = text_objects("|RETURN: progress to next phase|", mediumText)
+			TextRect.midleft = ((24*WIDTH/32), HEIGHT-TILESIZE)
+			self.screen.blit(TextSurf, TextRect)
+
+		
+
+		#Turn count display text		
 		TextSurf, TextRect = text_objects("Turn #{}".format(self.turn_count), largeText)
-		TextRect.center = ((WIDTH/8), 14)
+		TextRect.center = ((WIDTH/8), TILESIZE)
 		self.screen.blit(TextSurf, TextRect)
 
 		#"Current Phase" Text 
-		largeText = pygame.font.Font('freesansbold.ttf', 32)
-		TextSurf, TextRect = text_objects("Current phase: {}".format(self.current_phase), largeText)
-		TextRect.center = ((3*WIDTH/4), 16)
+		TextSurf, TextRect = text_objects("{}".format(self.current_phase), largeText)
+		TextRect.center = ((WIDTH/2), TILESIZE)
 		self.screen.blit(TextSurf, TextRect)
+
+		TextSurf, TextRect = text_objects("|HOME: reset game|", mediumText)
+		TextRect.midleft = ((24*WIDTH/32), TILESIZE)
+		self.screen.blit(TextSurf, TextRect)
+
 		
 		pygame.display.update()
 		
