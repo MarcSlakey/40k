@@ -240,12 +240,12 @@ class Game:
 
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
-		pygame.draw.circle(self.screen, RED, (40, 0), 30, 0)	
+		pygame.draw.circle(self.screen, RED, ((24*WIDTH//32)-15, HEIGHT-TILESIZE), 15, 0)	
 		unit_cohesions = []
 		for sprite in self.selectable_models:
 			unit_cohesions.append(sprite.cohesion)
 		if all(unit_cohesions):
-			pygame.draw.circle(self.screen, GREEN, (40, 0), 30, 0)
+			pygame.draw.circle(self.screen, GREEN, ((24*WIDTH//32)-15, HEIGHT-TILESIZE), 15, 0)
 
 	#Game Loop - Draw
 	def draw(self):
@@ -274,6 +274,9 @@ class Game:
 				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
 				if self.selected_model.cohesion:
 					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
+				#Weapon range radius
+				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
 
 				#Remaining move radius
 				if self.selected_model.max_move >= 1:

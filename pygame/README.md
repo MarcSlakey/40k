@@ -12,7 +12,7 @@ Once both are installed, change directory to the pygame folder and run main.py.
 
 MOVE PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
-"RMB" commands the selected model to move the clicked location.
+"RMB" commands the selected model to move to the clicked location.
 "Spacebar" while a model is selected will reset it to its previous position.
 "Enter/Return" will progress the game to the shooting phase if unit cohesion has been maintained
 "Home" will reset to a new game.
