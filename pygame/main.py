@@ -48,8 +48,13 @@ class Game:
 		self.all_models = pygame.sprite.Group()
 		self.selectable_models = pygame.sprite.Group()
 		self.walls = pygame.sprite.Group()
+		self.bullets = pygame.sprite.Group()
 		self.targets = pygame.sprite.Group()
 		self.selected_model = None
+		self.target_model = None
+
+		#TEST SPAWNS
+		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
 
 		#Create walls, enemies from map.txt
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
@@ -206,13 +211,23 @@ class Game:
 							pass
 
 						elif event.button == 3:	#RMB
+							self.target_model = None
+
 							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
 							shot_distance = find_hypotenuse(shot_x, shot_y)
+
+							for self.model in self.targets:
+								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.target_model = self.model
+
 							if shot_distance <= self.selected_model.weapons[0].w_range:
-								for self.target in self.targets:
-									if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
-										self.target.kill()
+								if self.target_model != None:
+									Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
+
+								#for self.target in self.targets:
+								#	if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
+								#		self.target.kill()
 
 						elif event.button == 3: #RMB
 							pass
@@ -338,6 +353,8 @@ class Game:
 			TextRect.midleft = ((24*WIDTH/32), HEIGHT-TILESIZE)
 			self.screen.blit(TextSurf, TextRect)
 
+
+
 		
 
 		#Turn count display text		
@@ -354,7 +371,7 @@ class Game:
 		TextRect.midleft = ((24*WIDTH/32), TILESIZE)
 		self.screen.blit(TextSurf, TextRect)
 
-		
+		self.bullets.draw
 		pygame.display.update()
 		
 

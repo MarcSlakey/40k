@@ -94,6 +94,9 @@ class Model(pygame.sprite.Sprite):
 		"""Adds a weapon to a given model's list of weapons"""
 		self.weapons.append(weapon)
 
+	def die(self):
+		self.kill()
+
 
 	def update(self):
 		temp_x = self.x	
@@ -129,8 +132,8 @@ class Model(pygame.sprite.Sprite):
 				self.acc += self.vel * -.4	#Friction coefficient; the higher the velocity, the higher this number is.
 				self.vel += self.acc
 
-				print("\nRot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
-				print("Velocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
+				#print("\nRot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
+				#print("Velocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
 
 				pixels_x = int(self.vel[0])
 				pixels_y = int(self.vel[1])
@@ -211,3 +214,59 @@ class Wall(pygame.sprite.Sprite):
 		self.y = y
 		self.rect.x = x * TILESIZE
 		self.rect.y = y * TILESIZE
+
+
+class Bullet(pygame.sprite.Sprite):
+	def __init__(self, game, weapon, shooter, target):
+		self.groups = [game.all_sprites, game.bullets]	
+		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
+		self.game = game
+		self.weapon = weapon
+		self.image = pygame.Surface((10, 10))
+		self.image.fill(RED)
+		self.rect = self.image.get_rect()
+		self.x = shooter.x
+		self.y = shooter.y
+		self.rect.center = (self.x, self.y)
+		self.speed = 5
+		self.rot = 0
+		self.vel = vec(0,0)
+		self.acc = vec(0,0)
+
+		self.target = target
+
+		self.target_x = self.target.x
+		self.target_y = self.target.y
+		#print("\nSpawned a bullet!")
+
+	def die(self):
+		self.kill()
+
+	def update(self):
+
+		for sprite_x in self.game.walls:
+			if pygame.sprite.collide_rect(self, sprite_x):
+				self.die()
+
+		if pygame.sprite.collide_rect(self, self.target):
+			self.die()
+			self.target.die()
+
+
+		bullet_pos = vec(self.x, self.y)
+		target_pos = vec(self.target_x, self.target_y)
+		self.rot = (target_pos - bullet_pos).angle_to(vec(1,0))	#Calculates the angle between desired vector and basic x vector
+		self.acc = vec(self.speed, 0).rotate(-self.rot)		#Sets the acceleration vector's to angle and magnitude
+		self.acc += self.vel * -.4	#Friction coefficient; the higher the velocity, the higher this number is.
+		self.vel += self.acc
+
+		#print("\n Bullet Rot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
+		#print("Bullet elocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
+
+		pixels_x = int(self.vel[0])
+		pixels_y = int(self.vel[1])
+		distance_moved = find_hypotenuse(pixels_x, pixels_y)
+
+		self.x += pixels_x
+		self.y += pixels_y
+		self.rect.center = (self.x, self.y)

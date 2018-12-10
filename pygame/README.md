@@ -19,7 +19,7 @@ MOVE PHASE CONTROLS:
 
 SHOOTING PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
-"RMB" while a model is selected will delete the moused-over target model if that model is in range of the selected model.
+"RMB" while a model is selected will shoot a bullet at the moused-over target model if that model is in range of the selected model.
 "Enter/Return" will progress the game to the next turn and begin a new movement phase.
 "Home" will reset to a new game.
 
