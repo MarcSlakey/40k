@@ -3,7 +3,7 @@ from math import *
 from settings import *
 from ray_casting import *
 
-vec = pygame.math.Vector2		#Pygame's vector functions (Vector2 indicates 2-dimensional vector)
+vec = pygame.math.Vector2		# Pygame's vector functions (Vector2 indicates 2-dimensional vector)
 								#	Example usage: self.vel = pygame.math.Vector2(x, y)
 								#	or with this assignment, self.vel = vect(x, y)
 
@@ -11,12 +11,12 @@ def find_hypotenuse(x, y):
 	hypotenuse = sqrt(x*x + y*y)
 	return hypotenuse
 
-def one_inch_scale():		#Scales the collision circle to the one inch out from the model's base
+def one_inch_scale():		# Scales the collision circle to the one inch out from the model's base
 	pass
 
 class Model(pygame.sprite.Sprite):
 
-	"""Model class
+	""" Model class
 	
 	Model sprite object. Basic game unit used to represent a single tabletop model. 
 

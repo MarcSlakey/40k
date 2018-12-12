@@ -6,6 +6,7 @@ import pygame, random
 import sys
 from os import path
 from settings import *
+from buttons import *
 from sprites import *
 from weapon import *
 from unit import Unit
@@ -45,8 +46,12 @@ class Game:
 		self.bullets = pygame.sprite.Group()
 		self.targets = pygame.sprite.Group()
 		self.rays = pygame.sprite.Group()
+		#self.buttons = []
 		self.selected_model = None
 		self.target_model = None
+
+		self.quitbutton = Button(self, "QUIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.reset_all_button = Button(self, "RESET MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
 		#TEST SPAWNS
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
@@ -102,22 +107,23 @@ class Game:
 			self.draw()
 
 	def quit(self):
+		print("QUITTING")
 		pygame.quit()
 		sys.exit()
 
 	#Sets sprites back to their starting positions when the spacebar is pressed
-	def reset_moves(self):
-		if self.selected_model.x != self.selected_model.original_pos[0] or self.selected_model.y != self.selected_model.original_pos[1]:
-			print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(self.selected_model.x, self.selected_model.y, 
-																			self.selected_model.original_pos[0], self .selected_model.original_pos[1]))
-			print("Max_move before reset: {}".format(self.selected_model.max_move))
-			self.selected_model.x = self.selected_model.original_pos[0]
-			self.selected_model.y = self.selected_model.original_pos[1]
-			self.selected_model.dest_x = self.selected_model.x
-			self.selected_model.dest_y = self.selected_model.y
-			self.selected_model.max_move = self.selected_model.original_max_move
-			print("Max_move after reset: {}.".format(self.selected_model.max_move))
-			print("Sprite location after reset: ({},{})".format(self.selected_model.x, self.selected_model.y))
+	def reset_moves(self, model):
+		if model.x != model.original_pos[0] or model.y != model.original_pos[1]:
+			print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(model.x, model.y, 
+																			model.original_pos[0], model.original_pos[1]))
+			print("Max_move before reset: {}".format(model.max_move))
+			model.x = model.original_pos[0]
+			model.y = model.original_pos[1]
+			model.dest_x = model.x
+			model.dest_y = model.y
+			model.max_move = model.original_max_move
+			print("Max_move after reset: {}.".format(model.max_move))
+			print("Sprite location after reset: ({},{})".format(model.x, model.y))
 
 	def refresh_moves(self):
 		for sprite in self.selectable_models:
@@ -157,7 +163,7 @@ class Game:
 						g.new()
 
 					elif self.selected_model != None and keys[pygame.K_SPACE]:
-						self.reset_moves()
+						self.reset_moves(self.selected_model)
 
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
@@ -167,27 +173,34 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					#If a model is not selected, LMB selects a model.
-					if self.selected_model == None:
-						if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+					
+					if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+						if self.quitbutton.mouse_over():
+							self.quit()
+
+						elif self.reset_all_button.mouse_over():
+							for model in self.selectable_models:
+								self.reset_moves(model)
+
+						if self.selected_model == None:
 							for self.model in self.selectable_models:
 								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = self.model
 
-					#If a model is selected, LMB either deselects it or selects a new model, RMB moves it, and Middle mouse button shoots.
-					elif self.selected_model != None:
-						if event.button == 1:	#LMB
+						elif self.selected_model != None:
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
 							for self.model in self.selectable_models:
 								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = self.model
 
-						elif event.button == 2:	#Middle mouse button
-							pass
+					elif event.button == 2:	#Middle mouse button
+						pass
 
-						elif event.button == 3: #RMB
+					elif event.button == 3: #RMB
+						if self.selected_model != None:
 							self.selected_model.dest_x = pygame.mouse.get_pos()[0]
 							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
-		
+
 		elif self.current_phase == "Shooting Phase":
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -222,6 +235,7 @@ class Game:
 
 					#If a model is selected, LMB either deselects it or selects a new model, RMB moves it, and Middle mouse button shoots.
 					elif self.selected_model != None:
+						
 						if event.button == 1:	#LMB
 							self.selected_model.valid_shots.clear()
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
@@ -281,6 +295,9 @@ class Game:
 		for sprite in self.targets:
 			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
 
+	def draw_buttons(self):
+		pass
+
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
 		pygame.draw.circle(self.screen, RED, ((24*WIDTH//32)-15, HEIGHT-TILESIZE), 15, 0)	
@@ -290,7 +307,7 @@ class Game:
 		if all(unit_cohesions):
 			pygame.draw.circle(self.screen, GREEN, ((24*WIDTH//32)-15, HEIGHT-TILESIZE), 15, 0)
 
-	#Taken from https://www.youtube.com/watch?v=MJ2GLVA7kaU
+	#Text constructor from https://www.youtube.com/watch?v=MJ2GLVA7kaU
 	def draw_text(self, text, font_name, size, color, x, y, align="nw"):
 		font = pygame.font.Font(font_name, size)
 		text_surface = font.render(text, True, color)
@@ -329,6 +346,9 @@ class Game:
 			return textSurface, textSurface.get_rect()
 		
 		self.draw_sprites()
+		#self.draw_buttons()
+
+		self.quitbutton.draw()
 			
 		if self.current_phase == "Movement Phase":	
 			if self.selected_model != None:
@@ -357,7 +377,7 @@ class Game:
 			self.draw_cohesion_indicator()	
 
 			#Controls Info Text	
-
+			self.reset_all_button.draw()
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
