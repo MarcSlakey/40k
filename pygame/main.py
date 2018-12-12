@@ -301,13 +301,14 @@ class Game:
 			text_rect.center = (x, y)
 		self.screen.blit(text_surface, text_rect)
 
+	generic_font = 'freesansbold.ttf'
+	mediumText = 20
+	largeText = 32
+
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(BLACK)	
 		self.draw_grid()
-
-		largeText = pygame.font.Font('freesansbold.ttf', 32)
-		mediumText = pygame.font.Font('freesansbold.ttf', 20)
 
 		def text_objects(text, font):
 			textSurface = font.render(text, True, WHITE)
@@ -343,10 +344,10 @@ class Game:
 
 			#Controls Info Text	
 
-			self.draw_text("|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
-			self.draw_text("|RMB: move model|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
-			self.draw_text("|SPACEBAR: reset selected model's move|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		elif self.current_phase == "Shooting Phase":
 			if self.selected_model != None:
@@ -360,15 +361,15 @@ class Game:
 					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
 
 			#Controls Info Text
-			self.draw_text("|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
-			self.draw_text("|RMB: delete target|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
-			self.draw_text("|SPACEBAR: N/A|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RMB: delete target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		#General info text
-		self.draw_text("Turn #{}".format(self.turn_count), 'freesansbold.ttf', 32, WHITE, WIDTH/8, TILESIZE, "center")
-		self.draw_text("{}".format(self.current_phase), 'freesansbold.ttf', 32, WHITE, WIDTH/2, TILESIZE, "center")
-		self.draw_text("|HOME: reset game|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, TILESIZE, "center")
+		self.draw_text("Turn #{}".format(self.turn_count), self.generic_font, self.largeText, WHITE, WIDTH/8, TILESIZE, "center")
+		self.draw_text("{}".format(self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
+		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, TILESIZE, "center")
 
 		self.bullets.draw
 
@@ -380,7 +381,7 @@ class Game:
 
 	def show_game_over_screen(self):
 		screen.fill(BLACK)
-		draw_text
+		#self.draw_text("Press a key to start", self.)
 
 g = Game()
 g.show_start_screen()
