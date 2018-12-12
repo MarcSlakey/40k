@@ -1,15 +1,15 @@
 Pygame adaptation of the Warhammer 40k tabletop game.
 
-
-Python and pygame are required to run this program. Python 2.7 or newer is recommended.
+Both python and pygame are required to run this program. Python 2.7 or newer is recommended.
 To install python, visit https://www.python.org/downloads/.
 To install pygame, use this pip install command in the command line:
 python3 -m pip install -U pygame --user
 
 Note: "python3" might be "python" or "py" instead depending on your version of python.
 
-Once both are installed, change directory to the pygame folder and run main.py.
-"main.py", "settings.py", and "sprites.py" must all be in the same folder.
+Once both are installed, download this entire folder.
+Change directory to the pygame folder and run main.py.
+
 
 MOVE PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
@@ -25,6 +25,7 @@ SHOOTING PHASE CONTROLS:
 	Valid shooting targets will be highlighted yellow instead of red.
 "Enter/Return" will progress the game to the next turn and begin a new movement phase.
 "Home" will reset to a new game.
+
 
 GAME BASICS:
 The white-filled circles are selectable tabletop "models".
@@ -45,17 +46,31 @@ Range is indicated by the thin red radius drawn around a selected model.
 Line of sight is blocked by other enemy models and terrain, but not by friendly models.
 Targets in LOS are painted yellow instead of red.
 
+
 CURRENTLY IMPLEMENTED:
-Movement Phase
+Movement Phase:
+	Basic movement
+	Max move distance
+	Collisions
+	Unit cohesion checking
 
 IN PROGRESS:
-Shooting Phase
+Shooting Phase:
+	Range checking
+	Line of sight checking
 
 FUTURE WORK:
-Psychic Phase
-Charge Phase
-Fight Phase
-Morale Phase
+Movement Phase:
+	Advance moves
+	Fall back moves
+Shooting Phase:
+Psychic Phase:
+Charge Phase:
+Fight Phase:
+Morale Phase:
+General:
+	Buff auras
 
 
 CURRENT BUGS:
+Models "stick" to walls and other models when they collide. 

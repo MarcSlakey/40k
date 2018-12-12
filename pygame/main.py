@@ -348,7 +348,7 @@ class Game:
 					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
 
 				#Cohesion radius (two inches)	
-				for sprite in self.selectable_models:
+				for sprite in self.selected_model.unit.models:
 					if sprite != self.selected_model:
 						pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
 
