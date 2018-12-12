@@ -33,6 +33,7 @@ class Game:
 
 	#Initialize a new game
 	def new(self):
+		print("\nNEW GAME START\n")
 		self.load_data()
 		self.turn_count = 1
 		#self.phases = ["Movement Phase", "Shooting Phase"]
