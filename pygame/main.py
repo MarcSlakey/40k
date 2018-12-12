@@ -115,6 +115,18 @@ class Game:
 			unit_cohesions.append(sprite.cohesion)
 		if all(unit_cohesions):
 			return True
+
+	def los_check(self, shooter):
+		#x = 1
+		for target in self.targets:
+			pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
+			pygame.display.update()
+			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
+			#print("{}".format(x))
+			#x += 1
+		print("\n")
+		print(shooter.valid_shots)
+
 	#Game Loop - Event Handling
 	def events(self):
 		if self.current_phase == "Movement Phase":
@@ -147,13 +159,13 @@ class Game:
 								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = self.model
 
-					#If a model is selected, LMB deselects it, RMB moves it, and Middle mouse button shoots.
+					#If a model is selected, LMB either deselects it or selects a new model, RMB moves it, and Middle mouse button shoots.
 					elif self.selected_model != None:
 						if event.button == 1:	#LMB
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
 							for self.model in self.selectable_models:
 								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = self.model		
+									self.selected_model = self.model
 
 						elif event.button == 2:	#Middle mouse button
 							pass
@@ -194,26 +206,18 @@ class Game:
 							for self.model in self.selectable_models:
 								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = self.model
-									print("A model is selected")
-									if not self.selected_model.valid_shots:
-										print("Valid shots was empty")
-										#x = 1
-										for target in self.targets:
-											pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
-											pygame.display.update()
-											Ray(self, self.selected_model, target, (self.selected_model.x, self.selected_model.y), (target.x, target.y)).cast()
-											#print("{}".format(x))
-											#x += 1
-										print("\n")
-										print(self.selected_model.valid_shots)
+									self.los_check(self.selected_model)
+									
 
-					#If a model is selected, LMB deselects it, RMB moves it, and Middle mouse button shoots.
+					#If a model is selected, LMB either deselects it or selects a new model, RMB moves it, and Middle mouse button shoots.
 					elif self.selected_model != None:
 						if event.button == 1:	#LMB
+							self.selected_model.valid_shots.clear()
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
 							for self.model in self.selectable_models:
 								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = self.model
+									self.los_check(self.selected_model)
 
 						elif event.button == 2: #Middle mouse button
 							pass
