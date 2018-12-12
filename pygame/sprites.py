@@ -100,7 +100,6 @@ class Model(pygame.sprite.Sprite):
 		self.game.selected_model.valid_shots.remove(self)
 		self.kill()
 
-
 	def update(self):
 		if self.game.current_phase == "Movement Phase":
 			if self.valid_shots != None:

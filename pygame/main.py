@@ -3,6 +3,7 @@
 """
 
 import pygame, random
+import sys
 from os import path
 from settings import *
 from sprites import *
@@ -90,6 +91,10 @@ class Game:
 			self.update()
 			self.draw()
 
+	def quit(self):
+		pygame.quit()
+		sys.exit()
+
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self):
 		if self.selected_model.x != self.selected_model.original_pos[0] or self.selected_model.y != self.selected_model.original_pos[1]:
@@ -132,9 +137,7 @@ class Game:
 		if self.current_phase == "Movement Phase":
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
-					if self.playing:
-						self.playing = False
-					self.running = False
+					self.quit()
 
 				#Keyboard event handling
 				elif event.type == pygame.KEYDOWN:
@@ -177,10 +180,7 @@ class Game:
 		elif self.current_phase == "Shooting Phase":
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
-					if self.playing:
-						self.playing = False
-
-					self.running = False
+					self.quit()
 
 				#Keyboard event handling
 				elif event.type == pygame.KEYDOWN:
@@ -250,6 +250,9 @@ class Game:
 	#Game Loop - Update
 	def update(self):
 		self.all_sprites.update()
+
+		if len(self.targets) == 0:
+			self.playing = False
 
 	#Draws reference grid
 	def draw_grid(self):
@@ -377,17 +380,34 @@ class Game:
 		
 
 	def show_start_screen(self):
-		pass
+		self.screen.fill(BLACK)
+		self.draw_text("Press a key to start", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		pygame.display.flip()
+		self.wait_for_key()
 
 	def show_game_over_screen(self):
-		screen.fill(BLACK)
-		#self.draw_text("Press a key to start", self.)
+		self.screen.fill(BLACK)
+		self.draw_text("Press a key to start", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		pygame.display.flip()
+		self.wait_for_key()
+
+	def wait_for_key(self):
+		pygame.event.wait()
+		waiting = True
+		while waiting:
+			self.clock.tick(FPS)
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					waiting = False
+					self.quit()
+				if event.type == pygame.KEYUP:
+					waiting = False
 
 g = Game()
 g.show_start_screen()
-
-while g.running:		#self.running always starts as True on Game __init__
+while g.running:
+	g.show_start_screen()
 	g.new()
-	g.show_go_screen()
+	g.show_game_over_screen()
 
 pygame.quit()
