@@ -124,6 +124,7 @@ class Game:
 	def los_check(self, shooter):
 		#x = 1
 		for target in self.targets:
+			#self.clock.tick(FPS) 	#not sure whether or not to tick here
 			pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
 			pygame.display.update()
 			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
