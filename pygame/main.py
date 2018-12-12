@@ -276,6 +276,31 @@ class Game:
 		if all(unit_cohesions):
 			pygame.draw.circle(self.screen, GREEN, ((24*WIDTH//32)-15, HEIGHT-TILESIZE), 15, 0)
 
+	#Taken from https://www.youtube.com/watch?v=MJ2GLVA7kaU
+	def draw_text(self, text, font_name, size, color, x, y, align="nw"):
+		font = pygame.font.Font(font_name, size)
+		text_surface = font.render(text, True, color)
+		text_rect = text_surface.get_rect()
+		if align == "nw":
+			text_rect.topleft = (x, y)
+		if align == "ne":
+			text_rect.topright = (x, y)
+		if align == "sw":
+			text_rect.bottomleft = (x, y)
+		if align == "se":
+			text_rect.bottomright = (x, y)
+		if align == "n":
+			text_rect.midtop = (x, y)
+		if align == "s":
+			text_rect.midbottom = (x, y)
+		if align == "e":
+			text_rect.midright = (x, y)
+		if align == "w":
+			text_rect.midleft = (x, y)
+		if align == "center":
+			text_rect.center = (x, y)
+		self.screen.blit(text_surface, text_rect)
+
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(BLACK)	
@@ -289,31 +314,6 @@ class Game:
 			return textSurface, textSurface.get_rect()
 		
 		self.draw_sprites()
-
-		#Taken from https://www.youtube.com/watch?v=MJ2GLVA7kaU
-		def draw_text(self, text, font_name, size, color, x, y, align="nw"):
-			font = pygame.font.Font(font_name, size)
-			text_surface = font.render(text, True, color)
-			text_rect = text_surface.get_rect()
-			if align == "nw":
-				text_rect.topleft = (x, y)
-			if align == "ne":
-				text_rect.topright = (x, y)
-			if align == "sw":
-				text_rect.bottomleft = (x, y)
-			if align == "se":
-				text_rect.bottomright = (x, y)
-			if align == "n":
-				text_rect.midtop = (x, y)
-			if align == "s":
-				text_rect.midbottom = (x, y)
-			if align == "e":
-				text_rect.midright = (x, y)
-			if align == "w":
-				text_rect.midleft = (x, y)
-			if align == "center":
-				text_rect.center = (x, y)
-			self.screen.blit(text_surface, text_rect)
 			
 		if self.current_phase == "Movement Phase":	
 			if self.selected_model != None:
@@ -343,10 +343,10 @@ class Game:
 
 			#Controls Info Text	
 
-			draw_text(self, "|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
-			draw_text(self, "|RMB: move model|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
-			draw_text(self, "|SPACEBAR: reset selected model's move|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
-			draw_text(self, "|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RMB: move model|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|SPACEBAR: reset selected model's move|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		elif self.current_phase == "Shooting Phase":
 			if self.selected_model != None:
@@ -360,26 +360,27 @@ class Game:
 					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
 
 			#Controls Info Text
-			draw_text(self, "|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
-			draw_text(self, "|RMB: delete target|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
-			draw_text(self, "|SPACEBAR: N/A|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
-			draw_text(self, "|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RMB: delete target|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|SPACEBAR: N/A|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		#General info text
-		draw_text(self, "Turn #{}".format(self.turn_count), 'freesansbold.ttf', 32, WHITE, WIDTH/8, TILESIZE, "center")
-		draw_text(self, "{}".format(self.current_phase), 'freesansbold.ttf', 32, WHITE, WIDTH/2, TILESIZE, "center")
-		draw_text(self, "|HOME: reset game|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, TILESIZE, "center")
+		self.draw_text("Turn #{}".format(self.turn_count), 'freesansbold.ttf', 32, WHITE, WIDTH/8, TILESIZE, "center")
+		self.draw_text("{}".format(self.current_phase), 'freesansbold.ttf', 32, WHITE, WIDTH/2, TILESIZE, "center")
+		self.draw_text("|HOME: reset game|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, TILESIZE, "center")
 
 		self.bullets.draw
-		
+
 		pygame.display.update()
 		
 
 	def show_start_screen(self):
 		pass
 
-	def show_go_screen(self):
-		pass
+	def show_game_over_screen(self):
+		screen.fill(BLACK)
+		draw_text
 
 g = Game()
 g.show_start_screen()
