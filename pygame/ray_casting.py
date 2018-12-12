@@ -1,3 +1,7 @@
+"""
+Inspired by the example found here: https://pastebin.com/krFBNK3a
+"""
+
 import pygame
 from math import *
 from settings import *

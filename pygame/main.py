@@ -220,7 +220,8 @@ class Game:
 									self.los_check(self.selected_model)
 
 						elif event.button == 2: #Middle mouse button
-							pass
+							if self.selected_model != None:
+								self.los_check(self.selected_model)
 
 						elif event.button == 3:	#RMB
 							self.target_model = None
@@ -289,13 +290,31 @@ class Game:
 		
 		self.draw_sprites()
 
-		#Model base radii
-
-		
-		#Cohesion radius (two inches)
-		#for sprite in self.selectable_models:
-		#	pygame.draw.circle(self.screen, GREEN, sprite.rect.center, sprite.true_cohesion_radius, 1)
-		
+		#Taken from https://www.youtube.com/watch?v=MJ2GLVA7kaU
+		def draw_text(self, text, font_name, size, color, x, y, align="nw"):
+			font = pygame.font.Font(font_name, size)
+			text_surface = font.render(text, True, color)
+			text_rect = text_surface.get_rect()
+			if align == "nw":
+				text_rect.topleft = (x, y)
+			if align == "ne":
+				text_rect.topright = (x, y)
+			if align == "sw":
+				text_rect.bottomleft = (x, y)
+			if align == "se":
+				text_rect.bottomright = (x, y)
+			if align == "n":
+				text_rect.midtop = (x, y)
+			if align == "s":
+				text_rect.midbottom = (x, y)
+			if align == "e":
+				text_rect.midright = (x, y)
+			if align == "w":
+				text_rect.midleft = (x, y)
+			if align == "center":
+				text_rect.center = (x, y)
+			self.screen.blit(text_surface, text_rect)
+			
 		if self.current_phase == "Movement Phase":	
 			if self.selected_model != None:
 				#Selected model indicator
@@ -322,24 +341,12 @@ class Game:
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
 
-			#Controls Info Text		
-			TextSurf, TextRect = text_objects("|LMB: select model|", mediumText)
-			TextRect.midleft = ((WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
+			#Controls Info Text	
 
-			TextSurf, TextRect = text_objects("|RMB: move model|", mediumText)
-			TextRect.midleft = ((6*WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
-
-			TextSurf, TextRect = text_objects("|SPACEBAR: reset selected model's move|", mediumText)
-			TextRect.midleft = ((12*WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
-
-			TextSurf, TextRect = text_objects("|RETURN: progress to next phase|", mediumText)
-			TextRect.midleft = ((24*WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
-
-
+			draw_text(self, "|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
+			draw_text(self, "|RMB: move model|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
+			draw_text(self, "|SPACEBAR: reset selected model's move|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
+			draw_text(self, "|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		elif self.current_phase == "Shooting Phase":
 			if self.selected_model != None:
@@ -352,43 +359,19 @@ class Game:
 				for model in self.selected_model.valid_shots:
 					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
 
+			#Controls Info Text
+			draw_text(self, "|LMB: select model|", 'freesansbold.ttf', 20, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
+			draw_text(self, "|RMB: delete target|", 'freesansbold.ttf', 20, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
+			draw_text(self, "|SPACEBAR: N/A|", 'freesansbold.ttf', 20, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
+			draw_text(self, "|RETURN: progress to next phase|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
-			#Controls Info Text		
-			TextSurf, TextRect = text_objects("|LMB: select model|", mediumText)
-			TextRect.midleft = ((WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
-
-			TextSurf, TextRect = text_objects("|RMB: delete target|", mediumText)
-			TextRect.midleft = ((6*WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
-
-			TextSurf, TextRect = text_objects("|SPACEBAR: N/A|", mediumText)
-			TextRect.midleft = ((12*WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
-
-			TextSurf, TextRect = text_objects("|RETURN: progress to next phase|", mediumText)
-			TextRect.midleft = ((24*WIDTH/32), HEIGHT-TILESIZE)
-			self.screen.blit(TextSurf, TextRect)
-
-
-
-		
-
-		#Turn count display text		
-		TextSurf, TextRect = text_objects("Turn #{}".format(self.turn_count), largeText)
-		TextRect.center = ((WIDTH/8), TILESIZE)
-		self.screen.blit(TextSurf, TextRect)
-
-		#"Current Phase" Text 
-		TextSurf, TextRect = text_objects("{}".format(self.current_phase), largeText)
-		TextRect.center = ((WIDTH/2), TILESIZE)
-		self.screen.blit(TextSurf, TextRect)
-
-		TextSurf, TextRect = text_objects("|HOME: reset game|", mediumText)
-		TextRect.midleft = ((24*WIDTH/32), TILESIZE)
-		self.screen.blit(TextSurf, TextRect)
+		#General info text
+		draw_text(self, "Turn #{}".format(self.turn_count), 'freesansbold.ttf', 32, WHITE, WIDTH/8, TILESIZE, "center")
+		draw_text(self, "{}".format(self.current_phase), 'freesansbold.ttf', 32, WHITE, WIDTH/2, TILESIZE, "center")
+		draw_text(self, "|HOME: reset game|", 'freesansbold.ttf', 20, WHITE, 24*WIDTH/32, TILESIZE, "center")
 
 		self.bullets.draw
+		
 		pygame.display.update()
 		
 
