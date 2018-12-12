@@ -62,7 +62,7 @@ class Game:
 		self.army1 = Army('Black Templars')
 		self.army1.add_unit(Unit('Crusader Unit(1)'))
 
-		for i in range(3):
+		for i in range(2):
 			x = 4 + i * 2
 			model = create_model_by_name('Initiate', self, x, 4)
 			#model.add_weapon(create_ranged_weapon_by_name('Bolter'))
