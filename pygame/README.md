@@ -1,5 +1,6 @@
 Pygame adaptation of the Warhammer 40k tabletop game.
 
+
 Python and pygame are required to run this program. Python 2.7 or newer is recommended.
 To install python, visit https://www.python.org/downloads/.
 To install pygame, use this pip install command in the command line:
@@ -58,4 +59,3 @@ Morale Phase
 
 
 CURRENT BUGS:
-Game crashes if a bullet is fired at an already dead target.
