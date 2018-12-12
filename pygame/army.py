@@ -25,7 +25,10 @@ class Army(object):
 	#Operator overloading: runs this function on print(Army) or str()
 	#Ultimately prints the number of units alive within the army as well as the models alive within each of those units
 	def __str__(self):
-		pass
+		text = 'Army has {} units in it\n'.format(len(self.units))
+		for unit in self.units:
+			text += '  {}'.format(unit)
+		return text
 
 	def add_unit(self, unit):
 		self.units.append(unit)

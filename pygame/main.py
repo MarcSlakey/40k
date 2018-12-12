@@ -1,5 +1,5 @@
-"""40k Pygame
-
+"""40k Pygame Adapation
+Please see README.md for details on game rules and controls.
 """
 
 import pygame, random
@@ -49,36 +49,45 @@ class Game:
 
 		#TEST SPAWNS
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
+		
+		#Initialize army, unit objects
+		self.army1 = Army('Black Templars')
+		self.army1.add_unit(Unit('Crusader Squad 1'))
+		self.army1.add_unit(Unit('Crusader Squad 2'))
+
+		self.army2 = Army('Plaguemarines')
 
 		#Create walls, enemies from map.txt
+		count = 0
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
 					Wall(self, col, row)
-				elif tile == 'X':
-					model = create_model_by_name('Initiate', self, col, row)
+				elif tile == 'P':
+					model = create_model_by_name('Plague Marine', self, col, row)
+					self.army2.add_unit(Unit('Plague Marine Squad ' + str(count + 1)))
+					self.army2.units[count].add_model(model)
 					model.add(self.targets)
+					model.unit = self.army2.units[count]
+					count += 1
 
+				elif tile == 'M':
+					model = create_model_by_name('Initiate', self, col, row)
+					self.army1.units[0].add_model(model)
+					model.add(self.selectable_models)
+					model.unit = self.army1.units[0]
+					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 
-		self.army1 = Army('Black Templars')
-		self.army1.add_unit(Unit('Crusader Unit(1)'))
+				elif tile == 'N':
+					model = create_model_by_name('Initiate', self, col, row)
+					self.army1.units[1].add_model(model)
+					model.add(self.selectable_models)
+					model.unit = self.army1.units[1]
+					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 
-		for i in range(2):
-			x = 4 + i * 2
-			model = create_model_by_name('Initiate', self, x, 4)
-			#model.add_weapon(create_ranged_weapon_by_name('Bolter'))
-			self.army1.units[0].add_model(model)
-			model.add(self.selectable_models)
-			model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+		print(self.army1)
+		print(self.army2)
 
-		"""	
-		self.model1 = Model(self, "model1", 6, 4, 25//2, YELLOW)	#Spawns a single model sprite at given tile coordinates
-		self.model2 = Model(self, "model2", 8, 4, 25//2, YELLOW)
-		self.model3 = Model(self, "model3", 10, 4, 25//2, YELLOW)
-		self.model1.add(self.selectable_models)
-		self.model2.add(self.selectable_models)
-		self.model3.add(self.selectable_models)
-		"""
 		self.run()
 
 	#Main Game Loop
@@ -370,9 +379,8 @@ class Game:
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		#General info text
-		self.draw_text("Turn #{}".format(self.turn_count), self.generic_font, self.largeText, WHITE, WIDTH/8, TILESIZE, "center")
-		self.draw_text("{}".format(self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
-		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, TILESIZE, "center")
+		self.draw_text("Turn #{}: {}".format(self.turn_count, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
+		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, TILESIZE, "w")
 
 		self.bullets.draw
 

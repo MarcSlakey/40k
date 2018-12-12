@@ -89,6 +89,7 @@ class Model(pygame.sprite.Sprite):
 		self.save = save
 		self.invulnerable = invulnerable
 		self.weapons = []
+		self.unit = None
 		self.valid_shots = []	# List of valid shooting targets
 		
 
@@ -203,7 +204,8 @@ class Model(pygame.sprite.Sprite):
 				self.dest_y = self.y
 				self.rect.center = (self.x, self.y)
 
-			for sprite in self.game.selectable_models:
+			#Unit cohesion checker
+			for sprite in self.unit.models:
 				if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
 					self.cohesion = True
 

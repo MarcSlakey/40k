@@ -27,7 +27,10 @@ class Unit(object):
 		self.models = []
 
 	def __str__(self):
-		pass
+		text = '{} has {} models in it\n'.format(self.name, len(self.models))
+		for model in self.models:
+			text += '    {}\n'.format(model.name)
+		return text
 
 	def add_model(self, model):
 		"""Adds a Model-class object to the unit's list of models"""
