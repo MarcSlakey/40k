@@ -97,6 +97,7 @@ class Model(pygame.sprite.Sprite):
 		self.weapons.append(weapon)
 
 	def die(self):
+		self.game.selected_model.valid_shots.remove(self)
 		self.kill()
 
 

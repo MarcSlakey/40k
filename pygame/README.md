@@ -21,6 +21,7 @@ SHOOTING PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected. 
 	When a model is selected, the game will check that model's line of sight against enemies.
 "RMB" while a model is selected will shoot a bullet at the moused-over target model if that model is in range AND in line of sight of the selected model.
+	Valid shooting targets will be highlighted yellow instead of red.
 "Enter/Return" will progress the game to the next turn and begin a new movement phase.
 "Home" will reset to a new game.
 
@@ -37,6 +38,11 @@ Models cannot pass through each other.
 Additionally, models may not be moved within 1" (one tile size) of an enemy model (represented by a red radius around each enemy).
 Models that are part of a unit must maintain "unit cohesion." That is, they must end their move phase within 2" of another member of their unit.
 
+SHOOTING PHASE RULES:
+A model must have line of sight to an enemy and be in range of that enemy in order to shoot it. 
+Range is indicated by the thin red radius drawn around a selected model.
+Line of sight is blocked by other enemy models and terrain, but not by friendly models.
+Valid targets are painted yellow instead of red.
 
 CURRENTLY IMPLEMENTED:
 Movement Phase

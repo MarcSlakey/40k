@@ -29,14 +29,14 @@ class Ray(object):
 
 			if self.target.rect.collidepoint(endpoint):
 				self.shooter.valid_shots.append(self.target)
-				print("\nRay hit intended target with length {}".format(length))
-				print("Ray's end pos: {}".format(endpoint))
+				#print("\nRay hit intended target with length {}".format(length))
+				#print("Ray's end pos: {}".format(endpoint))
 				return
 
 			for model in self.game.targets:
 				if model.rect.collidepoint(endpoint):
-					print("\nRay hit non-target model with length {}".format(length))
-					print("Ray's end pos: {}".format(endpoint))
+					#print("\nRay hit non-target model with length {}".format(length))
+					#print("Ray's end pos: {}".format(endpoint))
 					return
 
 			for wall in self.game.walls:

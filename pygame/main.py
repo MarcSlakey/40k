@@ -349,6 +349,9 @@ class Game:
 				#Weapon range radius
 				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
 
+				for model in self.selected_model.valid_shots:
+					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
+
 
 			#Controls Info Text		
 			TextSurf, TextRect = text_objects("|LMB: select model|", mediumText)
