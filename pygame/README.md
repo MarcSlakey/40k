@@ -42,7 +42,7 @@ SHOOTING PHASE RULES:
 A model must have line of sight to an enemy and be in range of that enemy in order to shoot it. 
 Range is indicated by the thin red radius drawn around a selected model.
 Line of sight is blocked by other enemy models and terrain, but not by friendly models.
-Valid targets are painted yellow instead of red.
+Targets in LOS are painted yellow instead of red.
 
 CURRENTLY IMPLEMENTED:
 Movement Phase

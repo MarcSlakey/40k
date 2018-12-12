@@ -356,10 +356,9 @@ class Game:
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
-
 				#Weapon range radius
 				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
-
+				#Targets in LOS
 				for model in self.selected_model.valid_shots:
 					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
 
@@ -381,7 +380,7 @@ class Game:
 
 	def show_start_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("40k pygame", self.generic_font, 120, WHITE, WIDTH/2, HEIGHT*1/4, "center")
+		self.draw_text("40k Pygame Adaptation", self.generic_font, 120, YELLOW, WIDTH/2, HEIGHT*1/4, "center")
 		self.draw_text("Please see the readme for game rules", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*2/4, "center")
 		self.draw_text("Press any key to start...", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
 		pygame.display.flip()
@@ -389,7 +388,9 @@ class Game:
 
 	def show_game_over_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("Press a key to start", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		self.draw_text("Victory!", self.generic_font, 120, GREEN, WIDTH/2, HEIGHT*1/4, "center")
+		self.draw_text("All targets eliminated", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*2/4, "center")
+		self.draw_text("Press any key to start a new game", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
 		pygame.display.flip()
 		self.wait_for_key()
 
