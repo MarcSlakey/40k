@@ -112,11 +112,11 @@ class Model(pygame.sprite.Sprite):
 			def revert_move():
 				self.x = temp_x
 				self.y = temp_y
-				print("Coordinates reverted to ({},{})".format(self.x, self.y))
+				#print("Coordinates reverted to ({},{})".format(self.x, self.y))
 
 			if self.dest_x != self.x and self.dest_y != self.y:
-				print("\n\n-------NEW STEP-------")
-				print("Pre-move coord: ({},{})".format(self.x, self.y))
+				#print("\n\n-------NEW STEP-------")
+				#print("Pre-move coord: ({},{})".format(self.x, self.y))
 				delta_x = self.x - self.dest_x
 				delta_y = self.y - self.dest_y
 				current_move = find_hypotenuse(delta_x, delta_y)
@@ -154,7 +154,7 @@ class Model(pygame.sprite.Sprite):
 					for sprite_x in self.game.all_models:
 						if sprite_x != self:
 							if pygame.sprite.collide_circle(self, sprite_x):
-								print("\n!Collision with between self and model!")
+								#print("\n!Collision with between self and model!")
 								revert_move()
 								self.rect.center = (self.x, self.y)
 								self.dest_x = self.x
@@ -164,7 +164,7 @@ class Model(pygame.sprite.Sprite):
 					for sprite_x in self.game.targets:
 						if sprite_x != self:
 							if pygame.sprite.collide_circle_ratio(sprite_x.melee_ratio)(self, sprite_x):
-								print("\n!Collision with between self and enemy melee radius!")
+								#print("\n!Collision with between self and enemy melee radius!")
 								revert_move()
 								self.rect.center = (self.x, self.y)
 								self.dest_x = self.x
@@ -173,7 +173,7 @@ class Model(pygame.sprite.Sprite):
 					#Terrain collision
 					for sprite_x in self.game.walls:
 						if pygame.sprite.collide_rect(self, sprite_x):
-							print("\n!Collision with between self and terrain!")
+							#print("\n!Collision with between self and terrain!")
 							revert_move()
 							self.rect.center = (self.x, self.y)
 							self.dest_x = self.x
@@ -182,18 +182,19 @@ class Model(pygame.sprite.Sprite):
 					#Max move reduced if model moved at all
 					if self.x != temp_x or self.y != temp_y:	
 						self.max_move -= distance_moved
-						print("\nSuccessful move!")
-						print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
-						print("Max move Remaining: {}".format(self.max_move))
-						print("\nPost-move coord: ({},{})".format(self.x, self.y))
+						#print("\nSuccessful move!")
+						#print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
+						#print("Max move Remaining: {}".format(self.max_move))
+						#print("\nPost-move coord: ({},{})".format(self.x, self.y))
 					else:
-						print("\nFailed move.")
-						print("Coordinates unchanged.")
+						pass
+						#print("\nFailed move.")
+						#print("Coordinates unchanged.")
 
 					
 					
 				else:
-					print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
+					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
 					self.dest_x = self.x
 					self.dest_y = self.y
 
@@ -242,7 +243,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.weapon = weapon
 		self.image = pygame.Surface((10, 10))
 		self.image.fill(RED)
-		self.rect = self.image.get_rect()
+		self.rect = pygame.Rect(1, 1, 1, 1)
 		self.x = shooter.x
 		self.y = shooter.y
 		self.rect.center = (self.x, self.y)
@@ -269,60 +270,6 @@ class Bullet(pygame.sprite.Sprite):
 		if pygame.sprite.collide_rect(self, self.target):
 			self.die()
 			self.target.die()
-
-
-		bullet_pos = vec(self.x, self.y)
-		target_pos = vec(self.target_x, self.target_y)
-		self.rot = (target_pos - bullet_pos).angle_to(vec(1,0))	#Calculates the angle between desired vector and basic x vector
-		self.acc = vec(self.speed, 0).rotate(-self.rot)		#Sets the acceleration vector's to angle and magnitude
-		self.acc += self.vel * -.4	#Friction coefficient; the higher the velocity, the higher this number is.
-		self.vel += self.acc
-
-		#print("\n Bullet Rot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
-		#print("Bullet elocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
-
-		pixels_x = int(self.vel[0])
-		pixels_y = int(self.vel[1])
-		distance_moved = find_hypotenuse(pixels_x, pixels_y)
-
-		self.x += pixels_x
-		self.y += pixels_y
-		self.rect.center = (self.x, self.y)
-
-class SightBullet(pygame.sprite.Sprite):
-	def __init__(self, game, weapon, shooter, target):
-		self.groups = [game.all_sprites]	
-		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
-		self.game = game
-		self.weapon = weapon
-		self.image = pygame.Surface((10, 10))
-		self.rect = self.image.get_rect()
-		self.x = shooter.x
-		self.y = shooter.y
-		self.rect.center = (self.x, self.y)
-		self.speed = 5
-		self.rot = 0
-		self.vel = vec(0,0)
-		self.acc = vec(0,0)
-
-		self.target = target
-
-		self.target_x = self.target.x
-		self.target_y = self.target.y
-		#print("\nSpawned a bullet!")
-
-	def die(self):
-		self.kill()
-
-	def update(self):
-
-		for sprite_x in self.game.walls:
-			if pygame.sprite.collide_rect(self, sprite_x):
-				self.die()
-
-
-		if pygame.sprite.collide_rect(self, self.target):
-			self.die()
 
 
 		bullet_pos = vec(self.x, self.y)

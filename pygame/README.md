@@ -27,7 +27,7 @@ SHOOTING PHASE CONTROLS:
 
 GAME BASICS:
 The white-filled circles are selectable tabletop "models".
-The red-filled circles are non-selectable "target models".
+The red-filled circles are non-selectable "target models". Game ends when all of these are eliminated.
 The large yellow circle that appears on model selection shows remaining move distance. The red one shows the model's shooting range.
 The selected model will turn from yellow to green when within 2 squares of a model in its unit to indicate that it is currently maintaining "unit cohesion" (see MOVE PHASE RULES below).
 The semi-circle on the top left of the screen will turn green if unit cohesion between the selectable models is established and is red otherwise.
@@ -55,3 +55,7 @@ Psychic Phase
 Charge Phase
 Fight Phase
 Morale Phase
+
+
+CURRENT BUGS:
+Game crashes if a bullet is fired at an already dead target.

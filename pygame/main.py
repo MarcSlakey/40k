@@ -129,8 +129,8 @@ class Game:
 			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
 			#print("{}".format(x))
 			#x += 1
-		print("\n")
-		print(shooter.valid_shots)
+		#print("\n")
+		#print(shooter.valid_shots)
 
 	#Game Loop - Event Handling
 	def events(self):
@@ -381,7 +381,9 @@ class Game:
 
 	def show_start_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("Press a key to start", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		self.draw_text("40k pygame", self.generic_font, 120, WHITE, WIDTH/2, HEIGHT*1/4, "center")
+		self.draw_text("Please see the readme for game rules", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*2/4, "center")
+		self.draw_text("Press any key to start...", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
 		pygame.display.flip()
 		self.wait_for_key()
 
