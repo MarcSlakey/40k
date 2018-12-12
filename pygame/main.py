@@ -406,7 +406,6 @@ class Game:
 g = Game()
 g.show_start_screen()
 while g.running:
-	g.show_start_screen()
 	g.new()
 	g.show_game_over_screen()
 
