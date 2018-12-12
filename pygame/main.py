@@ -1,16 +1,8 @@
 """40k Pygame
 
-Four Sprites are spawned, three controllable models named model1, model2, and model3, and one non-controllable model named target.
-
-Left clicking a controllable model selects it, left clicking empty space deselects it. 
-	Selecting a model causes three circles to be drawn: yellow for move distance, red for weapon range, and green to highlight the selected sprite.
-Right click moves the selected model to the clicked location if it is within the model's remaining move distance.
-Space resets the selected model to its original position and restores its max move distance.
-Middle click while hovering the mouse over the target model will delete it if the currently selected model is within shooting range.
 """
 
-import pygame
-import random
+import pygame, random
 from os import path
 from settings import *
 from sprites import *
@@ -50,6 +42,7 @@ class Game:
 		self.walls = pygame.sprite.Group()
 		self.bullets = pygame.sprite.Group()
 		self.targets = pygame.sprite.Group()
+		self.rays = pygame.sprite.Group()
 		self.selected_model = None
 		self.target_model = None
 
@@ -91,7 +84,8 @@ class Game:
 	def run(self):
 		self.playing = True
 		while self.playing:
-			self.clock.tick(FPS)
+			# Keep loop running at the right speed; defaults unit is milliseconds, converted here to seconds
+			dt = self.clock.tick(FPS)/1000
 			self.events()			
 			self.update()
 			self.draw()
@@ -141,6 +135,7 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
+							self.selected_model = None
 							self.current_phase = "Shooting Phase"
 	
 				#Mouse event handling
@@ -189,6 +184,7 @@ class Game:
 						self.refresh_moves()
 						self.turn_count += 1
 						self.current_phase = "Movement Phase"
+						self.selected_model = None
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -198,6 +194,18 @@ class Game:
 							for self.model in self.selectable_models:
 								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = self.model
+									print("A model is selected")
+									if not self.selected_model.valid_shots:
+										print("Valid shots was empty")
+										#x = 1
+										for target in self.targets:
+											pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
+											pygame.display.update()
+											Ray(self, self.selected_model, target, (self.selected_model.x, self.selected_model.y), (target.x, target.y)).cast()
+											#print("{}".format(x))
+											#x += 1
+										print("\n")
+										print(self.selected_model.valid_shots)
 
 					#If a model is selected, LMB deselects it, RMB moves it, and Middle mouse button shoots.
 					elif self.selected_model != None:
@@ -223,7 +231,8 @@ class Game:
 
 							if shot_distance <= self.selected_model.weapons[0].w_range:
 								if self.target_model != None:
-									Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
+									if self.target_model in self.selected_model.valid_shots:
+										Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
 
 								#for self.target in self.targets:
 								#	if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
@@ -335,6 +344,7 @@ class Game:
 
 				#Weapon range radius
 				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+
 
 			#Controls Info Text		
 			TextSurf, TextRect = text_objects("|LMB: select model|", mediumText)
