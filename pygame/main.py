@@ -42,12 +42,13 @@ class Game:
 		self.all_sprites = pygame.sprite.Group() 
 		self.all_models = pygame.sprite.Group()
 		self.selectable_models = pygame.sprite.Group()
+		self.targets = pygame.sprite.Group()
 		self.walls = pygame.sprite.Group()
 		self.bullets = pygame.sprite.Group()
-		self.targets = pygame.sprite.Group()
 		self.rays = pygame.sprite.Group()
 		#self.buttons = []
 		self.selected_model = None
+		self.selected_unit = None
 		self.target_model = None
 
 		self.quitbutton = Button(self, "QUIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
@@ -62,20 +63,16 @@ class Game:
 		self.army1.add_unit(Unit('Crusader Squad 2'))
 
 		self.army2 = Army('Plaguemarines')
+		self.army2.add_unit(Unit('Plague Marine Squad 1'))
+		self.army2.add_unit(Unit('Plague Marine Squad 2'))
+		self.army2.add_unit(Unit('Plague Marine Squad 3'))
+		
 
 		#Create walls, enemies from map.txt
-		count = 0
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
 					Wall(self, col, row)
-				elif tile == 'P':
-					model = create_model_by_name('Plague Marine', self, col, row)
-					self.army2.add_unit(Unit('Plague Marine Squad ' + str(count + 1)))
-					self.army2.units[count].add_model(model)
-					model.add(self.targets)
-					model.unit = self.army2.units[count]
-					count += 1
 
 				elif tile == 'M':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -89,6 +86,27 @@ class Game:
 					self.army1.units[1].add_model(model)
 					model.add(self.selectable_models)
 					model.unit = self.army1.units[1]
+					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+
+				elif tile == 'P':
+					model = create_model_by_name('Plague Marine', self, col, row)
+					self.army2.units[0].add_model(model)
+					model.add(self.targets)
+					model.unit = self.army2.units[0]
+					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+
+				elif tile == 'A':
+					model = create_model_by_name('Plague Marine', self, col, row)
+					self.army2.units[1].add_model(model)
+					model.add(self.targets)
+					model.unit = self.army2.units[1]
+					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+
+				elif tile == 'G':
+					model = create_model_by_name('Plague Marine', self, col, row)
+					self.army2.units[2].add_model(model)
+					model.add(self.targets)
+					model.unit = self.army2.units[2]
 					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 
 		print(self.army1)
@@ -167,13 +185,12 @@ class Game:
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
 							self.selected_model = None
+							self.selected_unit = None
 							self.current_phase = "Shooting Phase"
 	
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
-					#If a model is not selected, LMB selects a model.
-					
-					if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+					if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
 						if self.quitbutton.mouse_over():
 							self.quit()
 
@@ -182,15 +199,15 @@ class Game:
 								self.reset_moves(model)
 
 						if self.selected_model == None:
-							for self.model in self.selectable_models:
-								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = self.model
+							for model in self.selectable_models:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.selected_model = model
 
 						elif self.selected_model != None:
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
-							for self.model in self.selectable_models:
-								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = self.model
+							for model in self.selectable_models:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.selected_model = model
 
 					elif event.button == 2:	#Middle mouse button
 						pass
@@ -220,27 +237,34 @@ class Game:
 						self.turn_count += 1
 						self.current_phase = "Movement Phase"
 						self.selected_model = None
+						self.selected_unit = None
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					#If a model is not selected, LMB selects a model.
 					if self.selected_model == None:
 						if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
-							for self.model in self.selectable_models:
-								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = self.model
+							for model in self.selectable_models:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.selected_model = model
+									print(self.selected_model)
+									self.selected_unit = model.unit
+									print(self.selected_unit)
 									self.los_check(self.selected_model)
 									
 
 					#If a model is selected, LMB either deselects it or selects a new model, RMB moves it, and Middle mouse button shoots.
 					elif self.selected_model != None:
-						
 						if event.button == 1:	#LMB
 							self.selected_model.valid_shots.clear()
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
-							for self.model in self.selectable_models:
-								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = self.model
+							self.selected_unit = None
+							for model in self.selectable_models:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.selected_model = model
+									print(self.selected_model)
+									self.selected_unit = model.unit
+									print(self.selected_unit)
 									self.los_check(self.selected_model)
 
 						elif event.button == 2: #Middle mouse button
@@ -254,9 +278,9 @@ class Game:
 							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
 							shot_distance = find_hypotenuse(shot_x, shot_y)
 
-							for self.model in self.targets:
-								if self.model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.target_model = self.model
+							for model in self.targets:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									self.target_model = model
 
 							if shot_distance <= self.selected_model.weapons[0].w_range:
 								if self.target_model != None:
@@ -338,7 +362,7 @@ class Game:
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(BLACK)	
-		#self.draw_grid()
+		self.draw_grid()
 
 		def text_objects(text, font):
 			textSurface = font.render(text, True, WHITE)
@@ -383,6 +407,9 @@ class Game:
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		elif self.current_phase == "Shooting Phase":
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)

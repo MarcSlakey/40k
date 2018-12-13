@@ -93,6 +93,10 @@ class Model(pygame.sprite.Sprite):
 		self.valid_shots = []	# List of valid shooting targets
 		
 
+	def __str__(self):
+		text = '{}\n'.format(self.name)
+		return text
+
 	def add_weapon(self, weapon):
 		"""Adds a weapon to a given model's list of weapons"""
 		self.weapons.append(weapon)
