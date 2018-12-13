@@ -54,6 +54,9 @@ class Game:
 
 		self.reset_all_button = Button(self, "RESET MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
+		self.attack_button = Button(self, "FIRE WEAPON", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		
+
 		#TEST SPAWNS
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
 		
@@ -199,12 +202,22 @@ class Game:
 							for model in self.selectable_models:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = model
+									print("\nSelected a model:")
+									print(self.selected_model)
+									self.selected_unit = model.unit
+									print("Selected model's parent unit:")
+									print(self.selected_unit.name)
 
 						elif self.selected_model != None:
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
 							for model in self.selectable_models:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = model
+									print("\nSelected a model:")
+									print(self.selected_model)
+									self.selected_unit = model.unit
+									print("Selected model's parent unit:")
+									print(self.selected_unit.name)
 
 					elif event.button == 2:	#Middle mouse button
 						pass
@@ -241,59 +254,67 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					#If a model is not selected, LMB selects a model.
-					if self.selected_model == None:
-						if event.button == 1:	#Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+					if event.button == 1:	#LMB
+						if self.selected_model == None:
 							for model in self.selectable_models:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = model
+									print("\nSelected a model:")
 									print(self.selected_model)
 									self.selected_unit = model.unit
-									print(self.selected_unit)
+									print("Selected model's parent unit:")
+									print(self.selected_unit.name)
 									self.los_check(self.selected_model)
 									
+						elif self.selected_model != None:
+							if self.target_unit != None:
+								if self.attack_button.mouse_over():
+									self.selected_model.attack_with_weapon(self.target_unit)
+									Bullet(self, self.selected_model, self.target_model)
 
-					#If a model is selected, LMB either deselects it or selects a new model, RMB moves it, and Middle mouse button shoots.
-					elif self.selected_model != None:
-						if event.button == 1:	#LMB
-							self.selected_model.valid_shots.clear()
-							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
-							self.selected_unit = None
-							self.target_model = None
-							self.target_unit = None
-							for model in self.selectable_models:
-								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = model
-									print(self.selected_model)
-									self.selected_unit = model.unit
-									print(self.selected_unit)
-									self.los_check(self.selected_model)
+							else:
+								self.selected_model.valid_shots.clear()
+								self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
+								self.selected_unit = None
+								self.target_model = None
+								self.target_unit = None
+								for model in self.selectable_models:
+									if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+										self.selected_model = model
+										print("\nSelected a model:")
+										print(self.selected_model)
+										self.selected_unit = model.unit
+										print("Selected model's parent unit:")
+										print(self.selected_unit.name)
+										self.los_check(self.selected_model)
 
-						elif event.button == 2: #Middle mouse button
-							if self.selected_model != None:
-								self.los_check(self.selected_model)
+					elif event.button == 2: #Middle mouse button
+						if self.selected_model != None:
+							self.los_check(self.selected_model)
 
-						elif event.button == 3:	#RMB
-							self.target_model = None
-							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
-							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-							shot_distance = find_hypotenuse(shot_x, shot_y)
+					elif event.button == 3:	#RMB
+						self.target_model = None
+						self.target_unit = None
+						shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
+						shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
+						shot_distance = find_hypotenuse(shot_x, shot_y)
 
-							for model in self.targets:
-								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.target_model = model
-									self.target_unit = model.unit
+						for model in self.targets:
+							if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+								if shot_distance <= self.selected_model.weapons[0].w_range:
+									if model in self.selected_model.valid_shots:
+										self.target_model = model
+										self.target_unit = model.unit
 
-							#if shot_distance <= self.selected_model.weapons[0].w_range:
-							#	if self.target_model != None:
-							#		if self.target_model in self.selected_model.valid_shots:
-							#			Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
 
-								#for self.target in self.targets:
-								#	if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
-								#		self.target.kill()
+						#if shot_distance <= self.selected_model.weapons[0].w_range:
+						#	if self.target_model != None:
+						#		if self.target_model in self.selected_model.valid_shots:
+						#			Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
 
-						elif event.button == 3: #RMB
-							pass
+							#for self.target in self.targets:
+							#	if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
+							#		self.target.kill()
 
 				
 	#Game Loop - Update
@@ -322,12 +343,12 @@ class Game:
 	def draw_buttons(self):
 		if self.current_phase == "Movement Phase":
 			self.reset_all_button.draw()
+			self.reset_all_button.fill()
 
 		elif self.current_phase == "Shooting Phase":
-			pass
+			self.attack_button.draw()
+			self.attack_button.fill()
 
-		for button in self.buttons:
-			button.fill()
 
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
