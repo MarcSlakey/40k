@@ -52,7 +52,6 @@ class Game:
 		self.target_model = None
 		self.target_unit = None
 
-		self.quitbutton = Button(self, "QUIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.reset_all_button = Button(self, "RESET MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
 		#TEST SPAWNS
@@ -192,10 +191,7 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
-						if self.quitbutton.mouse_over():
-							self.quit()
-
-						elif self.reset_all_button.mouse_over():
+						if self.reset_all_button.mouse_over():
 							for model in self.selectable_models:
 								self.reset_moves(model)
 
@@ -321,11 +317,10 @@ class Game:
 
 	def draw_buttons(self):
 		if self.current_phase == "Movement Phase":
-			self.quitbutton.draw()
 			self.reset_all_button.draw()
 
 		elif self.current_phase == "Shooting Phase":
-			self.quitbutton.draw()
+			pass
 
 		for button in self.buttons:
 			button.fill()
