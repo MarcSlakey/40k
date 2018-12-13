@@ -46,7 +46,7 @@ class Game:
 		self.walls = pygame.sprite.Group()
 		self.bullets = pygame.sprite.Group()
 		self.rays = pygame.sprite.Group()
-		#self.buttons = []
+		self.buttons = []
 		self.selected_model = None
 		self.selected_unit = None
 		self.target_model = None
@@ -320,7 +320,15 @@ class Game:
 			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
 
 	def draw_buttons(self):
-		pass
+		if self.current_phase == "Movement Phase":
+			self.quitbutton.draw()
+			self.reset_all_button.draw()
+
+		elif self.current_phase == "Shooting Phase":
+			quitbutton.draw()
+
+		for button in self.buttons:
+			button.fill()
 
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
@@ -370,9 +378,7 @@ class Game:
 			return textSurface, textSurface.get_rect()
 		
 		self.draw_sprites()
-		#self.draw_buttons()
-
-		self.quitbutton.draw()
+		self.draw_buttons()
 			
 		if self.current_phase == "Movement Phase":	
 			if self.selected_model != None:
@@ -401,7 +407,6 @@ class Game:
 			self.draw_cohesion_indicator()	
 
 			#Controls Info Text	
-			self.reset_all_button.draw()
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
@@ -423,9 +428,9 @@ class Game:
 				for model in self.selected_model.valid_shots:
 					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
 
-			if self.target_unit != None:
-				for model in self.target_unit.models:
-					pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+				if self.target_unit != None:
+					for model in self.target_unit.models:
+						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
 
 			#Controls Info Text
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")

@@ -18,9 +18,14 @@ class Button(object):
 		self.height = height
 		self.align  = align
 		self.font = pygame.font.Font(font_name, size)
-		self.text_surface = self.font.render(text, True, color)
+		"""
+		This creates a new Surface with the specified text rendered on it. 
+		pygame provides no way to directly draw text on an existing Surface: 
+		instead you must use Font.render() to create an image (Surface) of the text, then blit this image onto another Surface.
+		"""
+		self.text_surface = self.font.render(self.text, True, self.color)
 		self.text_rect = self.text_surface.get_rect()
-		#self.game.buttons.append(self)
+		self.game.buttons.append(self)
 		if align == "nw":
 			self.text_rect.topleft = (self.x, self.y)
 		if align == "ne":
@@ -72,4 +77,11 @@ class Button(object):
 			return True
 		return False
 
-		
+	def fill(self):
+		#self.game.screen.blit(self.text_surface.fill(GREEN))
+		if self.mouse_over():
+			self.text_surface.fill(GREEN)
+		else:
+			self.text_surface = self.font.render(self.text, True, self.color)
+			self.draw()
+
