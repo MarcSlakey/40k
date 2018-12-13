@@ -462,7 +462,7 @@ class Game:
 			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
-		elif self.current_phase == "Shooting Phase" or "Wound Allocation":
+		elif self.current_phase == "Shooting Phase":
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
@@ -487,6 +487,32 @@ class Game:
 			self.draw_text("|RMB: delete target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
+
+		elif self.current_phase == "Wound Allocation":
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
+			if self.selected_model != None:
+				#Selected model indicator
+				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
+				#Weapon range radius
+				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+
+				#Targets in LOS
+				for model in self.selected_model.valid_shots:
+					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
+
+				if self.target_unit != None:
+					for model in self.target_unit.models:
+						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+			#Controls Info Text
+			self.draw_text("|LMB: allocate wound to model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, (8*WIDTH/32), HEIGHT-TILESIZE, "w")
+			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
+			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
 		#General info text
 		self.draw_text("Turn #{}: {}".format(self.turn_count, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
