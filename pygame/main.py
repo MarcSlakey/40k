@@ -66,10 +66,10 @@ class Game:
 		self.army1.add_unit(Unit('Crusader Squad 1'))
 		self.army1.add_unit(Unit('Crusader Squad 2'))
 
-		self.army2 = Army('Plaguemarines')
-		self.army2.add_unit(Unit('Plague Marine Squad 1'))
-		self.army2.add_unit(Unit('Plague Marine Squad 2'))
-		self.army2.add_unit(Unit('Plague Marine Squad 3'))
+		self.army2 = Army('Orkz')
+		self.army2.add_unit(Unit('Ork Boyz 1'))
+		self.army2.add_unit(Unit('Ork Boyz 2'))
+		self.army2.add_unit(Unit('Ork Boyz 3'))
 		
 
 		#Create walls, enemies from map.txt
@@ -93,25 +93,25 @@ class Game:
 					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 
 				elif tile == 'P':
-					model = create_model_by_name('Plague Marine', self, col, row)
+					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[0].add_model(model)
 					model.add(self.targets)
 					model.unit = self.army2.units[0]
-					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
 
 				elif tile == 'A':
-					model = create_model_by_name('Plague Marine', self, col, row)
+					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[1].add_model(model)
 					model.add(self.targets)
 					model.unit = self.army2.units[1]
-					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
 
 				elif tile == 'G':
-					model = create_model_by_name('Plague Marine', self, col, row)
+					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[2].add_model(model)
 					model.add(self.targets)
 					model.unit = self.army2.units[2]
-					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
 
 		print(self.army1)
 		print(self.army2)
