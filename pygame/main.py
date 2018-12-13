@@ -235,6 +235,8 @@ class Game:
 						self.current_phase = "Movement Phase"
 						self.selected_model = None
 						self.selected_unit = None
+						self.target_model = None
+						self.target_unit = None
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -256,6 +258,8 @@ class Game:
 							self.selected_model.valid_shots.clear()
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
 							self.selected_unit = None
+							self.target_model = None
+							self.target_unit = None
 							for model in self.selectable_models:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.selected_model = model
