@@ -331,6 +331,11 @@ class Game:
 									print(model.unit)
 									if self.unallocated_wounds <= 0:
 										print("All wounds allocated, returning to shooting phase")
+										self.selected_model.valid_shots.clear()
+										self.selected_model = None
+										self.selected_unit = None
+										self.target_model = None
+										self.target_unit = None
 										self.current_phase = "Shooting Phase"
 
 								else:
