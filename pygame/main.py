@@ -325,7 +325,7 @@ class Game:
 			self.reset_all_button.draw()
 
 		elif self.current_phase == "Shooting Phase":
-			quitbutton.draw()
+			self.quitbutton.draw()
 
 		for button in self.buttons:
 			button.fill()
