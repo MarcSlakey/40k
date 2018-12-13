@@ -114,16 +114,15 @@ class Game:
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self, model):
 		if model.x != model.original_pos[0] or model.y != model.original_pos[1]:
-			print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(model.x, model.y, 
-																			model.original_pos[0], model.original_pos[1]))
-			print("Max_move before reset: {}".format(model.max_move))
+			#print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(model.x, model.y, model.original_pos[0], model.original_pos[1]))
+			#print("Max_move before reset: {}".format(model.max_move))
 			model.x = model.original_pos[0]
 			model.y = model.original_pos[1]
 			model.dest_x = model.x
 			model.dest_y = model.y
 			model.max_move = model.original_max_move
-			print("Max_move after reset: {}.".format(model.max_move))
-			print("Sprite location after reset: ({},{})".format(model.x, model.y))
+			#print("Max_move after reset: {}.".format(model.max_move))
+			#print("Sprite location after reset: ({},{})".format(model.x, model.y))
 
 	def refresh_moves(self):
 		for sprite in self.selectable_models:
@@ -339,7 +338,7 @@ class Game:
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(BLACK)	
-		self.draw_grid()
+		#self.draw_grid()
 
 		def text_objects(text, font):
 			textSurface = font.render(text, True, WHITE)
