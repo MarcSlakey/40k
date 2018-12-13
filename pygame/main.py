@@ -274,7 +274,6 @@ class Game:
 
 						elif event.button == 3:	#RMB
 							self.target_model = None
-
 							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
 							shot_distance = find_hypotenuse(shot_x, shot_y)
@@ -282,11 +281,12 @@ class Game:
 							for model in self.targets:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 									self.target_model = model
+									self.target_unit = model.unit
 
-							if shot_distance <= self.selected_model.weapons[0].w_range:
-								if self.target_model != None:
-									if self.target_model in self.selected_model.valid_shots:
-										Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
+							#if shot_distance <= self.selected_model.weapons[0].w_range:
+							#	if self.target_model != None:
+							#		if self.target_model in self.selected_model.valid_shots:
+							#			Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
 
 								#for self.target in self.targets:
 								#	if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
@@ -411,14 +411,21 @@ class Game:
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
 				#Weapon range radius
 				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+
 				#Targets in LOS
 				for model in self.selected_model.valid_shots:
 					pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
+
+			if self.target_unit != None:
+				for model in self.target_unit.models:
+					pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
 
 			#Controls Info Text
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
