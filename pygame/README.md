@@ -10,21 +10,30 @@ Note: "python3" might be "python" or "py" instead depending on your version of p
 Once both are installed, download this entire folder.
 Change directory to the pygame folder and run main.py.
 
+GENERAL CONTROLS:
+LMB to click any of the buttons on the bottom part of the screen
 
 MOVE PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected.
 "RMB" commands the selected model to move to the clicked location.
 "Spacebar" while a model is selected will reset it to its previous position.
+Click "Reset Moves" button to achieve the Spacebar effect but for all selectable models.
 "Enter/Return" will progress the game to the shooting phase if unit cohesion has been maintained
 "Home" will reset to a new game.
 
 SHOOTING PHASE CONTROLS:
 "LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected. 
 	When a model is selected, the game will check that model's line of sight against enemies.
-"RMB" while a model is selected will shoot a bullet at the moused-over target model if that model is in range AND in line of sight of the selected model.
+"RMB" while a model is selected will target a given model's unit for shooting if that model is in range AND in line of sight of the selected model.
 	Valid shooting targets will be highlighted yellow instead of red.
-"Enter/Return" will progress the game to the next turn and begin a new movement phase.
+	Once a unit is successfully selected for shooting its models will turn orange.
+Click "Fire Weapon" while a model AND a target unit are selected. If the shot does damage, the game will proceed to a "Wound Allocation" phase.
+"Enter/Return" will progress the game to the next turn and begin a new movement phase as long as you're not currently allocating wounds.
 "Home" will reset to a new game.
+
+WOUND ALLOCATION PHASE CONTROLS:
+"LMB" on a model in the currently targetted unit to allocate a single wound to it.
+	When all wounds have been allocated, the game will return to the shooting phase.
 
 
 GAME BASICS:
