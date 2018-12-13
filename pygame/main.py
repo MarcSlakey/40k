@@ -51,6 +51,7 @@ class Game:
 		self.selected_unit = None
 		self.target_model = None
 		self.target_unit = None
+		self.unallocated_wounds = 0
 
 		self.reset_all_button = Button(self, "RESET MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
@@ -171,6 +172,17 @@ class Game:
 
 	#Game Loop - Event Handling
 	def events(self):
+		def model_selection(game):
+			for model in game.selectable_models:
+				if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+					game.selected_model = model
+					print("\nSelected a model:")
+					print(game.selected_model)
+					game.selected_unit = model.unit
+					print("Selected model's parent unit:")
+					print(game.selected_unit.name)
+					
+
 		if self.current_phase == "Movement Phase":
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -199,25 +211,11 @@ class Game:
 								self.reset_moves(model)
 
 						if self.selected_model == None:
-							for model in self.selectable_models:
-								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = model
-									print("\nSelected a model:")
-									print(self.selected_model)
-									self.selected_unit = model.unit
-									print("Selected model's parent unit:")
-									print(self.selected_unit.name)
+							model_selection(self)
 
 						elif self.selected_model != None:
 							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
-							for model in self.selectable_models:
-								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = model
-									print("\nSelected a model:")
-									print(self.selected_model)
-									self.selected_unit = model.unit
-									print("Selected model's parent unit:")
-									print(self.selected_unit.name)
+							model_selection(self)
 
 					elif event.button == 2:	#Middle mouse button
 						pass
@@ -253,39 +251,36 @@ class Game:
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
-					#If a model is not selected, LMB selects a model.
 					if event.button == 1:	#LMB
 						if self.selected_model == None:
-							for model in self.selectable_models:
-								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									self.selected_model = model
-									print("\nSelected a model:")
-									print(self.selected_model)
-									self.selected_unit = model.unit
-									print("Selected model's parent unit:")
-									print(self.selected_unit.name)
-									self.los_check(self.selected_model)
+							model_selection(self)
+							self.los_check(self.selected_model)
 									
 						elif self.selected_model != None:
+							#Attack button
 							if self.target_unit != None:
 								if self.attack_button.mouse_over():
 									self.selected_model.attack_with_weapon(self.target_unit)
-									Bullet(self, self.selected_model, self.target_model)
+									if self.unallocated_wounds > 0:
+										self.current_phase = "Wound Allocation"
 
+								else:
+									self.selected_model.valid_shots.clear()
+									self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
+									self.selected_unit = None
+									self.target_model = None
+									self.target_unit = None
+									model_selection(self)
+									if self.selected_model != None:
+										self.los_check(self.selected_model)
 							else:
-								self.selected_model.valid_shots.clear()
-								self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
-								self.selected_unit = None
-								self.target_model = None
-								self.target_unit = None
-								for model in self.selectable_models:
-									if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-										self.selected_model = model
-										print("\nSelected a model:")
-										print(self.selected_model)
-										self.selected_unit = model.unit
-										print("Selected model's parent unit:")
-										print(self.selected_unit.name)
+									self.selected_model.valid_shots.clear()
+									self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
+									self.selected_unit = None
+									self.target_model = None
+									self.target_unit = None
+									model_selection(self)
+									if self.selected_model != None:
 										self.los_check(self.selected_model)
 
 					elif event.button == 2: #Middle mouse button
@@ -293,29 +288,59 @@ class Game:
 							self.los_check(self.selected_model)
 
 					elif event.button == 3:	#RMB
-						self.target_model = None
-						self.target_unit = None
-						shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
-						shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-						shot_distance = find_hypotenuse(shot_x, shot_y)
+						if self.selected_model != None:
+							self.target_model = None
+							self.target_unit = None
+							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
+							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
+							shot_distance = find_hypotenuse(shot_x, shot_y)
 
+							#Target selection
+							for model in self.targets:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									if shot_distance <= self.selected_model.weapons[0].w_range:
+										if model in self.selected_model.valid_shots:
+											self.target_model = model
+											self.target_unit = model.unit
+
+		elif self.current_phase == "Wound Allocation":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif keys[pygame.K_RETURN]:
+						pass
+	
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
 						for model in self.targets:
 							if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-								if shot_distance <= self.selected_model.weapons[0].w_range:
-									if model in self.selected_model.valid_shots:
-										self.target_model = model
-										self.target_unit = model.unit
+								if model in self.target_unit.models:
+									model.wounds -= 1
+									self.unallocated_wounds -= 1
+									print("\nAllocated wound to: ")
+									print(model)
+									print("This model is part of unit:")
+									print(model.unit)
+									if self.unallocated_wounds <= 0:
+										print("All wounds allocated, returning to shooting phase")
+										self.current_phase = "Shooting Phase"
 
+								else:
+									print("Chosen model not a valid target, please select a model in the target unit.")
 
-						#if shot_distance <= self.selected_model.weapons[0].w_range:
-						#	if self.target_model != None:
-						#		if self.target_model in self.selected_model.valid_shots:
-						#			Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model, self.target_model)
+					elif event.button == 2:	#Middle mouse button
+						pass
 
-							#for self.target in self.targets:
-							#	if self.target.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):		#Returns true if the spot clicked is in the target's rect
-							#		self.target.kill()
-
+					elif event.button == 3: #RMB
+						pass
 				
 	#Game Loop - Update
 	def update(self):
@@ -432,7 +457,7 @@ class Game:
 			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-TILESIZE, "w")
 
-		elif self.current_phase == "Shooting Phase":
+		elif self.current_phase == "Shooting Phase" or "Wound Allocation":
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)

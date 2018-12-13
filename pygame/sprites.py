@@ -105,9 +105,13 @@ class Model(pygame.sprite.Sprite):
 	def die(self):
 		if self in self.game.selected_model.valid_shots:
 			self.game.selected_model.valid_shots.remove(self)
+		self.unit.models.remove(self)
 		self.kill()
 
 	def update(self):
+		if self.wounds <= 0:
+			self.die()
+
 		if self.game.current_phase == "Movement Phase":
 			if self.valid_shots != None:
 				self.valid_shots.clear()
@@ -244,6 +248,7 @@ class Model(pygame.sprite.Sprite):
 		for i in range(shot_count):
 			print('Taking shot {}'.format(i+1))
 			self.single_shot(weapon_used, target_unit)
+			Bullet(self.game, self.game.selected_model, self.game.target_model)
 
 	def single_shot(self, weapon, target_unit):
 		"""Summary."""
@@ -287,12 +292,12 @@ class Model(pygame.sprite.Sprite):
 				return
 
 		if weapon.damage_dice == 0:
-			self.wounds -= weapon.damage
+			self.game.unallocated_wounds += weapon.damage
 			print('!  {} took {} damage from {}!'.format(self.name, weapon.damage, weapon.name))
 		else:
 			for i in range(weapon.damage_dice):
 				roll = random.randint(1, weapon.damage)
-				self.wounds -= roll
+				self.game.unallocated_wounds += roll
 				print('!  {} took {} damage from {}!'.format(self.name, roll, weapon.name))
 
 
