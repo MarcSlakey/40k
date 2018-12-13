@@ -182,7 +182,6 @@ class Game:
 					print("Selected model's parent unit:")
 					print(game.selected_unit.name)
 					
-
 		if self.current_phase == "Movement Phase":
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -254,7 +253,8 @@ class Game:
 					if event.button == 1:	#LMB
 						if self.selected_model == None:
 							model_selection(self)
-							self.los_check(self.selected_model)
+							if self.selected_model != None:
+								self.los_check(self.selected_model)
 									
 						elif self.selected_model != None:
 							#Attack button
