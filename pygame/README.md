@@ -35,12 +35,14 @@ The selected model will turn from yellow to green when within 2 squares of a mod
 The semi-circle on the top left of the screen will turn green if unit cohesion between the selectable models is established and is red otherwise.
 
 MOVE PHASE RULES:
+Selected model is colored either yellow or green depending on unit cohesion.
 Each model can only travel a set distance per turn. 
 Models cannot pass through each other.
 Additionally, models may not be moved within 1" (one tile size) of an enemy model (represented by a red radius around each enemy).
 Models that are part of a unit must maintain "unit cohesion." That is, they must end their move phase within 2" of another member of their unit.
 
 SHOOTING PHASE RULES:
+Selected model is green, other models in the same unit are cyan. 
 A model must have line of sight to an enemy and be in range of that enemy in order to shoot it. 
 Range is indicated by the thin red radius drawn around a selected model.
 Line of sight is blocked by other enemy models and terrain, but not by friendly models.

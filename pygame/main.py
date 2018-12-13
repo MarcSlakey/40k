@@ -50,6 +50,7 @@ class Game:
 		self.selected_model = None
 		self.selected_unit = None
 		self.target_model = None
+		self.target_unit = None
 
 		self.quitbutton = Button(self, "QUIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.reset_all_button = Button(self, "RESET MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
