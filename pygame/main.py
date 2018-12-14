@@ -383,8 +383,13 @@ class Game:
 									print(model)
 									print("This model is part of unit:")
 									print(model.unit)
-									if self.unallocated_wounds <= 0:
-										print("All wounds allocated, returning to shooting phase")
+									if self.unallocated_wounds <= 0 or len(self.target_unit.models) == 0:
+										if self.unallocated_wounds <= 0:
+											print("All wounds allocated!")
+										elif len(self.target_unit.models) == 0:
+											print("Target unit eliminated. No valid targets remain.")
+										print("Returning to shooting phase")
+										self.unallocated_wounds = 0
 										self.selected_model.valid_shots.clear()
 										self.selected_model = None
 										self.selected_unit = None
