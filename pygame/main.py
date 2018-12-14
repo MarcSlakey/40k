@@ -328,13 +328,11 @@ class Game:
 										self.current_phase = "Wound Allocation"
 
 								else:
-									print("A")
 									multiple_selection(self)
 									self.los_check(self.selected_model)
 									self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
 
 							else:
-								print("B")
 								multiple_selection(self)
 								self.los_check(self.selected_model)
 								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
