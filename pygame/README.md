@@ -64,16 +64,17 @@ Individual models are allocated damage once a group of shots have been resolved 
 
 CURRENTLY IMPLEMENTED:
 Movement Phase:
-	Basic movement
-	Max move distance
-	Collisions
-	Unit cohesion checking
+	Basic movement:
+		Max move distance
+		Collisions
+		Unit cohesion checking
 Shooting Phase:
-	Multi-shooter selection
-	Range checking
-	Group line of sight checking
-	Wound allocation
-	Model death
+	Basic Shooting:
+		Multi-shooter selection ("fast dice rolling")
+		Range checking
+		Group line of sight checking
+		Wound allocation
+		Model death
 Program:
 	Basic buttons
 	Info text
@@ -83,17 +84,40 @@ IN PROGRESS:
 
 FUTURE WORK:
 Movement Phase:
-	Advance moves
-	Fall back moves
+	Special movement:
+		Advance moves
+		Fall back moves
 Shooting Phase:
-Psychic Phase:
+	Weapon type interactions:
+		Rapid fire
+		Heavy
+		Assault (requires advance moves)
+		Rapid fire
+		Grenade
+		Pistols (requires basic melee phase)
+	Terrain/Cover modifiers
+	Character targeting ruless
 Charge Phase:
+	Unit selection (eligibility)
+	Targeting and charge declarations
+	Overwatch
+	Heroic intervention
 Fight Phase:
+	Pile in move
+	Targeting
+	Consolidation move
 Morale Phase:
 General:
+	Mortal wounds
 	Buff auras
 Program:
 	Control GUI
+
+Fancy Rules (for the distant future):
+	Transports
+	Psychic phase
+	Reinforcements
+
 
 CURRENT BUGS:
 Models "stick" to walls and other models when they collide. 
