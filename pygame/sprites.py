@@ -103,9 +103,14 @@ class Model(pygame.sprite.Sprite):
 		self.weapons.append(weapon)
 
 	def die(self):
-		if self.game.selected_model != None:
-			if self in self.game.selected_model.valid_shots:
-				self.game.selected_model.valid_shots.remove(self)
+		if self.game.selected_unit != None:
+			if self in self.game.selected_unit.valid_shots:
+				self.game.selected_unit.valid_shots.remove(self)
+
+		for model in self.game.selectable_models:
+			if self in model.valid_shots:
+				model.valid_shots.remove(self)
+
 		self.unit.models.remove(self)
 		print("{} died!".format(self.name))
 		self.kill()
@@ -255,7 +260,7 @@ class Model(pygame.sprite.Sprite):
 			for i in range(shot_count):
 				print('Taking shot {}'.format(i+1))
 				self.single_shot(weapon_used, target_unit)
-				Bullet(self.game, self.game.selected_model, self.game.target_model)
+				Bullet(self.game, self, self.game.target_model)
 
 	def single_shot(self, weapon, target_unit):
 		"""Summary."""

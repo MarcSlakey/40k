@@ -22,12 +22,13 @@ Click "Reset Moves" button to achieve the Spacebar effect but for all selectable
 "Home" will reset to a new game.
 
 SHOOTING PHASE CONTROLS:
-"LMB" on a model (circle) to select it. A model will turn yellow to indicate that it is selected. 
-	When a model is selected, the game will check that model's line of sight against enemies.
+"LMB" on a model (circle) to select it. 
+	Clicking a second model while one is already selected will attempt to make a group that can shoot at the same time.
 "RMB" while a model is selected will target a given model's unit for shooting if that model is in range AND in line of sight of the selected model.
 	Valid shooting targets will be highlighted yellow instead of red.
 	Once a unit is successfully selected for shooting its models will turn orange.
 Click "Fire Weapon" while a model AND a target unit are selected. If the shot does damage, the game will proceed to a "Wound Allocation" phase.
+"Spacebar" while any models are selected will reset clear all selections.
 "Enter/Return" will progress the game to the next turn and begin a new movement phase as long as you're not currently allocating wounds.
 "Home" will reset to a new game.
 
@@ -52,11 +53,14 @@ Models that are part of a unit must maintain "unit cohesion." That is, they must
 
 SHOOTING PHASE RULES:
 Selected model is green, other models in the same unit are cyan. 
+Models that have been cumulatively selected for simultaneous shooting have a blue dot on them.
+Models can only shoot as a group if they are in the same unit, have the same ballistic skill, use the same weapon, and are shooting at the same target unit.
 A model must have line of sight to an enemy and be in range of that enemy in order to shoot it. 
-Range is indicated by the thin red radius drawn around a selected model.
 Line of sight is blocked by other enemy models and terrain, but not by friendly models.
 Targets in LOS are painted yellow instead of red.
-
+Range is indicated by the thin red radius drawn around a selected model.
+Enemies are targeted as unit blocks, not as individuals. 
+Individual models are allocated damage once a group of shots have been resolved (been tested for hit, wound, and save)
 
 CURRENTLY IMPLEMENTED:
 Movement Phase:
@@ -64,11 +68,18 @@ Movement Phase:
 	Max move distance
 	Collisions
 	Unit cohesion checking
+Shooting Phase:
+	Multi-shooter selection
+	Range checking
+	Group line of sight checking
+	Wound allocation
+	Model death
+Program:
+	Basic buttons
+	Info text
 
 IN PROGRESS:
-Shooting Phase:
-	Range checking
-	Line of sight checking
+
 
 FUTURE WORK:
 Movement Phase:
@@ -81,7 +92,8 @@ Fight Phase:
 Morale Phase:
 General:
 	Buff auras
-
+Program:
+	Control GUI
 
 CURRENT BUGS:
 Models "stick" to walls and other models when they collide. 
