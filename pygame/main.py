@@ -328,7 +328,7 @@ class Game:
 								if model in self.target_unit.models:
 									model.wounds -= 1
 									self.unallocated_wounds -= 1
-									print("\nAllocated wound to: ")
+									print("\nAllocating wound to: ")
 									print(model)
 									print("This model is part of unit:")
 									print(model.unit)

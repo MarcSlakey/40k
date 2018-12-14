@@ -107,6 +107,7 @@ class Model(pygame.sprite.Sprite):
 			if self in self.game.selected_model.valid_shots:
 				self.game.selected_model.valid_shots.remove(self)
 		self.unit.models.remove(self)
+		print("{} died!".format(self.name))
 		self.kill()
 
 	def update(self):
