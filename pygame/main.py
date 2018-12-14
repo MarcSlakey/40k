@@ -247,6 +247,9 @@ class Game:
 						self.selected_unit = None
 						self.target_model = None
 						self.target_unit = None
+						for model in self.selectable_models:
+							for weapon in model.weapons:
+								weapon.fired = False
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:

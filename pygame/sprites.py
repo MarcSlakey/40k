@@ -236,20 +236,25 @@ class Model(pygame.sprite.Sprite):
 		First determines how many shots the weapon has, then fires those shots one by one at the target. 
 		"""
 		weapon_used = self.weapons[weapon_index]
-		if True:
-			if weapon_used.shot_dice == 0:
-				shot_count = weapon_used.shots
-			else:
-				shot_count = 0
-				for i in range(weapon_used.shot_dice):
-					roll = random.randint(1, weapon_used.shots)
-					shot_count += roll 
-			
-		print('\n{} takes {} shots against {} with {}.'.format(self.name, shot_count, target_unit.name, weapon_used.name))
-		for i in range(shot_count):
-			print('Taking shot {}'.format(i+1))
-			self.single_shot(weapon_used, target_unit)
-			Bullet(self.game, self.game.selected_model, self.game.target_model)
+		if weapon_used.fired == True:
+			print("Weapon has already fired this turn. Pick a different weapon or model.")
+			return
+		else:
+			weapon_used.fired = True
+			if True:
+				if weapon_used.shot_dice == 0:
+					shot_count = weapon_used.shots
+				else:
+					shot_count = 0
+					for i in range(weapon_used.shot_dice):
+						roll = random.randint(1, weapon_used.shots)
+						shot_count += roll 
+				
+			print('\n{} takes {} shots against {} with {}.'.format(self.name, shot_count, target_unit.name, weapon_used.name))
+			for i in range(shot_count):
+				print('Taking shot {}'.format(i+1))
+				self.single_shot(weapon_used, target_unit)
+				Bullet(self.game, self.game.selected_model, self.game.target_model)
 
 	def single_shot(self, weapon, target_unit):
 		"""Summary."""
