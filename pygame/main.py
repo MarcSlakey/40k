@@ -55,7 +55,7 @@ class Game:
 
 		self.reset_all_button = Button(self, "RESET MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
-		self.attack_button = Button(self, "FIRE WEAPON", self.generic_font, self.mediumText, WHITE,  WIDTH*3/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.attack_button = Button(self, "FIRE WEAPON", self.generic_font, self.mediumText, WHITE,  WIDTH*1/4, HEIGHT-4*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		
 
 		#TEST SPAWNS
@@ -510,6 +510,9 @@ class Game:
 				if self.target_unit != None:
 					for model in self.target_unit.models:
 						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+			#Unallocated wound counter
+			self.draw_text("{}Wound(s) to allocate!".format(self.unallocated_wounds), self.generic_font, self.largeText, YELLOW, WIDTH/2, HEIGHT - 5*TILESIZE, "center")
 
 			#Controls Info Text
 			self.draw_text("|LMB: allocate wound to model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-TILESIZE, "w")
