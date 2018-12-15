@@ -122,5 +122,6 @@ Fancy Rules (for the distant future):
 
 
 CURRENT BUGS:
+Models can maintain cohesion by simply being next to one of their unit models; thus a pair can break away from the rest of the unit.
 Models "stick" to walls and other models when they collide.
 During shooting phase, can add models to the shooting group even if they have fired all their weapons (although they do not fire again).
