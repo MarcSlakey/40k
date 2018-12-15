@@ -80,7 +80,8 @@ Program:
 	Info text
 
 IN PROGRESS:
-
+Shooting Phase:
+	Multiple weapons (selection)
 
 FUTURE WORK:
 Movement Phase:
