@@ -383,6 +383,8 @@ class Game:
 									print(model)
 									print("This model is part of unit:")
 									print(model.unit)
+									for model in self.target_unit.models:
+										model.update()
 									if self.unallocated_wounds <= 0 or len(self.target_unit.models) == 0:
 										if self.unallocated_wounds <= 0:
 											print("All wounds allocated!")
