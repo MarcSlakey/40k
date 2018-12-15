@@ -260,7 +260,8 @@ class Model(pygame.sprite.Sprite):
 			for i in range(shot_count):
 				print('Taking shot {}'.format(i+1))
 				self.single_shot(weapon_used, target_unit)
-				Bullet(self.game, self, self.game.target_model)
+				x = random.randint(0, len(target_unit.models)-1)
+				Bullet(self.game, self, target_unit.models[x])
 
 	def single_shot(self, weapon, target_unit):
 		"""Summary."""
