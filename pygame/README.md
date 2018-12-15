@@ -27,7 +27,8 @@ SHOOTING PHASE CONTROLS:
 "RMB" while a model is selected will target a given model's unit for shooting if that model is in range AND in line of sight of the selected model.
 	Valid shooting targets will be highlighted yellow instead of red.
 	Once a unit is successfully selected for shooting its models will turn orange.
-Click "Fire Weapon" while a model AND a target unit are selected. If the shot does damage, the game will proceed to a "Wound Allocation" phase.
+"MMB" (Middle click mouse) selects an entire squad.
+Click "Fire Weapon" while a friendly unit AND a target unit are selected to shoot. If the shots do damage, the game will proceed to a "Wound Allocation" phase.
 "Spacebar" while any models are selected will reset clear all selections.
 "Enter/Return" will progress the game to the next turn and begin a new movement phase as long as you're not currently allocating wounds.
 "Home" will reset to a new game.
