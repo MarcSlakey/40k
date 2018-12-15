@@ -256,7 +256,7 @@ class Model(pygame.sprite.Sprite):
 						roll = random.randint(1, weapon_used.shots)
 						shot_count += roll 
 				
-			print('\n{} takes {} shots against {} with {}.'.format(self.name, shot_count, target_unit.name, weapon_used.name))
+			print('\n{} takes {} shot(s) against {} with {}.'.format(self.name, shot_count, target_unit.name, weapon_used.name))
 			for i in range(shot_count):
 				print('Taking shot {}'.format(i+1))
 				self.single_shot(weapon_used, target_unit)
