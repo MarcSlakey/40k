@@ -615,7 +615,8 @@ class Game:
 		#General info text
 		self.draw_text("Turn #{}: {}".format(self.turn_count, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
 		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, TILESIZE, "w")
-
+		fps = int(self.clock.get_fps())
+		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 4*WIDTH/32, TILESIZE, "w")
 		self.bullets.draw
 
 		pygame.display.update()
