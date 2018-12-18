@@ -173,8 +173,8 @@ class Game:
 		self.target_unit = None
 		for target in self.targets:
 			#self.clock.tick(FPS) 	#not sure whether or not to tick here
-			pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
-			pygame.display.update()
+			#pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
+			#pygame.display.update()
 			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
 			#print("{}".format(x))
 			#x += 1
@@ -466,12 +466,12 @@ class Game:
 
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
-		pygame.draw.circle(self.screen, RED, ((24*WIDTH//32)-15, HEIGHT-TILESIZE), 15, 0)	
+		pygame.draw.circle(self.screen, RED, (int(23*WIDTH/32), int(HEIGHT-5*TILESIZE)), 15, 0)	
 		unit_cohesions = []
 		for sprite in self.selectable_models:
 			unit_cohesions.append(sprite.cohesion)
 		if all(unit_cohesions):
-			pygame.draw.circle(self.screen, GREEN, ((24*WIDTH//32)-15, HEIGHT-TILESIZE), 15, 0)
+			pygame.draw.circle(self.screen, GREEN, (int(23*WIDTH/32), int(HEIGHT-5*TILESIZE)), 15, 0)
 
 	#Text constructor from https://www.youtube.com/watch?v=MJ2GLVA7kaU
 	def draw_text(self, text, font_name, size, color, x, y, align="nw"):
