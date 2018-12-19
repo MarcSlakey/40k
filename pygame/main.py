@@ -80,6 +80,7 @@ class Game:
 		self.army2.add_unit(Unit('Ork Boyz 2'))
 		self.army2.add_unit(Unit('Ork Boyz 3'))
 		
+		self.active_army = self.army1
 
 		#Create walls, enemies from map.txt
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
@@ -90,37 +91,40 @@ class Game:
 				elif tile == 'M':
 					model = create_model_by_name('Initiate', self, col, row)
 					self.army1.units[0].add_model(model)
-					model.add(self.selectable_models)
 					model.unit = self.army1.units[0]
 					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 
 				elif tile == 'N':
 					model = create_model_by_name('Initiate', self, col, row)
 					self.army1.units[1].add_model(model)
-					model.add(self.selectable_models)
 					model.unit = self.army1.units[1]
 					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
 
 				elif tile == 'P':
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[0].add_model(model)
-					model.add(self.targets)
 					model.unit = self.army2.units[0]
 					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
 
 				elif tile == 'A':
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[1].add_model(model)
-					model.add(self.targets)
 					model.unit = self.army2.units[1]
 					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
 
 				elif tile == 'G':
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[2].add_model(model)
-					model.add(self.targets)
 					model.unit = self.army2.units[2]
 					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+
+		for unit in self.army1.units:
+			for model in unit.models:
+				self.selectable_models.add(model)
+
+		for unit in self.army2.units:
+			for model in unit.models:
+				self.targets.add(model)
 
 		print(self.army1)
 		print(self.army2)
@@ -141,6 +145,35 @@ class Game:
 		print("QUITTING")
 		pygame.quit()
 		sys.exit()
+
+
+	def change_active(self):
+		if self.active_army == self.army1:
+			self.active_army = self.army2
+			active_army = self.army2
+			inactive_army = self.army1
+
+		elif self.active_army == self.army2:
+			self.turn_count += 1
+			self.active_army = self.army1
+			active_army = self.army1
+			inactive_army = self.army2
+
+		self.selectable_models.empty()
+		self.targets.empty()
+
+		for unit in active_army.units:
+			for model in unit.models:
+				self.selectable_models.add(model)
+
+		for unit in inactive_army.units:
+			for model in unit.models:
+				self.targets.add(model)
+
+		if len(self.targets) == 0 or len(self.selectable_models) == 0:
+			self.playing = False
+
+
 
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self, model):
@@ -314,7 +347,6 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						self.refresh_moves()
-						self.turn_count += 1
 						self.current_phase = "Movement Phase"
 						self.shooting_models.clear()
 						self.selected_unit = None
@@ -323,6 +355,7 @@ class Game:
 						for model in self.selectable_models:
 							for weapon in model.weapons:
 								weapon.fired = False
+						self.change_active()
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -434,9 +467,6 @@ class Game:
 	#Game Loop - Update
 	def update(self):
 		self.all_sprites.update()
-
-		if len(self.targets) == 0:
-			self.playing = False
 
 	#Draws reference grid
 	def draw_grid(self):
@@ -613,10 +643,10 @@ class Game:
 			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
 		#General info text
-		self.draw_text("Turn #{}: {}".format(self.turn_count, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
-		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, TILESIZE, "w")
+		self.draw_text("Turn #{}: {} {}".format(self.turn_count, self.active_army.name, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
+		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*2), TILESIZE, "e")
 		fps = self.clock.get_fps()
-		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 4*WIDTH/32, TILESIZE, "w")
+		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 2*WIDTH/32, TILESIZE, "w")
 		self.bullets.draw
 
 		pygame.display.update()
