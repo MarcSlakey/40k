@@ -172,7 +172,7 @@ class Game:
 		self.target_model = None
 		self.target_unit = None
 		for target in self.targets:
-			#self.clock.tick(FPS) 	#not sure whether or not to tick here
+			self.clock.tick(FPS) 	#not sure whether or not to tick here
 			#pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
 			#pygame.display.update()
 			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
@@ -615,7 +615,7 @@ class Game:
 		#General info text
 		self.draw_text("Turn #{}: {}".format(self.turn_count, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
 		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, TILESIZE, "w")
-		fps = int(self.clock.get_fps())
+		fps = self.clock.get_fps()
 		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 4*WIDTH/32, TILESIZE, "w")
 		self.bullets.draw
 
