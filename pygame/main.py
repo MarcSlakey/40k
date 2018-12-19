@@ -3,6 +3,7 @@ Please see README.md for details on game rules and controls.
 """
 
 import pygame, random
+from pygame.locals import *
 import sys
 from os import path
 from settings import *
@@ -28,6 +29,7 @@ class Game:
 	def __init__(self):
 		pygame.init() 
 		#pygame.mixer.init()
+		#flags = FULLSCREEN | DOUBLEBUF | HWSURFACE
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 		pygame.display.set_caption(TITLE)
 		self.clock = pygame.time.Clock()
@@ -205,7 +207,6 @@ class Game:
 		self.target_model = None
 		self.target_unit = None
 		for target in self.targets:
-			self.clock.tick(FPS) 	#not sure whether or not to tick here
 			#pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
 			#pygame.display.update()
 			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
