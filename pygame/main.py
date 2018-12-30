@@ -16,6 +16,8 @@ from data_creation import *
 
 get_workbook_data()
 
+#Load game graphics
+
 def intersection(a, b):
 	#c = []
 	#for target in a:
@@ -36,11 +38,14 @@ class Game:
 		self.running = True
 
 	def load_data(self):
-		game_folder = path.dirname(__file__)
+		self.game_folder = path.dirname(__file__)
+		self.img_dir = path.join(self.game_folder, 'img')
 		self.map_data = []
-		with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+		with open(path.join(self.game_folder, 'map.txt'), 'rt') as f:
 			for line in f:
 				self.map_data.append(line)
+
+		self.spritesheet = Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 
 	#Initialize a new game
 	def new(self):
@@ -107,18 +112,24 @@ class Game:
 					self.army2.units[0].add_model(model)
 					model.unit = self.army2.units[0]
 					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image.set_colorkey(WHITE)
 
 				elif tile == 'A':
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[1].add_model(model)
 					model.unit = self.army2.units[1]
 					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image.set_colorkey(WHITE)
 
 				elif tile == 'G':
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[2].add_model(model)
 					model.unit = self.army2.units[2]
 					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image.set_colorkey(WHITE)
 
 		for unit in self.army1.units:
 			for model in unit.models:
@@ -479,11 +490,11 @@ class Game:
 	def draw_sprites(self):
 		self.all_sprites.draw(self.screen)
 
-		for sprite in self.selectable_models:
-			pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
+		#for sprite in self.selectable_models:
+			#pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
 
-		for sprite in self.targets:
-			pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
+		#for sprite in self.targets:
+			#pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
 
 	def draw_buttons(self):
 		if self.current_phase == "Movement Phase":
@@ -546,6 +557,8 @@ class Game:
 		self.draw_buttons()
 			
 		if self.current_phase == "Movement Phase":	
+			
+			#Model base drawing/coloring
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
@@ -579,10 +592,11 @@ class Game:
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
 		elif self.current_phase == "Shooting Phase":
+			#Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
-
+			#Model base drawing/coloring
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
@@ -612,10 +626,13 @@ class Game:
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
 		elif self.current_phase == "Wound Allocation":
+		
+			#Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
 
+			#Model base drawing/coloring
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)

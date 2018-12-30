@@ -1,5 +1,6 @@
 import pygame
 import random
+from os import path
 from math import *
 from settings import *
 from ray_casting import *
@@ -15,7 +16,19 @@ def find_hypotenuse(x, y):
 def one_inch_scale():		# Scales the collision circle to the one inch out from the model's base
 	pass
 
-class Model(pygame.sprite.Sprite):
+
+class Spritesheet:
+	# utility class for loading and parsing spritesheets
+	def __init__(self, filename):
+		self.spritesheet = pygame.image.load(filename).convert()
+
+	def get_image(self, x, y, width, height):
+		# grab a particular image off the spritesheet
+		image = pygame.Surface((width, height))
+		image.blit(self.spritesheet, (0,0), (x, y, width, height))
+		return image
+
+class Model(pygame.sprite.DirtySprite):
 
 	""" Model class
 	
@@ -46,9 +59,11 @@ class Model(pygame.sprite.Sprite):
 		self.groups = [game.all_sprites, game.all_models]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.game = game
-		self.image = pygame.Surface((TILESIZE, TILESIZE))
+		self.image = pygame.transform.scale(pygame.image.load(path.join(self.game.img_dir, 'marine_bolter.png')).convert(), (40, 50))
+		self.image.set_colorkey(WHITE)
 		self.rect = self.image.get_rect()
 		self.radius = radius 		#represents the model's base size
+		self.dirty = 1
 
 		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + 1/2 inch
 		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius
@@ -314,7 +329,7 @@ class Model(pygame.sprite.Sprite):
 				print('!  {} took {} damage from {}!'.format(self.name, roll, weapon.name))
 
 
-class Wall(pygame.sprite.Sprite):
+class Wall(pygame.sprite.DirtySprite):
 	def __init__(self, game, x, y):
 		self.groups = [game.all_sprites, game.walls]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
@@ -328,7 +343,7 @@ class Wall(pygame.sprite.Sprite):
 		self.rect.y = y * TILESIZE
 
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet(pygame.sprite.DirtySprite):
 	def __init__(self, game, shooter, target):
 		self.groups = [game.all_sprites, game.bullets]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality

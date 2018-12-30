@@ -79,10 +79,13 @@ Shooting Phase:
 Program:
 	Basic buttons
 	Info text
+Optimization:
+	Lock/unlock screen around multiple draw() calls
 
 IN PROGRESS:
-Shooting Phase:
-	Multiple weapons (selection)
+Program:
+	Dirty rect animation
+	
 
 FUTURE WORK:
 Movement Phase:
@@ -91,6 +94,7 @@ Movement Phase:
 		Fall back moves
 Shooting Phase:
 	Weapon type interactions:
+		Multiple weapons (selection)
 		Rapid fire
 		Heavy
 		Assault (requires advance moves)
@@ -122,6 +126,6 @@ Fancy Rules (for the distant future):
 
 
 CURRENT BUGS:
-Models can maintain cohesion by simply being next to one of their unit models; thus a pair can break away from the rest of the unit.
-Models "stick" to walls and other models when they collide.
-During shooting phase, can add models to the shooting group even if they have fired all their weapons (although they do not fire again).
+Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This is because I've implemented the RAW; a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency.
+Models "stick" to walls and other models when they collide; although this is workable, it feels terrible and should be improved by pathfinding.
+During shooting phase, can "add" models to the shooting group even if they have fired all their weapons (although they do not fire again).
