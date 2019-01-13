@@ -83,8 +83,7 @@ Optimization:
 	Lock/unlock screen around multiple draw() calls
 
 IN PROGRESS:
-Program:
-	Dirty rect animation
+
 	
 
 FUTURE WORK:
@@ -118,6 +117,7 @@ General:
 	Buff auras
 Program:
 	Control GUI
+	Dirty rect animation
 
 Fancy Rules (for the distant future):
 	Transports
@@ -126,6 +126,7 @@ Fancy Rules (for the distant future):
 
 
 CURRENT BUGS:
+LOS checks are currently very slow, especially when doing multi-shooter LOS checks.
 Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This is because I've implemented the RAW; a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency.
 Models "stick" to walls and other models when they collide; although this is workable, it feels terrible and should be improved by pathfinding.
 There is no way to collide the circular model bases with rectangular terrain. Need to write custom collision code for this interaction.

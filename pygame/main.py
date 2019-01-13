@@ -270,7 +270,7 @@ class Game:
 							print("Selected model's parent unit:")
 							print(game.selected_unit)
 							print("Models selected:")
-							print(game.shooting_models)
+							#print(game.shooting_models)
 
 						else:
 							print("Chosen model not in same unit as currently selected shooting models.")
@@ -290,7 +290,7 @@ class Game:
 						print("Selected model's parent unit:")
 						print(game.selected_unit)
 						print("Models selected:")
-						print(game.shooting_models)
+						#print(game.shooting_models)
 						
 		if self.current_phase == "Movement Phase":
 			for event in pygame.event.get():
