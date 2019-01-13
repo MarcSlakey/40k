@@ -28,7 +28,7 @@ class Spritesheet:
 		image.blit(self.spritesheet, (0,0), (x, y, width, height))
 		return image
 
-class Model(pygame.sprite.DirtySprite):
+class Model(pygame.sprite.Sprite):
 
 	""" Model class
 	
@@ -63,7 +63,6 @@ class Model(pygame.sprite.DirtySprite):
 		self.image.set_colorkey(WHITE)
 		self.rect = self.image.get_rect()
 		self.radius = radius 		#represents the model's base size
-		self.dirty = 1
 
 		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + 1/2 inch
 		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius
@@ -329,7 +328,7 @@ class Model(pygame.sprite.DirtySprite):
 				print('!  {} took {} damage from {}!'.format(self.name, roll, weapon.name))
 
 
-class Wall(pygame.sprite.DirtySprite):
+class Wall(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
 		self.groups = [game.all_sprites, game.walls]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
@@ -343,7 +342,7 @@ class Wall(pygame.sprite.DirtySprite):
 		self.rect.y = y * TILESIZE
 
 
-class Bullet(pygame.sprite.DirtySprite):
+class Bullet(pygame.sprite.Sprite):
 	def __init__(self, game, shooter, target):
 		self.groups = [game.all_sprites, game.bullets]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
