@@ -128,4 +128,5 @@ Fancy Rules (for the distant future):
 CURRENT BUGS:
 Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This is because I've implemented the RAW; a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency.
 Models "stick" to walls and other models when they collide; although this is workable, it feels terrible and should be improved by pathfinding.
+There is no way to collide the circular model bases with rectangular terrain. Need to write custom collision code for this interaction.
 During shooting phase, can "add" models to the shooting group even if they have fired all their weapons (although they do not fire again).
