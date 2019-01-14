@@ -45,10 +45,10 @@ class Button(object):
 		if align == "center":
 			self.text_rect.center = (self.x, self.y)
 
+		self.outline = pygame.Rect(self.x, self.y, self.text_rect.width + 10,self.text_rect.height + 10)
 
 
 	def draw(self):
-		self.outline = pygame.Rect(self.x, self.y, self.text_rect.width + 10,self.text_rect.height + 10)
 		if self.align == "nw":
 			self.outline.topleft = (self.x, self.y)
 		if self.align == "ne":

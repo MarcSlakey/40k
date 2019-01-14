@@ -43,7 +43,7 @@ class Model(pygame.sprite.Sprite):
 		x: spawn coordinates; allows initializing with a tile number which is then converted to pixels
 		y: same as above
 		rect.center: the location of the sprite's center point
-		original_pos: tuple to store the sprite's spawn location
+		original_pos: tuple to store the sprite's start of turn location
 		radius: represents the model's base in the tabletop game
 		dest_x: stores mouse click location during movements
 		dest_y: same as above
@@ -85,7 +85,6 @@ class Model(pygame.sprite.Sprite):
 		self.dest_y = self.y
 		self.shot_dest_x = 0
 		self.shot_dest_y = 0
-		#self.weapon_range = 24*TILESIZE
 		self.speed = 1
 		self.rot = 0
 		self.vel = vec(0,0)
@@ -106,6 +105,12 @@ class Model(pygame.sprite.Sprite):
 		self.weapons = []
 		self.unit = None
 		self.valid_shots = []	# List of valid shooting targets
+		self.charge_move = 0
+
+		#Special movement flags
+		self.charged = False
+		self.advanced = False
+		self.fell_back = False
 		
 
 	def __str__(self):
@@ -250,6 +255,112 @@ class Model(pygame.sprite.Sprite):
 						print("{}".format(x))
 						x += 1
 			"""
+
+		if self.game.current_phase == "Charge Phase":
+			if self.valid_shots != None:
+				self.valid_shots.clear()
+			temp_x = self.x	
+			temp_y = self.y
+			current_move = 0
+			self.cohesion = False
+
+			def revert_move():
+				self.x = temp_x
+				self.y = temp_y
+				#print("Coordinates reverted to ({},{})".format(self.x, self.y))
+
+			if self.dest_x != self.x and self.dest_y != self.y:
+				#print("\n\n-------NEW STEP-------")
+				#print("Pre-move coord: ({},{})".format(self.x, self.y))
+				delta_x = self.x - self.dest_x
+				delta_y = self.y - self.dest_y
+				current_move = find_hypotenuse(delta_x, delta_y)
+				"""
+				print("Current coordinates: {},{}".format(self.x, self.y))
+				print("Target coordinate: {},{}".format(self.dest_x, self.dest_y))
+				print("delta_x: {} pixels".format(delta_x))
+				print("delta_y: {} pixels".format(delta_y))
+				print("delta hypot: {} pixels".format(current_move))
+				"""
+
+				#Attempts to move the model if the desired move is within the unit's max move
+				if self.charge_move > 0:
+					model_pos = vec(self.x, self.y)
+					dest_pos = vec(self.dest_x, self.dest_y)
+					self.rot = (dest_pos - model_pos).angle_to(vec(1,0))	#Calculates the angle between desired vector and basic x vector
+					self.acc = vec(self.speed, 0).rotate(-self.rot)		#Sets the acceleration vector's to angle and magnitude
+					self.acc += self.vel * -.4	#Friction coefficient; the higher the velocity, the higher this number is.
+					self.vel += self.acc
+
+					#print("\nRot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
+					#print("Velocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
+
+					pixels_x = int(self.vel[0])
+					pixels_y = int(self.vel[1])
+					distance_moved = find_hypotenuse(pixels_x, pixels_y)
+
+					self.x += pixels_x
+					self.y += pixels_y
+					self.rect.center = (self.x, self.y)
+
+					#Model base collision
+					for sprite_x in self.game.all_models:
+						if sprite_x != self:
+							if pygame.sprite.collide_circle(self, sprite_x):
+								#print("\n!Collision with between self and model!")
+								revert_move()
+								self.rect.center = (self.x, self.y)
+								self.dest_x = self.x
+								self.dest_y = self.y
+
+					#Melee collision
+					for sprite_x in self.game.targets:
+						if sprite_x != self:
+							if pygame.sprite.collide_circle_ratio(sprite_x.melee_ratio)(self, sprite_x):
+								#print("\n!Collision with between self and enemy melee radius!")
+								revert_move()
+								self.rect.center = (self.x, self.y)
+								self.dest_x = self.x
+								self.dest_y = self.y
+
+					#Terrain collision
+					for sprite_x in self.game.walls:
+						if pygame.sprite.collide_rect(self, sprite_x):
+							#print("\n!Collision with between self and terrain!")
+							revert_move()
+							self.rect.center = (self.x, self.y)
+							self.dest_x = self.x
+							self.dest_y = self.y
+
+					#Max move reduced if model moved at all
+					if self.x != temp_x or self.y != temp_y:	
+						self.charge_move -= distance_moved
+						#print("\nSuccessful move!")
+						#print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
+						#print("Max move Remaining: {}".format(self.max_move))
+						#print("\nPost-move coord: ({},{})".format(self.x, self.y))
+					else:
+						pass
+						#print("\nFailed move.")
+						#print("Coordinates unchanged.")
+
+					
+					
+				else:
+					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
+					self.dest_x = self.x
+					self.dest_y = self.y
+
+			else:
+				self.dest_x = self.x
+				self.dest_y = self.y
+				self.rect.center = (self.x, self.y)
+
+			#Unit cohesion checker
+			for sprite in self.unit.models:
+				if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
+					self.cohesion = True
+					
 	def attack_with_weapon(self, target_unit, weapon_index = 0):
 		"""Initiates an attack against the next valid target in the opposing army.
 
