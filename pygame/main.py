@@ -359,7 +359,7 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						self.refresh_moves()
-						self.current_phase = "Movement Phase"
+						self.current_phase = "Charge Phase"
 						self.shooting_models.clear()
 						self.selected_unit = None
 						self.target_model = None
@@ -367,7 +367,7 @@ class Game:
 						for model in self.selectable_models:
 							for weapon in model.weapons:
 								weapon.fired = False
-						self.change_active()
+						
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -469,6 +469,37 @@ class Game:
 
 								else:
 									print("Chosen model not a valid target, please select a model in the target unit.")
+
+					elif event.button == 2:	#Middle mouse button
+						pass
+
+					elif event.button == 3: #RMB
+						pass
+
+
+		elif self.current_phase == "Charge Phase":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif keys[pygame.K_RETURN]:
+						self.current_phase = "Movement Phase"
+						self.selected_model = None
+						self.selected_unit = None
+						self.target_model = None
+						self.target_unit = None
+						self.change_active()
+	
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+						pass
 
 					elif event.button == 2:	#Middle mouse button
 						pass
