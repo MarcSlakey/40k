@@ -68,11 +68,13 @@ class Game:
 		self.target_model = None
 		self.target_unit = None
 		self.unallocated_wounds = 0
+		self.charging_unit = None
 		self.charge_range = 0
 
 		self.reset_all_button = Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-
 		self.attack_button = Button(self, "FIRE WEAPON", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.charge_button = Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-1.5*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+
 		
 
 		#TEST SPAWNS
@@ -160,6 +162,8 @@ class Game:
 		pygame.quit()
 		sys.exit()
 
+	#Switches active army. Meant to be used at the end of the last phase (morale phase). Turn count incremented here
+	#Also checks for whether either of the armies has been destroyed.
 	def change_active(self):
 		if self.active_army == self.army1:
 			self.active_army = self.army2
@@ -186,6 +190,27 @@ class Game:
 		if len(self.targets) == 0 or len(self.selectable_models) == 0:
 			self.playing = False
 
+	#Repopulates the selectable_models and target sprite groups according to current active_army
+	def reset_active(self):
+		if self.active_army == self.army1:
+			active_army = self.army1
+			inactive_army = self.army2
+
+		elif self.active_army == self.army2:
+			active_army = self.army2
+			inactive_army = self.army1
+
+		self.selectable_models.empty()
+		self.targets.empty()
+
+		for unit in active_army.units:
+			for model in unit.models:
+				self.selectable_models.add(model)
+
+		for unit in inactive_army.units:
+			for model in unit.models:
+				self.targets.add(model)
+
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self, model):
 		if model.x != model.original_pos[0] or model.y != model.original_pos[1]:
@@ -195,21 +220,13 @@ class Game:
 			model.y = model.original_pos[1]
 			model.dest_x = model.x
 			model.dest_y = model.y
-			model.max_move = model.original_max_move
-			#print("Max_move after reset: {}.".format(model.max_move))
-			#print("Sprite location after reset: ({},{})".format(model.x, model.y))
-
-	def reset_charge(self, model):
-		if model.x != model.original_pos[0] or model.y != model.original_pos[1]:
-			#print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(model.x, model.y, model.original_pos[0], model.original_pos[1]))
-			#print("Max_move before reset: {}".format(model.max_move))
-			model.x = model.original_pos[0]
-			model.y = model.original_pos[1]
-			model.dest_x = model.x
-			model.dest_y = model.y
-			model.charge_move = self.charge_range
-			#print("Max_move after reset: {}.".format(model.max_move))
-			#print("Sprite location after reset: ({},{})".format(model.x, model.y))
+			
+			if self.current_phase == "Move Phase":
+				model.max_move = model.original_max_move
+				#print("Max_move after reset: {}.".format(model.max_move))
+				#print("Sprite location after reset: ({},{})".format(model.x, model.y))
+			elif self.current_phase == "Charge Move":
+				model.charge_move = self.charge_range
 
 	def refresh_moves(self):
 		for sprite in self.selectable_models:
@@ -251,6 +268,14 @@ class Game:
 			model.charged = False
 			model.advanced = False
 			model.fell_back = False
+
+	def charge_roll(self, unit):
+		roll = random.randint(1,6)
+		print("Die rolled; charge distance for {} set to {}".format(unit, roll))
+		self.charge_range = roll*TILESIZE
+		for model in unit.models:
+			model.charge_move = self.charge_range
+
 
 	#Game Loop - Event Handling
 	def events(self):
@@ -379,7 +404,6 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
-						self.refresh_moves()
 						self.current_phase = "Charge Phase"
 						self.shooting_models.clear()
 						self.clear_selections()
@@ -507,9 +531,10 @@ class Game:
 						g.new()
 
 					elif keys[pygame.K_RETURN]:
-						self.current_phase = "Movement Phase"
-						self.clear_selections()
-						self.change_active()
+						pass
+						#self.current_phase = "Movement Phase"
+						#self.clear_selections()
+						#self.change_active()
 	
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -518,7 +543,170 @@ class Game:
 							for model in self.selectable_models:
 								self.reset_moves(model)
 
+						if self.charge_button.mouse_over() and self.selected_model != None and self.target_model != None:
+							print("\nCharge target confirmed. Proceeding to overwatch response.")
+							self.current_phase = "Overwatch"
+							self.selectable_models.empty()
+							self.targets.empty()
+							for model in self.selected_unit.models:
+								self.targets.add(model)
+							for model in self.target_unit.models:
+								self.selectable_models.add(model)
+							overwatch_unit = self.target_unit
+							self.charging_unit = self.selected_unit
+							self.clear_selections
+							self.target_unit = self.charging_unit
+							self.selected_unit = overwatch_unit
+
 						elif self.selected_model == None:
+							model_selection(self)
+
+						elif self.selected_model != None:
+							self.selected_model = None 	#Defaults to deselecting current model if another model isn't clicked
+							self.selected_unit = None
+							model_selection(self)
+
+					elif event.button == 2:	#Middle mouse button
+						pass
+
+					elif event.button == 3: #RMB
+						if self.selected_model != None:
+							self.target_model = None
+							self.target_unit = None
+							charge_x = self.selected_model.x - pygame.mouse.get_pos()[0]
+							charge_y = self.selected_model.y - pygame.mouse.get_pos()[1]
+							charge_distance = find_hypotenuse(charge_x, charge_y)
+
+							#Target selection
+							for model in self.targets:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									if charge_distance <= 12*TILESIZE:
+										self.target_model = model
+										self.target_unit = model.unit
+									else:
+										print("\nAttempted selection outside of max charge range.")
+										print("Select a different charge target.")
+
+		elif self.current_phase == "Overwatch":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif keys[pygame.K_SPACE]:
+						for model in self.shooting_models:
+							model.valid_shots.clear()
+						self.shooting_models.clear()
+						if self.selected_unit != None:
+							self.selected_unit.valid_shots.clear()
+						self.clear_selections()
+
+					elif keys[pygame.K_RETURN]:
+						self.current_phase = "Charge Move"
+						for model in self.selectable_models:
+							for weapon in model.weapons:
+								weapon.fired = False
+						self.selectable_models.empty()
+						self.targets.empty()
+						for model in self.charging_unit.models:
+							self.selectable_models.add(model)
+						self.shooting_models.clear()
+						self.clear_selections()
+						self.selected_unit = self.charging_unit
+						self.charge_roll(self.charging_unit)
+						
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB
+						if len(self.shooting_models) == 0:
+							multiple_selection(self)
+							if len(self.shooting_models) > 0:
+								self.los_check(self.selected_model)
+								self.selected_unit.valid_shots = self.selected_model.valid_shots
+									
+						elif len(self.shooting_models) > 0:
+							#Attack button
+							if self.target_unit != None:
+								if self.attack_button.mouse_over():
+									for model in self.shooting_models:
+										model.attack_with_weapon(self.target_unit)
+									if self.unallocated_wounds > 0:
+										self.current_phase = "Wound Allocation"
+
+								else:
+									multiple_selection(self)
+									self.los_check(self.selected_model)
+									self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
+
+							else:
+								multiple_selection(self)
+								self.los_check(self.selected_model)
+								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
+
+					elif event.button == 2: #Middle mouse button
+						self.shooting_models.clear()
+						self.selected_unit = None
+						mass_selection(self)
+						if len(self.shooting_models) > 0:
+							self.los_check(self.selected_model)
+							self.selected_unit.valid_shots = self.selected_model.valid_shots
+							for model in self.shooting_models:
+								self.los_check(model)
+								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, model.valid_shots)
+
+					elif event.button == 3:	#RMB
+						if len(self.shooting_models) > 0:
+							self.target_model = None
+							self.target_unit = None
+							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
+							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
+							shot_distance = find_hypotenuse(shot_x, shot_y)
+
+							#Target selection
+							for model in self.targets:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									if shot_distance <= self.selected_model.weapons[0].w_range:
+										if model in self.selected_unit.valid_shots:
+											self.target_model = model
+											self.target_unit = model.unit
+
+		elif self.current_phase == "Charge Move":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif self.selected_model != None and keys[pygame.K_SPACE]:
+						self.reset_moves(self.selected_model)
+
+					elif keys[pygame.K_RETURN]:
+						if self.cohesion_check():
+							self.current_phase = "Charge Phase"
+							for model in self.charging_unit.models:
+								model.charge_move = 0
+							self.clear_selections()
+							self.charging_unit = None
+							self.reset_active()
+	
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+						if self.reset_all_button.mouse_over():
+							for model in self.selectable_models:
+								self.reset_moves(model)
+
+						if self.selected_model == None:
 							model_selection(self)
 
 						elif self.selected_model != None:
@@ -529,7 +717,10 @@ class Game:
 						pass
 
 					elif event.button == 3: #RMB
-						pass
+						if self.selected_model != None:
+							self.selected_model.dest_x = pygame.mouse.get_pos()[0]
+							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
+
 				
 	#Game Loop - Update
 	def update(self):
@@ -550,16 +741,6 @@ class Game:
 
 		#for sprite in self.targets:
 			#pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
-
-	def draw_buttons(self):	#Not used currently; buttons are drawn in phase draw sections
-		if self.current_phase == "Movement Phase" or "Charge Phase":
-			self.reset_all_button.draw()
-			self.reset_all_button.fill()
-
-		elif self.current_phase == "Shooting Phase":
-			self.attack_button.draw()
-			self.attack_button.fill()
-
 
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
@@ -612,6 +793,10 @@ class Game:
 			
 		if self.current_phase == "Movement Phase":	
 			#Model base drawing/coloring
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
@@ -721,9 +906,12 @@ class Game:
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
-		if self.current_phase == "Charge Phase":
-			
+		elif self.current_phase == "Charge Phase":
 			#Model base drawing/coloring
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
@@ -732,7 +920,101 @@ class Game:
 
 				#Remaining charge move radius
 				if self.selected_model.charge_move != 0:
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.charge_range), 1)
+					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.charge_range), 1)
+
+				#Max charge move radius
+				if self.selected_model.charge_move == 0:
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), 12*TILESIZE, 1)
+
+				#Melee radius (one inch)
+				for sprite in self.targets:
+					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+
+				#Cohesion radius (two inches)	
+				for sprite in self.selected_model.unit.models:
+					if sprite != self.selected_model:
+						pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
+
+				#Target unit indicator
+				if self.target_unit != None:
+					for model in self.target_unit.models:
+						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+			#Draws large semi-circle cohesion indicator
+			self.draw_cohesion_indicator()	
+
+			#Buttons
+			self.reset_all_button.draw()
+			self.reset_all_button.fill()
+
+			self.charge_button.draw()
+			self.charge_button.fill()
+
+
+
+			#Controls Info Text	
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
+			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+
+		elif self.current_phase == "Overwatch":
+			#Model base drawing/coloring
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
+			if self.selected_model != None:
+				#Selected model indicator
+				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
+				#Weapon range radius
+				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+
+				#Targets in LOS
+				if self.selected_unit != None:
+					if len(self.selected_unit.valid_shots) > 0:
+						for model in self.selected_unit.valid_shots:
+							pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
+
+				if self.target_unit != None:
+					for model in self.target_unit.models:
+						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+			if len(self.shooting_models) > 0:
+				for model in self.shooting_models:
+					pygame.draw.circle(self.screen, BLUE, model.rect.center, int((model.radius)/2), 0)
+
+			#Buttons
+			self.attack_button.draw()
+			self.attack_button.fill()
+
+			#Controls Info Text
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|MMB: select entire unit|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
+			self.draw_text("|RMB: select target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: deselect shooters|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")	
+
+		elif self.current_phase == "Charge Move":	
+			#Model base drawing/coloring
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
+			if self.selected_model != None:
+				#Selected model indicator
+				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
+				if self.selected_model.cohesion:
+					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
+				#Weapon range radius
+				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+
+				#Remaining move radius
+				if self.selected_model.charge_move >= 1:
+					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.charge_move), 1)
 
 				#Melee radius (one inch)
 				for sprite in self.targets:
@@ -756,8 +1038,6 @@ class Game:
 			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-
-			
 
 		#General info text
 		self.draw_text("Turn #{}: {} {}".format(self.turn_count, self.active_army.name, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")

@@ -52,6 +52,7 @@ class Model(pygame.sprite.Sprite):
 		weapon_range: same as above
 		max_move: a model's moves are subtracted from this value during the move phase
 		original_max_move: tuple; stores the max_move so it can be reset 
+		charge_move: distance the model can move during charge phase. This is rolled (D6) each time a new charge is declared.
 
 	"""
 	
@@ -243,7 +244,8 @@ class Model(pygame.sprite.Sprite):
 				if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
 					self.cohesion = True
 
-		if self.game.current_phase == "Shooting Phase":
+		elif self.game.current_phase == "Shooting Phase":
+			pass
 			"""
 			if self.game.selected_model == self:
 				print("A model is selected")
@@ -256,7 +258,7 @@ class Model(pygame.sprite.Sprite):
 						x += 1
 			"""
 
-		if self.game.current_phase == "Charge Phase":
+		elif self.game.current_phase == "Charge Move":
 			if self.valid_shots != None:
 				self.valid_shots.clear()
 			temp_x = self.x	
@@ -337,7 +339,7 @@ class Model(pygame.sprite.Sprite):
 						self.charge_move -= distance_moved
 						#print("\nSuccessful move!")
 						#print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
-						#print("Max move Remaining: {}".format(self.max_move))
+						#print("Max move Remaining: {}".format(self.charge_move))
 						#print("\nPost-move coord: ({},{})".format(self.x, self.y))
 					else:
 						pass
@@ -347,7 +349,7 @@ class Model(pygame.sprite.Sprite):
 					
 					
 				else:
-					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
+					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.charge_move))
 					self.dest_x = self.x
 					self.dest_y = self.y
 
@@ -360,7 +362,7 @@ class Model(pygame.sprite.Sprite):
 			for sprite in self.unit.models:
 				if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
 					self.cohesion = True
-					
+
 	def attack_with_weapon(self, target_unit, weapon_index = 0):
 		"""Initiates an attack against the next valid target in the opposing army.
 
@@ -391,11 +393,14 @@ class Model(pygame.sprite.Sprite):
 	def single_shot(self, weapon, target_unit):
 		"""Summary."""
 		roll = random.randint(1,6)
-		if roll < self.ballistic_skill:
-			print('  Failed to hit.')
-			return
-
-		# target_unit.hit_with_weapon(weapon)
+		if self.game.current_phase == "Shooting Phase":
+			if roll < self.ballistic_skill:
+				print('  Failed to hit.')
+				return
+		elif self.game.current_phase == "Overwatch":
+			if roll != 6:
+				print('  Overwatch shot failed to hit.')
+				return
 
 		roll = random.randint(1,6)
 		#Target toughness is always homogeneous within a unit
