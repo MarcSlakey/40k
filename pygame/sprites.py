@@ -13,10 +13,6 @@ def find_hypotenuse(x, y):
 	hypotenuse = sqrt(x*x + y*y)
 	return hypotenuse
 
-def one_inch_scale():		# Scales the collision circle to the one inch out from the model's base
-	pass
-
-
 class Spritesheet:
 	# utility class for loading and parsing spritesheets
 	def __init__(self, filename):
@@ -66,9 +62,9 @@ class Model(pygame.sprite.Sprite):
 		self.radius = radius 		#represents the model's base size
 
 		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + 1/2 inch
-		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius
+		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius 		#the coefficient by which the radius can be mulitplied to achieve the base radius + 1/2 inch
 		self.melee_radius = int(self.radius * self.melee_ratio)				#gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
-		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#the "true" 1" melee radius
+		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#the "true" 1" melee radius, used for display purposes
 
 		self.cohesion_ratio = (self.radius + TILESIZE)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + one inch
 		self.true_cohesion_ratio = (self.radius + 2*TILESIZE)/self.radius
@@ -310,16 +306,6 @@ class Model(pygame.sprite.Sprite):
 						if sprite_x != self:
 							if pygame.sprite.collide_circle(self, sprite_x):
 								#print("\n!Collision with between self and model!")
-								revert_move()
-								self.rect.center = (self.x, self.y)
-								self.dest_x = self.x
-								self.dest_y = self.y
-
-					#Melee collision
-					for sprite_x in self.game.targets:
-						if sprite_x != self:
-							if pygame.sprite.collide_circle_ratio(sprite_x.melee_ratio)(self, sprite_x):
-								#print("\n!Collision with between self and enemy melee radius!")
 								revert_move()
 								self.rect.center = (self.x, self.y)
 								self.dest_x = self.x

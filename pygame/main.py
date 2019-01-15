@@ -257,6 +257,21 @@ class Game:
 		#print("\n")
 		#print(shooter.valid_shots)
 
+	def melee_ratio(self, sprite_1, sprite_2):
+		ratio = (sprite_1.radius + sprite_2.radius + TILESIZE)/(sprite_1.radius + sprite_2.radius)
+		return ratio
+
+	def charge_success(self):
+		for sprite in self.charging_unit.models:
+			for target in self.target_unit.models:
+				#ratio = 
+				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
+					return True
+		print("No charging models in melee radius, charge considered to be a failure.")
+		print("Reset moves and then press enter to return to charge phase.")
+		return False
+
+
 	def clear_selections(self):
 		self.selected_model = None
 		self.selected_unit = None
@@ -270,7 +285,9 @@ class Game:
 			model.fell_back = False
 
 	def charge_roll(self, unit):
-		roll = random.randint(1,6)
+		roll_1 = random.randint(1,6)
+		roll_2 = random.randint(1,6)
+		roll = roll_1 + roll_2
 		print("Die rolled; charge distance for {} set to {}".format(unit, roll))
 		self.charge_range = roll*TILESIZE
 		for model in unit.models:
@@ -617,8 +634,10 @@ class Game:
 						for model in self.charging_unit.models:
 							self.selectable_models.add(model)
 						self.shooting_models.clear()
+						target_unit = self.selected_unit
 						self.clear_selections()
 						self.selected_unit = self.charging_unit
+						self.target_unit = target_unit
 						self.charge_roll(self.charging_unit)
 						
 				#Mouse event handling
@@ -692,12 +711,13 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
-							self.current_phase = "Charge Phase"
-							for model in self.charging_unit.models:
-								model.charge_move = 0
-							self.clear_selections()
-							self.charging_unit = None
-							self.reset_active()
+							if self.charge_success():
+								self.current_phase = "Charge Phase"
+								for model in self.charging_unit.models:
+									model.charge_move = 0
+								self.clear_selections()
+								self.charging_unit = None
+								self.reset_active()
 	
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1017,7 +1037,7 @@ class Game:
 					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.charge_move), 1)
 
 				#Melee radius (one inch)
-				for sprite in self.targets:
+				for sprite in self.target_unit.models:
 					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
 
 				#Cohesion radius (two inches)	
