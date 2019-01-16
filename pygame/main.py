@@ -212,9 +212,10 @@ class Game:
 			for model in unit.models:
 				self.targets.add(model)
 
-	def change_phase(new_phase):
+	def change_phase(self, new_phase):
 		self.previous_phase = self.current_phase
 		self.current_phase = new_phase
+		print("\n------Changing phase from {} to {}.------".format(self.previous_phase, new_phase))
 
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self, model):
@@ -299,7 +300,7 @@ class Game:
 		roll_1 = random.randint(1,6)
 		roll_2 = random.randint(1,6)
 		roll = roll_1 + roll_2
-		print("Die rolled; charge distance for {} set to {}".format(unit, roll))
+		print("\nDie rolled; charge distance for {} set to {}".format(unit, roll))
 		self.charge_range = roll*TILESIZE
 		for model in unit.models:
 			model.charge_move = self.charge_range
@@ -310,7 +311,11 @@ class Game:
 		def model_selection(game):
 			for model in game.selectable_models:
 				if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-					if self.current_phase == "Charge Phase":
+					if self.current_phase == "Shooting Phase" or self.current_phase == "Overwatch":
+						if model.in_melee == True:
+							print("\nModel is engaged in melee and cannot shoot.")
+							return
+					elif self.current_phase == "Charge Phase":
 						if model.in_melee == True:
 							print("\nModel is already engaged in melee and cannot charge.")
 							return
@@ -325,6 +330,14 @@ class Game:
 			if len(game.shooting_models) == 0:
 				for model in game.selectable_models:
 					if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if self.current_phase == "Shooting Phase" or self.current_phase == "Overwatch":
+							if model.in_melee == True:
+								print("\nModel is engaged in melee and cannot shoot.")
+								return
+						elif self.current_phase == "Charge Phase":
+							if model.in_melee == True:
+								print("\nModel is already engaged in melee and cannot charge.")
+								return
 						game.selected_model = model
 						game.selected_unit = model.unit
 						game.shooting_models.append(model)
@@ -338,6 +351,14 @@ class Game:
 			elif len(game.shooting_models) > 0:
 				for model in game.selectable_models:
 					if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if self.current_phase == "Shooting Phase" or self.current_phase == "Overwatch":
+							if model.in_melee == True:
+								print("\nModel is engaged in melee and cannot shoot.")
+								return
+						elif self.current_phase == "Charge Phase":
+							if model.in_melee == True:
+								print("\nModel is already engaged in melee and cannot charge.")
+								return
 						for shooter in game.shooting_models:
 							if model == shooter:
 								print("Model already a shooter; made it the selected_model.")
@@ -363,6 +384,14 @@ class Game:
 			if len(game.shooting_models) == 0:
 				for model in game.selectable_models:
 					if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if self.current_phase == "Shooting Phase" or self.current_phase == "Overwatch":
+							if model.in_melee == True:
+								print("\nModel is engaged in melee and cannot shoot.")
+								return
+						elif self.current_phase == "Charge Phase":
+							if model.in_melee == True:
+								print("\nModel is already engaged in melee and cannot charge.")
+								return
 						game.selected_model = model
 						game.selected_unit = model.unit
 						for model in game.selected_unit.models:
@@ -391,7 +420,7 @@ class Game:
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
 							self.clear_selections()
-							self.current_phase = "Shooting Phase"
+							self.change_phase("Shooting Phase")
 	
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -436,7 +465,7 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
-						self.current_phase = "Charge Phase"
+						self.change_phase("Charge Phase")
 						self.shooting_models.clear()
 						self.clear_selections()
 						for model in self.selectable_models:
@@ -460,7 +489,7 @@ class Game:
 									for model in self.shooting_models:
 										model.attack_with_weapon(self.target_unit)
 									if self.unallocated_wounds > 0:
-										self.current_phase = "Wound Allocation"
+										self.change_phase("Wound Allocation")
 
 								else:
 									multiple_selection(self)
@@ -516,34 +545,33 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
-						for model in self.targets:
+						for model in self.target_unit.models:
 							if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-								if model in self.target_unit.models:
-									model.wounds -= 1
-									self.unallocated_wounds -= 1
-									print("\nAllocating wound to: ")
-									print(model)
-									print("This model is part of unit:")
-									print(model.unit)
-									for model in self.target_unit.models:
-										model.update()
-									if self.unallocated_wounds <= 0 or len(self.target_unit.models) == 0:
-										if self.unallocated_wounds <= 0:
-											print("All wounds allocated!")
-										elif len(self.target_unit.models) == 0:
-											print("Target unit eliminated. No valid targets remain.")
-										print("Returning to shooting phase")
-										self.unallocated_wounds = 0
-										self.selected_model.valid_shots.clear()
-										self.selected_model = None
-										self.selected_unit = None
-										self.shooting_models.clear()
-										self.target_model = None
-										self.target_unit = None
-										self.current_phase = "Shooting Phase"
-
+								model.wounds -= 1
+								self.unallocated_wounds -= 1
+								print("\nAllocating wound to: ")
+								print(model)
+								print("This model is part of unit:")
+								print(model.unit.name)
+								for model in self.target_unit.models:
+									model.update()
+								if self.unallocated_wounds <= 0 or len(self.target_unit.models) == 0:
+									if self.unallocated_wounds <= 0:
+										print("\nAll wounds allocated!")
+									elif len(self.target_unit.models) == 0:
+										print("\nTarget unit eliminated. No valid targets remain.")
+									print("Returning to previous phase")
+									self.change_phase(self.previous_phase)
+									self.unallocated_wounds = 0
+									self.selected_model.valid_shots.clear()
+									self.selected_model = None
+									self.selected_unit = None
+									self.shooting_models.clear()
+									self.target_model = None
+									self.target_unit = None
+									
 								else:
-									print("Chosen model not a valid target, please select a model in the target unit.")
+									print("\nChosen model not a valid target, please select a model in the target unit.")
 
 					elif event.button == 2:	#Middle mouse button
 						pass
@@ -563,10 +591,9 @@ class Game:
 						g.new()
 
 					elif keys[pygame.K_RETURN]:
-						pass
-						#self.current_phase = "Movement Phase"
-						#self.clear_selections()
-						#self.change_active()
+						self.change_phase("Movement Phase")
+						self.clear_selections()
+						self.change_active()
 	
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -577,7 +604,7 @@ class Game:
 
 						if self.charge_button.mouse_over() and self.selected_model != None and self.target_model != None:
 							print("\nCharge target confirmed. Proceeding to overwatch response.")
-							self.current_phase = "Overwatch"
+							self.change_phase("Overwatch")
 							self.selectable_models.empty()
 							self.targets.empty()
 							for model in self.selected_unit.models:
@@ -640,7 +667,10 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
-						self.current_phase = "Charge Move"
+						if len(self.charging_unit.models) == 0:
+							self.change_phase("Charge Phase")
+							return
+						self.change_phase("Charge Move")
 						for model in self.selectable_models:
 							for weapon in model.weapons:
 								weapon.fired = False
@@ -649,10 +679,9 @@ class Game:
 						for model in self.charging_unit.models:
 							self.selectable_models.add(model)
 						self.shooting_models.clear()
-						target_unit = self.selected_unit
+						self.target_unit = self.selected_unit
 						self.clear_selections()
 						self.selected_unit = self.charging_unit
-						self.target_unit = target_unit
 						self.charge_roll(self.charging_unit)
 						
 				#Mouse event handling
@@ -671,7 +700,7 @@ class Game:
 									for model in self.shooting_models:
 										model.attack_with_weapon(self.target_unit)
 									if self.unallocated_wounds > 0:
-										self.current_phase = "Wound Allocation"
+										self.change_phase("Wound Allocation")
 
 								else:
 									multiple_selection(self)
@@ -727,7 +756,7 @@ class Game:
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
 							if self.charge_success():
-								self.current_phase = "Charge Phase"
+								self.change_phase("Charge Phase")
 								for model in self.charging_unit.models:
 									model.charge_move = 0
 								self.clear_selections()
@@ -1052,8 +1081,9 @@ class Game:
 					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.charge_move), 1)
 
 				#Melee radius (one inch)
-				for sprite in self.target_unit.models:
-					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+				if self.target_unit != None:
+					for sprite in self.target_unit.models:
+						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
 
 				#Cohesion radius (two inches)	
 				for sprite in self.selected_model.unit.models:

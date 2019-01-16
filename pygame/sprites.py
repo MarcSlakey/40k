@@ -242,6 +242,8 @@ class Model(pygame.sprite.Sprite):
 			for sprite in self.unit.models:
 				if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
 					self.cohesion = True
+				elif len(self.unit.models) <= 1:
+					self.cohesion = True
 
 		elif self.game.current_phase == "Shooting Phase":
 			pass
@@ -350,6 +352,8 @@ class Model(pygame.sprite.Sprite):
 			#Unit cohesion checker
 			for sprite in self.unit.models:
 				if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
+					self.cohesion = True
+				elif len(self.unit.models) <= 1:
 					self.cohesion = True
 
 	def attack_with_weapon(self, target_unit, weapon_index = 0):
