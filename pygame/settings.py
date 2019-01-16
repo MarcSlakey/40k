@@ -4,7 +4,7 @@
 TITLE = "40k pygame"
 WIDTH = 1500	#Should be evenly divisible by TILESIZE value below 
 HEIGHT = 900	
-FPS = 60		#locks the FPS
+FPS = 120		#locks the FPS
 
 #define simple color constants
 WHITE = (255, 255, 255)

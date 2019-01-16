@@ -70,8 +70,7 @@ class Model(pygame.sprite.Sprite):
 		self.true_cohesion_ratio = (self.radius + 2*TILESIZE)/self.radius
 		self.cohesion_radius = int(self.radius * self.cohesion_ratio)		#gives half the cohesion radius (1 inch) to each sprite to simulate 2" cohesion radius
 		self.true_cohesion_radius = int(self.radius * self.true_cohesion_ratio) #the "true" 2" cohesion radius
-		self.cohesion = True
-
+		
 		self.vx, self.vy = (0, 0)
 		self.x = x * TILESIZE
 		self.y = y * TILESIZE
@@ -104,7 +103,9 @@ class Model(pygame.sprite.Sprite):
 		self.valid_shots = []	# List of valid shooting targets
 		self.charge_move = 0
 
-		#Special movement flags
+		#Special flags
+		self.cohesion = True
+		self.in_melee = False
 		self.charged = False
 		self.advanced = False
 		self.fell_back = False
@@ -138,6 +139,7 @@ class Model(pygame.sprite.Sprite):
 		if self.game.current_phase == "Movement Phase":
 			if self.valid_shots != None:
 				self.valid_shots.clear()
+
 			temp_x = self.x	
 			temp_y = self.y
 			current_move = 0
@@ -148,6 +150,7 @@ class Model(pygame.sprite.Sprite):
 				self.y = temp_y
 				#print("Coordinates reverted to ({},{})".format(self.x, self.y))
 
+			#Performs movement once destination is set by mouse event input
 			if self.dest_x != self.x and self.dest_y != self.y:
 				#print("\n\n-------NEW STEP-------")
 				#print("Pre-move coord: ({},{})".format(self.x, self.y))

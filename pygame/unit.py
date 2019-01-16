@@ -16,13 +16,14 @@ class Unit(object):
 
 	"""
 	
-	def __init__(self, name=''):
+	def __init__(self, game, name=''):
 		"""The constructor for Unit class
 
 		Parameters:
 			name (str): unit'ss name, used solely for output 
 			units (Unit): list of this unit's Model objects
 		"""
+		self.game = game
 		self.name = name
 		self.models = []
 		self.valid_shots = []
@@ -52,3 +53,11 @@ class Unit(object):
 	def alive(self):
 		"""Returns true as long as at least one model is alive in the given unit."""
 		return len(self.models_alive()) != 0
+
+	def melee_check(self):			
+		for model in self.models:
+			for target in self.game.targets:
+				if pygame.sprite.collide_circle_ratio(self.game.melee_ratio(model, target))(model, target):
+					for model in self.models:
+						model.in_melee = True
+					return

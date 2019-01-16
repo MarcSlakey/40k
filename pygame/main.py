@@ -54,6 +54,7 @@ class Game:
 		self.turn_count = 1
 		#self.phases = ["Movement Phase", "Shooting Phase"]
 		self.current_phase = "Movement Phase"
+		self.previous_phase = None
 		self.all_sprites = pygame.sprite.Group() 
 		self.all_models = pygame.sprite.Group()
 		self.selectable_models = pygame.sprite.Group()
@@ -82,13 +83,13 @@ class Game:
 		
 		#Initialize army, unit objects
 		self.army1 = Army('Black Templars')
-		self.army1.add_unit(Unit('Crusader Squad 1'))
-		self.army1.add_unit(Unit('Crusader Squad 2'))
+		self.army1.add_unit(Unit(self, 'Crusader Squad 1'))
+		self.army1.add_unit(Unit(self, 'Crusader Squad 2'))
 
 		self.army2 = Army('Orkz')
-		self.army2.add_unit(Unit('Ork Boyz 1'))
-		self.army2.add_unit(Unit('Ork Boyz 2'))
-		self.army2.add_unit(Unit('Ork Boyz 3'))
+		self.army2.add_unit(Unit(self, 'Ork Boyz 1'))
+		self.army2.add_unit(Unit(self, 'Ork Boyz 2'))
+		self.army2.add_unit(Unit(self, 'Ork Boyz 3'))
 		
 		self.active_army = self.army1
 
@@ -211,6 +212,10 @@ class Game:
 			for model in unit.models:
 				self.targets.add(model)
 
+	def change_phase(new_phase):
+		self.previous_phase = self.current_phase
+		self.current_phase = new_phase
+
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self, model):
 		if model.x != model.original_pos[0] or model.y != model.original_pos[1]:
@@ -261,11 +266,17 @@ class Game:
 		ratio = (sprite_1.radius + sprite_2.radius + TILESIZE)/(sprite_1.radius + sprite_2.radius)
 		return ratio
 
+	#Defines whether or not a charge has succeeded based on melee collision
+	#	Sets relevant sprite.in_melee flag to True if the charge succeeds
 	def charge_success(self):
 		for sprite in self.charging_unit.models:
 			for target in self.target_unit.models:
 				#ratio = 
 				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
+					for model in self.charging_unit.models:
+						model.in_melee = True
+					for model in self.target_unit.models:
+						model.in_melee = True
 					return True
 		print("No charging models in melee radius, charge considered to be a failure.")
 		print("Reset moves and then press enter to return to charge phase.")
@@ -299,6 +310,10 @@ class Game:
 		def model_selection(game):
 			for model in game.selectable_models:
 				if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+					if self.current_phase == "Charge Phase":
+						if model.in_melee == True:
+							print("\nModel is already engaged in melee and cannot charge.")
+							return
 					game.selected_model = model
 					game.selected_unit = model.unit
 					print("\nSelected a model:")
