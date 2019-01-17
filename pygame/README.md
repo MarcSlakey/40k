@@ -76,6 +76,9 @@ Shooting Phase:
 		Group line of sight checking
 		Wound allocation
 		Model death
+Charge Phase:
+	Unit selection (eligibility)
+	Overwatch
 Program:
 	Basic buttons
 	Info text
@@ -83,7 +86,8 @@ Optimization:
 	Lock/unlock screen around multiple draw() calls
 
 IN PROGRESS:
-
+Charge Phase:
+	Targeting and charge declarations
 	
 
 FUTURE WORK:
@@ -103,9 +107,6 @@ Shooting Phase:
 	Terrain/Cover modifiers
 	Character targeting ruless
 Charge Phase:
-	Unit selection (eligibility)
-	Targeting and charge declarations
-	Overwatch
 	Heroic intervention
 Fight Phase:
 	Pile in move

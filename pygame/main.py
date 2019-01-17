@@ -342,6 +342,7 @@ class Game:
 
 					game.selected_model = model
 					game.selected_unit = model.unit
+
 					print("\nSelected a model:")
 					print(game.selected_model)
 					print("Selected model's parent unit:")
@@ -415,7 +416,7 @@ class Game:
 						print("Selected model's parent unit:")
 						print(game.selected_unit.name)
 						print("Models selected:")
-						#print(game.shooting_models)
+						print(game.shooting_models)
 						
 		if self.current_phase == "Movement Phase":
 			for event in pygame.event.get():
@@ -522,8 +523,8 @@ class Game:
 						self.selected_unit = None
 						mass_selection(self)
 						if len(self.shooting_models) > 0:
-							#self.los_check(self.selected_model)
-							#self.selected_unit.valid_shots = self.selected_model.valid_shots
+							self.los_check(self.selected_model)
+							self.selected_unit.valid_shots = self.selected_model.valid_shots
 							for model in self.shooting_models:
 								self.los_check(model)
 								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, model.valid_shots)
