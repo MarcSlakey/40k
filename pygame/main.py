@@ -70,6 +70,7 @@ class Game:
 		self.target_unit = None
 		self.unallocated_wounds = 0
 		self.charging_unit = None
+		self.charge_target_unit = None
 		self.charge_range = 0
 
 		self.reset_all_button = Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
@@ -605,17 +606,19 @@ class Game:
 						if self.charge_button.mouse_over() and self.selected_model != None and self.target_model != None:
 							print("\nCharge target confirmed. Proceeding to overwatch response.")
 							self.change_phase("Overwatch")
+
 							self.selectable_models.empty()
 							self.targets.empty()
 							for model in self.selected_unit.models:
 								self.targets.add(model)
 							for model in self.target_unit.models:
 								self.selectable_models.add(model)
-							overwatch_unit = self.target_unit
+
+							self.charge_target_unit = self.target_unit
 							self.charging_unit = self.selected_unit
-							self.clear_selections
+							self.clear_selections()
 							self.target_unit = self.charging_unit
-							self.selected_unit = overwatch_unit
+							self.selected_unit = self.charge_target_unit
 
 						elif self.selected_model == None:
 							model_selection(self)
@@ -671,16 +674,18 @@ class Game:
 							self.change_phase("Charge Phase")
 							return
 						self.change_phase("Charge Move")
+
 						for model in self.selectable_models:
 							for weapon in model.weapons:
 								weapon.fired = False
 						self.selectable_models.empty()
 						self.targets.empty()
+						self.shooting_models.clear()
+
 						for model in self.charging_unit.models:
 							self.selectable_models.add(model)
-						self.shooting_models.clear()
-						self.target_unit = self.selected_unit
 						self.clear_selections()
+						self.target_unit = self.charge_target_unit
 						self.selected_unit = self.charging_unit
 						self.charge_roll(self.charging_unit)
 						
