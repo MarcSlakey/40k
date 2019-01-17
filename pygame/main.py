@@ -255,8 +255,13 @@ class Game:
 		#x = 1
 		self.target_model = None
 		self.target_unit = None
+
 		for target in self.targets:
-			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
+			shot_x = self.selected_model.x - target.x
+			shot_y = self.selected_model.y - target.y
+			shot_distance = find_hypotenuse(shot_x, shot_y)
+			if shot_distance <= self.selected_model.weapons[0].w_range:
+				Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
 			#print("{}".format(x))
 			#x += 1
 		#print("\n")
@@ -524,17 +529,12 @@ class Game:
 						if len(self.shooting_models) > 0:
 							self.target_model = None
 							self.target_unit = None
-							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
-							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-							shot_distance = find_hypotenuse(shot_x, shot_y)
-
 							#Target selection
 							for model in self.targets:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									if shot_distance <= self.selected_model.weapons[0].w_range:
-										if model in self.selected_unit.valid_shots:
-											self.target_model = model
-											self.target_unit = model.unit
+									if model in self.selected_unit.valid_shots:
+										self.target_model = model
+										self.target_unit = model.unit
 
 		elif self.current_phase == "Wound Allocation":
 			for event in pygame.event.get():
@@ -742,17 +742,16 @@ class Game:
 						if len(self.shooting_models) > 0:
 							self.target_model = None
 							self.target_unit = None
-							shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
-							shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-							shot_distance = find_hypotenuse(shot_x, shot_y)
+							#shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
+							#shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
+							#shot_distance = find_hypotenuse(shot_x, shot_y)
 
 							#Target selection
 							for model in self.targets:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									if shot_distance <= self.selected_model.weapons[0].w_range:
-										if model in self.selected_unit.valid_shots:
-											self.target_model = model
-											self.target_unit = model.unit
+									if model in self.selected_unit.valid_shots:
+										self.target_model = model
+										self.target_unit = model.unit
 
 		elif self.current_phase == "Charge Move":
 			for event in pygame.event.get():
