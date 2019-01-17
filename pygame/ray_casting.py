@@ -23,6 +23,7 @@ class Ray(object):
 		#print("Shooter's position vector: ({}, {})".format(self.pos_vec[0], self.pos_vec[1]))
 		#print("Target vector: ({}, {})".format(self.target_vec[0], self.target_vec[1]))
 
+	#Casts a single ray from the shooter towards the target.
 	def cast(self):
 		ray = self.target_vec - self.pos_vec
 		length = int(ray.length())

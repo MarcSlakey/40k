@@ -256,8 +256,6 @@ class Game:
 		self.target_model = None
 		self.target_unit = None
 		for target in self.targets:
-			#pygame.draw.circle(self.screen, GREEN, target.rect.center, target.radius, 0)
-			#pygame.display.update()
 			Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
 			#print("{}".format(x))
 			#x += 1
@@ -291,6 +289,18 @@ class Game:
 		self.target_model = None
 		self.target_unit = None
 
+	def clear_valid_shots(self):		
+		for unit in self.army1.units:
+			unit.valid_shots.clear()
+			for model in unit.models:
+				model.valid_shots.clear()
+
+		for unit in self.army2.units:
+			unit.valid_shots.clear()
+			for model in unit.models:
+				model.valid_shots.clear()
+
+
 	def reset_flags(self):
 		for model in self.selectable_models:
 			model.charged = False
@@ -316,10 +326,12 @@ class Game:
 						if model.in_melee == True:
 							print("\nModel is engaged in melee and cannot shoot.")
 							return
+
 					elif self.current_phase == "Charge Phase":
 						if model.in_melee == True:
 							print("\nModel is already engaged in melee and cannot charge.")
 							return
+
 					game.selected_model = model
 					game.selected_unit = model.unit
 					print("\nSelected a model:")
@@ -335,17 +347,14 @@ class Game:
 							if model.in_melee == True:
 								print("\nModel is engaged in melee and cannot shoot.")
 								return
-						elif self.current_phase == "Charge Phase":
-							if model.in_melee == True:
-								print("\nModel is already engaged in melee and cannot charge.")
-								return
+
 						game.selected_model = model
 						game.selected_unit = model.unit
 						game.shooting_models.append(model)
 						print("\nSelected a model:")
 						print(game.selected_model)
 						print("Selected model's parent unit:")
-						print(game.selected_unit)
+						print(game.selected_unit.name)
 						print("Models selected:")
 						print(game.shooting_models)
 
@@ -356,15 +365,13 @@ class Game:
 							if model.in_melee == True:
 								print("\nModel is engaged in melee and cannot shoot.")
 								return
-						elif self.current_phase == "Charge Phase":
-							if model.in_melee == True:
-								print("\nModel is already engaged in melee and cannot charge.")
-								return
+
 						for shooter in game.shooting_models:
 							if model == shooter:
 								print("Model already a shooter; made it the selected_model.")
 								game.selected_model = model
 								return
+
 						if game.shooting_models[0].unit == model.unit:
 							game.selected_model = model
 							game.selected_unit = model.unit
@@ -372,9 +379,9 @@ class Game:
 							print("\nSelected a model:")
 							print(game.selected_model)
 							print("Selected model's parent unit:")
-							print(game.selected_unit)
+							print(game.selected_unit.name)
 							print("Models selected:")
-							#print(game.shooting_models)
+							print(game.shooting_models)
 
 						else:
 							print("Chosen model not in same unit as currently selected shooting models.")
@@ -389,18 +396,16 @@ class Game:
 							if model.in_melee == True:
 								print("\nModel is engaged in melee and cannot shoot.")
 								return
-						elif self.current_phase == "Charge Phase":
-							if model.in_melee == True:
-								print("\nModel is already engaged in melee and cannot charge.")
-								return
+
 						game.selected_model = model
 						game.selected_unit = model.unit
 						for model in game.selected_unit.models:
 							game.shooting_models.append(model)
+
 						print("\nSelected a model:")
 						print(game.selected_model)
 						print("Selected model's parent unit:")
-						print(game.selected_unit)
+						print(game.selected_unit.name)
 						print("Models selected:")
 						#print(game.shooting_models)
 						
@@ -469,9 +474,11 @@ class Game:
 						self.change_phase("Charge Phase")
 						self.shooting_models.clear()
 						self.clear_selections()
+						self.clear_valid_shots()
 						for model in self.selectable_models:
 							for weapon in model.weapons:
 								weapon.fired = False
+
 						
 
 				#Mouse event handling
@@ -507,8 +514,8 @@ class Game:
 						self.selected_unit = None
 						mass_selection(self)
 						if len(self.shooting_models) > 0:
-							self.los_check(self.selected_model)
-							self.selected_unit.valid_shots = self.selected_model.valid_shots
+							#self.los_check(self.selected_model)
+							#self.selected_unit.valid_shots = self.selected_model.valid_shots
 							for model in self.shooting_models:
 								self.los_check(model)
 								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, model.valid_shots)
@@ -678,13 +685,16 @@ class Game:
 						for model in self.selectable_models:
 							for weapon in model.weapons:
 								weapon.fired = False
+
 						self.selectable_models.empty()
 						self.targets.empty()
 						self.shooting_models.clear()
 
 						for model in self.charging_unit.models:
 							self.selectable_models.add(model)
+
 						self.clear_selections()
+						self.clear_valid_shots()
 						self.target_unit = self.charge_target_unit
 						self.selected_unit = self.charging_unit
 						self.charge_roll(self.charging_unit)

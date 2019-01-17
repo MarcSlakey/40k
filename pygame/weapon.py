@@ -53,7 +53,7 @@ class RangedWeapon(Weapon):
 	def __init__(self, name, w_range, w_type, shot_dice, shots, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None, damage_function=None):
 		#Run the __init__ function on yourself of the super/parent of the RangedWeapon class (which is the Weapon class)
 		super(RangedWeapon, self).__init__(name, strength, ap, damage_dice, damage, hit_function, wound_function, save_function)
-		self.w_range = w_range
+		self.w_range = w_range	#multiplied by TILESIZE in data_creation
 		self.w_type = w_type
 		self.shot_dice = shot_dice
 		self.shots = shots

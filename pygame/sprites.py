@@ -87,7 +87,7 @@ class Model(pygame.sprite.Sprite):
 		self.acc = vec(0,0)
 
 		self.name = name
-		self.max_move = move
+		self.max_move = move 	#multiplied by TILESIZE in data_creation
 		self.original_max_move = (self.max_move)
 		self.weapon_skill = weapon_skill
 		self.ballistic_skill = ballistic_skill
