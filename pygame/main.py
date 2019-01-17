@@ -275,17 +275,20 @@ class Game:
 	#	Sets relevant sprite.in_melee flag to True if the charge succeeds
 	def charge_success(self):
 		for sprite in self.charging_unit.models:
-			for target in self.target_unit.models:
-				#ratio = 
-				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
-					for model in self.charging_unit.models:
-						model.in_melee = True
-					for model in self.target_unit.models:
-						model.in_melee = True
-					return True
-		print("No charging models in melee radius, charge considered to be a failure.")
-		print("Reset moves and then press enter to return to charge phase.")
-		return False
+			if sprite.x != sprite.original_pos[0] or sprite.y != sprite.original_pos[1]:
+				for target in self.target_unit.models:
+					if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
+						for model in self.charging_unit.models:
+							model.in_melee = True
+						for model in self.target_unit.models:
+							model.in_melee = True
+						return True
+				print("No charging models in melee radius, charge considered to be a failure.")
+				print("Reset moves and then press enter to return to charge phase.")
+				return False
+			else:
+				print("Charging models have not moved. Returning to Charge Phase.")
+				return True
 
 
 	def clear_selections(self):
