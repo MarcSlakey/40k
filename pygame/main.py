@@ -75,7 +75,7 @@ class Game:
 
 		self.reset_all_button = Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.attack_button = Button(self, "FIRE WEAPON", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.charge_button = Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-1.5*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.charge_button = Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
 		
 
@@ -319,7 +319,7 @@ class Game:
 		roll_1 = random.randint(1,6)
 		roll_2 = random.randint(1,6)
 		roll = roll_1 + roll_2
-		print("\nDie rolled; charge distance for {} set to {}".format(unit, roll))
+		print("\nDie rolled; charge distance for {} set to {}".format(unit.name, roll))
 		self.charge_range = roll*TILESIZE
 		for model in unit.models:
 			model.charge_move = self.charge_range
@@ -875,7 +875,7 @@ class Game:
 			
 		if self.current_phase == "Movement Phase":	
 			#Model base drawing/coloring
-			if self.selected_unit != None:
+			if self.selected_unit != None and self.selected_model != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
 
@@ -917,7 +917,7 @@ class Game:
 
 		elif self.current_phase == "Shooting Phase":
 			#Model base drawing/coloring
-			if self.selected_unit != None:
+			if self.selected_unit != None and self.selected_model != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
 
@@ -1026,19 +1026,14 @@ class Game:
 			self.draw_cohesion_indicator()	
 
 			#Buttons
-			self.reset_all_button.draw()
-			self.reset_all_button.fill()
-
 			self.charge_button.draw()
 			self.charge_button.fill()
-
-
 
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|RMB: select charge target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
 		elif self.current_phase == "Overwatch":
