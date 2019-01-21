@@ -276,7 +276,7 @@ class Game:
 	def charge_success(self):
 		for sprite in self.charging_unit.models:
 			if sprite.x != sprite.original_pos[0] or sprite.y != sprite.original_pos[1]:
-				for target in self.target_unit.models:
+				for target in self.charge_target_unit.models:
 					if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
 						for model in self.charging_unit.models:
 							model.in_melee = True
@@ -286,9 +286,8 @@ class Game:
 				print("No charging models in melee radius, charge considered to be a failure.")
 				print("Reset moves and then press enter to return to charge phase.")
 				return False
-			else:
-				print("Charging models have not moved. Returning to Charge Phase.")
-				return True
+		print("Charging models have not moved. Returning to Charge Phase.")
+		return True
 
 
 	def clear_selections(self):
@@ -772,13 +771,14 @@ class Game:
 						self.reset_moves(self.selected_model)
 
 					elif keys[pygame.K_RETURN]:
-						if self.cohesion_check():
-							if self.charge_success():
+						if self.charge_success():
+							if self.cohesion_check():
 								self.change_phase("Charge Phase")
 								for model in self.charging_unit.models:
 									model.charge_move = 0
 								self.clear_selections()
 								self.charging_unit = None
+								self.charge_target_unit = None
 								self.reset_active()
 	
 				#Mouse event handling
