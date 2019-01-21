@@ -228,7 +228,7 @@ class Game:
 			model.dest_x = model.x
 			model.dest_y = model.y
 			
-			if self.current_phase == "Move Phase":
+			if self.current_phase == "Movement Phase":
 				model.max_move = model.original_max_move
 				#print("Max_move after reset: {}.".format(model.max_move))
 				#print("Sprite location after reset: ({},{})".format(model.x, model.y))
