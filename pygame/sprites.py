@@ -56,13 +56,14 @@ class Model(pygame.sprite.Sprite):
 		self.groups = [game.all_sprites, game.all_models]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.game = game
-		self.image = pygame.transform.scale(pygame.image.load(path.join(self.game.img_dir, 'marine_bolter.png')).convert(), (40, 50))
+		image_surf = pygame.image.load(path.join(self.game.img_dir, 'marine_bolter_cropped.png')).convert()
+		self.image = pygame.transform.scale(image_surf, (26, 35))
 		self.image.set_colorkey(WHITE)
 		self.rect = self.image.get_rect()
 		self.radius = radius 		#represents the model's base size
 
-		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + 1/2 inch
-		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius 		#the coefficient by which the radius can be mulitplied to achieve the base radius + 1/2 inch
+		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			#the coefficient by which the radius can be multiplied to achieve the base radius + 1/2 inch
+		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius 		#the coefficient by which the radius can be multiplied to achieve the base radius + 1/2 inch
 		self.melee_radius = int(self.radius * self.melee_ratio)				#gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
 		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#the "true" 1" melee radius, used for display purposes
 
