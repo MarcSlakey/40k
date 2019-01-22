@@ -159,6 +159,11 @@ Fancy Rules (for the distant future):
 
 
 CURRENT BUGS:
+
+High Priority:
+
+
+Low Priority:
 LOS checks are currently very slow, especially when doing multi-shooter LOS checks.
 Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This is because I've implemented the RAW; a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency.
 Models "stick" to walls and other models when they collide; although this is workable, it feels terrible and should be improved by pathfinding.

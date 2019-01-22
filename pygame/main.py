@@ -434,6 +434,7 @@ class Game:
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
 							self.clear_selections()
+							self.refresh_moves()
 							self.change_phase("Shooting Phase")
 	
 				#Mouse event handling

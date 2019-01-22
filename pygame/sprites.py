@@ -190,7 +190,7 @@ class Model(pygame.sprite.Sprite):
 					for sprite_x in self.game.all_models:
 						if sprite_x != self:
 							if pygame.sprite.collide_circle(self, sprite_x):
-								#print("\n!Collision with between self and model!")
+								print("\n!Collision with between self and {}!".format(sprite_x.name))
 								revert_move()
 								self.rect.center = (self.x, self.y)
 								self.dest_x = self.x
@@ -230,7 +230,7 @@ class Model(pygame.sprite.Sprite):
 					
 					
 				else:
-					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
+					print("\nMOVE HALTED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
 					self.dest_x = self.x
 					self.dest_y = self.y
 
@@ -263,6 +263,7 @@ class Model(pygame.sprite.Sprite):
 		elif self.game.current_phase == "Charge Move":
 			if self.valid_shots != None:
 				self.valid_shots.clear()
+				
 			temp_x = self.x	
 			temp_y = self.y
 			current_move = 0
