@@ -161,7 +161,7 @@ Fancy Rules (for the distant future):
 CURRENT BUGS:
 
 High Priority:
-Melee detection not working.
+
 
 Low Priority:
 LOS checks are currently very slow, especially when doing multi-shooter LOS checks.
