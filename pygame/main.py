@@ -283,10 +283,10 @@ class Game:
 						for model in self.target_unit.models:
 							model.in_melee = True
 						return True
-				print("No charging models in melee radius, charge considered to be a failure.")
+				print("\nNo charging models in melee radius, charge considered to be a failure.")
 				print("Reset moves and then press enter to return to charge phase.")
 				return False
-		print("Charging models have not moved. Returning to Charge Phase.")
+		print("\nCharging models have not moved. Returning to Charge Phase.")
 		return True
 
 
@@ -342,10 +342,8 @@ class Game:
 					game.selected_model = model
 					game.selected_unit = model.unit
 
-					print("\nSelected a model:")
-					print(game.selected_model)
-					print("Selected model's parent unit:")
-					print(game.selected_unit.name)
+					print("\nSelected a model: {}".format(game.selected_model))
+					print("Selected model's parent unit:".format(game.selected_unit.name))
 
 		def multiple_selection(game):
 			if len(game.shooting_models) == 0:
@@ -604,6 +602,8 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						self.change_phase("Movement Phase")
+						for unit in self.active_army.units:
+							unit.charge_attempt_list.clear()
 						self.clear_selections()
 						self.change_active()
 	
@@ -615,8 +615,15 @@ class Game:
 								self.reset_moves(model)
 
 						if self.charge_button.mouse_over() and self.selected_model != None and self.target_model != None:
+							for item in self.selected_unit.charge_attempt_list:
+								if item == self.target_unit:
+									print("\nA charge against this target has already been attempted by the selected unit on this turn.")
+									print("Select a different charge target.")
+									return
+
 							print("\nCharge target confirmed. Proceeding to overwatch response.")
 							self.change_phase("Overwatch")
+							self.selected_unit.charge_attempt_list.append(self.target_unit)
 
 							self.selectable_models.empty()
 							self.targets.empty()
@@ -625,8 +632,8 @@ class Game:
 							for model in self.target_unit.models:
 								self.selectable_models.add(model)
 
-							self.charge_target_unit = self.target_unit
 							self.charging_unit = self.selected_unit
+							self.charge_target_unit = self.target_unit
 							self.clear_selections()
 							self.target_unit = self.charging_unit
 							self.selected_unit = self.charge_target_unit

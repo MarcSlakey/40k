@@ -27,6 +27,7 @@ class Unit(object):
 		self.name = name
 		self.models = []
 		self.valid_shots = []
+		self.charge_attempt_list = []
 
 	def __str__(self):
 		text = '{} has {} models in it\n'.format(self.name, len(self.models))

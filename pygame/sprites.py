@@ -101,6 +101,7 @@ class Model(pygame.sprite.Sprite):
 		self.invulnerable = invulnerable
 		self.weapons = []
 		self.unit = None
+
 		self.valid_shots = []	# List of valid shooting targets
 		self.charge_move = 0
 
