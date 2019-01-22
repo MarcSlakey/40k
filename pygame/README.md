@@ -110,6 +110,7 @@ Shooting Phase:
 		Model death
 Charge Phase:
 	Unit selection (eligibility)
+	Targeting and charge declarations
 	Overwatch
 Program:
 	Basic buttons
@@ -119,7 +120,7 @@ Optimization:
 
 IN PROGRESS:
 Charge Phase:
-	Targeting and charge declarations
+	
 	
 
 FUTURE WORK:
@@ -159,15 +160,11 @@ Fancy Rules (for the distant future):
 
 
 CURRENT BUGS:
-
 High Priority:
-
+There is no way to collide the circular model bases with rectangular terrain. Need to write custom collision code for this interaction.
 
 Low Priority:
-LOS checks are currently very slow, especially when doing multi-shooter LOS checks.
+LOS checks are currently very slow, especially when doing multi-shooter LOS checks during the shooting phase.
 Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This is because I've implemented the RAW; a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency.
 Models "stick" to walls and other models when they collide; although this is workable, it feels terrible and should be improved by pathfinding.
-There is no way to collide the circular model bases with rectangular terrain. Need to write custom collision code for this interaction.
 During shooting phase, can "add" models to the shooting group even if they have fired all their weapons (although they do not fire again).
-During the charge phase, a unit can attempt to charge the same unit after having failed a charge against it.
-During the charge phase, charging units can violate the melee radius of enemies that are not its charge target.

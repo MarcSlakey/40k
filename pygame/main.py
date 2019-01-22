@@ -94,6 +94,7 @@ class Game:
 		self.army2.add_unit(Unit(self, 'Ork Boyz 4'))
 		
 		self.active_army = self.army1
+		self.inactive_army = self.army2
 
 		#Create walls, enemies from map.txt
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
@@ -178,23 +179,21 @@ class Game:
 	def change_active(self):
 		if self.active_army == self.army1:
 			self.active_army = self.army2
-			active_army = self.army2
-			inactive_army = self.army1
+			self.inactive_army = self.army1
 
 		elif self.active_army == self.army2:
 			self.turn_count += 1
 			self.active_army = self.army1
-			active_army = self.army1
-			inactive_army = self.army2
+			self.inactive_army = self.army2
 
 		self.selectable_models.empty()
 		self.targets.empty()
 
-		for unit in active_army.units:
+		for unit in self.active_army.units:
 			for model in unit.models:
 				self.selectable_models.add(model)
 
-		for unit in inactive_army.units:
+		for unit in self.inactive_army.units:
 			for model in unit.models:
 				self.targets.add(model)
 
@@ -298,7 +297,6 @@ class Game:
 		print("\nCharging models have not moved. Returning to Charge Phase.")
 		return True
 
-
 	def clear_selections(self):
 		self.selected_model = None
 		self.selected_unit = None
@@ -315,7 +313,6 @@ class Game:
 			unit.valid_shots.clear()
 			for model in unit.models:
 				model.valid_shots.clear()
-
 
 	def reset_flags(self):
 		for model in self.selectable_models:
@@ -712,6 +709,10 @@ class Game:
 
 						for model in self.charging_unit.models:
 							self.selectable_models.add(model)
+
+						for unit in self.inactive_army.units:
+							for model in unit.models:
+								self.targets.add(model)
 
 						self.clear_selections()
 						self.clear_valid_shots()
@@ -1111,9 +1112,12 @@ class Game:
 					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.charge_move), 1)
 
 				#Melee radius (one inch)
+				for sprite in self.targets:
+					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+
 				if self.target_unit != None:
 					for sprite in self.target_unit.models:
-						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+						pygame.draw.circle(self.screen, ORANGE, sprite.rect.center, sprite.true_melee_radius, 1)
 
 				#Cohesion radius (two inches)	
 				for sprite in self.selected_model.unit.models:

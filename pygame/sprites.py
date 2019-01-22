@@ -1,5 +1,4 @@
-import pygame
-import random
+import pygame, random
 from os import path
 from math import *
 from settings import *
@@ -150,6 +149,9 @@ class Model(pygame.sprite.Sprite):
 			def revert_move():
 				self.x = temp_x
 				self.y = temp_y
+				self.rect.center = (self.x, self.y)
+				self.dest_x = self.x
+				self.dest_y = self.y
 				#print("Coordinates reverted to ({},{})".format(self.x, self.y))
 
 			#Performs movement once destination is set by mouse event input
@@ -193,28 +195,18 @@ class Model(pygame.sprite.Sprite):
 							if pygame.sprite.collide_circle(self, sprite_x):
 								print("\n!Collision with between self and {}!".format(sprite_x.name))
 								revert_move()
-								self.rect.center = (self.x, self.y)
-								self.dest_x = self.x
-								self.dest_y = self.y
 
 					#Melee collision
-					for sprite_x in self.game.targets:
-						if sprite_x != self:
-							if pygame.sprite.collide_circle_ratio(sprite_x.melee_ratio)(self, sprite_x):
-								#print("\n!Collision with between self and enemy melee radius!")
-								revert_move()
-								self.rect.center = (self.x, self.y)
-								self.dest_x = self.x
-								self.dest_y = self.y
+					for sprite in self.game.targets:
+						if pygame.sprite.collide_circle_ratio(self.game.melee_ratio(self, sprite))(self, sprite):
+							print("\n!Collision with between self and enemy melee radius!")
+							revert_move()
 
 					#Terrain collision
 					for sprite_x in self.game.walls:
 						if pygame.sprite.collide_rect(self, sprite_x):
-							#print("\n!Collision with between self and terrain!")
+							print("\n!Collision with between self and terrain!")
 							revert_move()
-							self.rect.center = (self.x, self.y)
-							self.dest_x = self.x
-							self.dest_y = self.y
 
 					#Max move reduced if model moved at all
 					if self.x != temp_x or self.y != temp_y:	
@@ -227,8 +219,6 @@ class Model(pygame.sprite.Sprite):
 						pass
 						#print("\nFailed move.")
 						#print("Coordinates unchanged.")
-
-					
 					
 				else:
 					print("\nMOVE HALTED: Current move of {} > Remaining max move of {}".format(current_move, self.max_move))
@@ -273,6 +263,9 @@ class Model(pygame.sprite.Sprite):
 			def revert_move():
 				self.x = temp_x
 				self.y = temp_y
+				self.rect.center = (self.x, self.y)
+				self.dest_x = self.x
+				self.dest_y = self.y
 				#print("Coordinates reverted to ({},{})".format(self.x, self.y))
 
 			if self.dest_x != self.x and self.dest_y != self.y:
@@ -315,18 +308,19 @@ class Model(pygame.sprite.Sprite):
 							if pygame.sprite.collide_circle(self, sprite_x):
 								#print("\n!Collision with between self and model!")
 								revert_move()
-								self.rect.center = (self.x, self.y)
-								self.dest_x = self.x
-								self.dest_y = self.y
+								
+					#Melee collision
+					for sprite in self.game.targets:
+						if sprite.unit != self.game.charge_target_unit:
+							if pygame.sprite.collide_circle_ratio(self.game.melee_ratio(self, sprite))(self, sprite):
+								print("\n!Collision with between self and enemy melee radius!")
+								revert_move()
 
 					#Terrain collision
 					for sprite_x in self.game.walls:
 						if pygame.sprite.collide_rect(self, sprite_x):
 							#print("\n!Collision with between self and terrain!")
 							revert_move()
-							self.rect.center = (self.x, self.y)
-							self.dest_x = self.x
-							self.dest_y = self.y
 
 					#Max move reduced if model moved at all
 					if self.x != temp_x or self.y != temp_y:	
@@ -340,8 +334,6 @@ class Model(pygame.sprite.Sprite):
 						#print("\nFailed move.")
 						#print("Coordinates unchanged.")
 
-					
-					
 				else:
 					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.charge_move))
 					self.dest_x = self.x
