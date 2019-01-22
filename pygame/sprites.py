@@ -366,7 +366,7 @@ class Model(pygame.sprite.Sprite):
 		"""
 		weapon_used = self.weapons[weapon_index]
 		if weapon_used.fired == True:
-			print("Weapon has already fired this turn. Pick a different weapon or model.")
+			print("\nWeapon has already fired this turn. Pick a different weapon or model.")
 			return
 		else:
 			weapon_used.fired = True

@@ -91,6 +91,7 @@ class Game:
 		self.army2.add_unit(Unit(self, 'Ork Boyz 1'))
 		self.army2.add_unit(Unit(self, 'Ork Boyz 2'))
 		self.army2.add_unit(Unit(self, 'Ork Boyz 3'))
+		self.army2.add_unit(Unit(self, 'Ork Boyz 4'))
 		
 		self.active_army = self.army1
 
@@ -132,6 +133,14 @@ class Game:
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[2].add_model(model)
 					model.unit = self.army2.units[2]
+					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image.set_colorkey(WHITE)
+
+				elif tile == 'K':
+					model = create_model_by_name('Ork Boy', self, col, row)
+					self.army2.units[3].add_model(model)
+					model.unit = self.army2.units[3]
 					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
 					model.image = self.spritesheet.get_image(424, 882, 28, 33)
 					model.image.set_colorkey(WHITE)
