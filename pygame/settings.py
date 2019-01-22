@@ -2,7 +2,7 @@
 
 #Create and set Window size and FPS constants
 TITLE = "40k pygame"
-WIDTH = 1500	#Should be evenly divisible by TILESIZE value below 
+WIDTH = 1600	#Should be evenly divisible by TILESIZE value below 
 HEIGHT = 900	
 FPS = 120		#locks the FPS
 

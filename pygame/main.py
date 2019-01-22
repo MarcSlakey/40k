@@ -291,7 +291,7 @@ class Game:
 						for model in self.target_unit.models:
 							model.in_melee = True
 						return True
-				print("\nNo charging models in melee radius, charge considered to be a failure.")
+				print("\nNo charging models in melee radius, charge considered a failure.")
 				print("Reset moves and then press enter to return to charge phase.")
 				return False
 		print("\nCharging models have not moved. Returning to Charge Phase.")
@@ -331,6 +331,7 @@ class Game:
 
 
 	#Game Loop - Event Handling
+	#The bulk of the game logic is defined here. 
 	def events(self):
 		def model_selection(game):
 			for model in game.selectable_models:
@@ -820,7 +821,6 @@ class Game:
 						if self.selected_model != None:
 							self.selected_model.dest_x = pygame.mouse.get_pos()[0]
 							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
-
 				
 	#Game Loop - Update
 	def update(self):
@@ -1177,6 +1177,7 @@ class Game:
 
 g = Game()
 g.show_start_screen()
+
 while g.running:
 	g.new()
 	g.show_game_over_screen()
