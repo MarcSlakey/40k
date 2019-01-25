@@ -118,7 +118,7 @@ class Model(pygame.sprite.Sprite):
 		
 
 	def __str__(self):
-		text = '{}\n'.format(self.name)
+		text = '{}'.format(self.name)
 		return text
 
 	def add_weapon(self, weapon):

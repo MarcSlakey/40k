@@ -63,6 +63,7 @@ class Game:
 		self.bullets = pygame.sprite.Group()
 		self.rays = pygame.sprite.Group()
 		self.buttons = []
+		self.show_radii = True
 		self.selected_model = None
 		self.selected_unit = None
 		self.shooting_models = []
@@ -72,7 +73,9 @@ class Game:
 		self.charging_unit = None
 		self.charge_target_unit = None
 		self.charge_range = 0
+		self.ineligible_fight_units = []
 
+		self.toggle_radii_button = Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  3*WIDTH/4, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.reset_all_button = Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.attack_button = Button(self, "FIRE WEAPON", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.charge_button = Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
@@ -97,7 +100,7 @@ class Game:
 		self.active_army = self.army1
 		self.inactive_army = self.army2
 
-		#Create walls, enemies from map.txt
+		#Create models and wall sprites from map.txt
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
@@ -337,6 +340,11 @@ class Game:
 		for model in unit.models:
 			model.charge_move = self.charge_range
 
+	def toggle_radii(self):
+		if self.show_radii == True:
+			self.show_radii = False
+		else:
+			self.show_radii = True
 
 	#Game Loop - Event Handling
 	#The bulk of the game logic is defined here. 
@@ -362,8 +370,8 @@ class Game:
 					game.selected_model = model
 					game.selected_unit = model.unit
 
-					print("\nSelected a model: {}".format(game.selected_model))
-					print("Selected model's parent unit:".format(game.selected_unit.name))
+					print("\nSelected model: {}".format(game.selected_model))
+					print("Selected unit: {}".format(game.selected_unit.name))
 
 		def multiple_selection(game):
 			if len(game.shooting_models) == 0:
@@ -377,12 +385,9 @@ class Game:
 						game.selected_model = model
 						game.selected_unit = model.unit
 						game.shooting_models.append(model)
-						print("\nSelected a model:")
-						print(game.selected_model)
-						print("Selected model's parent unit:")
-						print(game.selected_unit.name)
-						print("Models selected:")
-						print(game.shooting_models)
+						print("\nSelected model: {}".format(game.selected_model))
+						print("Selected unit: {}".format(game.selected_unit.name))
+						print("Models selected: {}".format(game.shooting_models))
 
 			elif len(game.shooting_models) > 0:
 				for model in game.selectable_models:
@@ -402,12 +407,9 @@ class Game:
 							game.selected_model = model
 							game.selected_unit = model.unit
 							game.shooting_models.append(model)
-							print("\nSelected a model:")
-							print(game.selected_model)
-							print("Selected model's parent unit:")
-							print(game.selected_unit.name)
-							print("Models selected:")
-							print(game.shooting_models)
+							print("\nSelected model: {}".format(game.selected_model))
+							print("Selected unit: {}".format(game.selected_unit.name))
+							print("Models selected: {}".format(game.shooting_models))
 
 						else:
 							print("Chosen model not in same unit as currently selected shooting models.")
@@ -462,7 +464,10 @@ class Game:
 							for model in self.selectable_models:
 								self.reset_moves(model)
 
-						if self.selected_model == None:
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif self.selected_model == None:
 							model_selection(self)
 
 						elif self.selected_model != None:
@@ -510,7 +515,10 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB
-						if len(self.shooting_models) == 0:
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif len(self.shooting_models) == 0:
 							multiple_selection(self)
 							if len(self.shooting_models) > 0:
 								self.los_check(self.selected_model)
@@ -574,30 +582,34 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
-						for model in self.target_unit.models:
-							if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-								model.wounds -= 1
-								self.unallocated_wounds -= 1
-								print("\nAllocating wound to: ")
-								print(model)
-								print("This model is part of unit:")
-								print(model.unit.name)
-								for model in self.target_unit.models:
-									model.update()
-								if self.unallocated_wounds <= 0 or len(self.target_unit.models) == 0:
-									if self.unallocated_wounds <= 0:
-										print("\nAll wounds allocated!")
-									elif len(self.target_unit.models) == 0:
-										print("\nTarget unit eliminated. No valid targets remain.")
-									print("Returning to previous phase")
-									self.change_phase(self.previous_phase)
-									self.unallocated_wounds = 0
-									self.selected_model.valid_shots.clear()
-									self.selected_model = None
-									self.selected_unit = None
-									self.shooting_models.clear()
-									self.target_model = None
-									self.target_unit = None
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						else:
+							for model in self.target_unit.models:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									model.wounds -= 1
+									self.unallocated_wounds -= 1
+									print("\nAllocating wound to: ")
+									print(model)
+									print("This model is part of unit:")
+									print(model.unit.name)
+									for model in self.target_unit.models:
+										model.update()
+									if self.unallocated_wounds <= 0 or len(self.target_unit.models) == 0:
+										if self.unallocated_wounds <= 0:
+											print("\nAll wounds allocated!")
+										elif len(self.target_unit.models) == 0:
+											print("\nTarget unit eliminated. No valid targets remain.")
+										print("Returning to previous phase")
+										self.change_phase(self.previous_phase)
+										self.unallocated_wounds = 0
+										self.selected_model.valid_shots.clear()
+										self.selected_model = None
+										self.selected_unit = None
+										self.shooting_models.clear()
+										self.target_model = None
+										self.target_unit = None
 									
 								else:
 									print("\nChosen model not a valid target, please select a model in the target unit.")
@@ -633,7 +645,10 @@ class Game:
 							for model in self.selectable_models:
 								self.reset_moves(model)
 
-						if self.charge_button.mouse_over() and self.selected_model != None and self.target_model != None:
+						elif self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif self.charge_button.mouse_over() and self.selected_model != None and self.target_model != None:
 							for item in self.selected_unit.charge_attempt_list:
 								if item == self.target_unit:
 									print("\nA charge against this target has already been attempted by the selected unit on this turn.")
@@ -735,7 +750,10 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB
-						if len(self.shooting_models) == 0:
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif len(self.shooting_models) == 0:
 							multiple_selection(self)
 							if len(self.shooting_models) > 0:
 								self.los_check(self.selected_model)
@@ -817,7 +835,10 @@ class Game:
 							for model in self.selectable_models:
 								self.reset_moves(model)
 
-						if self.selected_model == None:
+						elif self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif self.selected_model == None:
 							model_selection(self)
 
 						elif self.selected_model != None:
@@ -853,7 +874,10 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB
-						if self.fight_button.mouse_over():
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif self.fight_button.mouse_over():
 							if self.selected_model != None and self.selected_unit != None:
 								self.refresh_moves()
 								self.selectable_models.empty()
@@ -868,7 +892,7 @@ class Game:
 								self.change_phase("Pile In")
 										
 
-						if self.selected_model == None:
+						elif self.selected_model == None:
 							model_selection(self)
 
 						elif self.selected_model != None:
@@ -901,17 +925,21 @@ class Game:
 						if self.cohesion_check():
 							self.refresh_moves()
 							self.clear_selections()
+							self.ineligible_fight_units.empty
 							self.change_phase("Fight Phase")
 						
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB
-						if self.reset_all_button.mouse_over():
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif self.reset_all_button.mouse_over():
 							for model in self.selectable_models:
 								self.reset_moves(model)
 
-						if self.selected_model == None:
+						elif self.selected_model == None:
 							model_selection(self)
 
 						elif self.selected_model != None:
@@ -948,7 +976,8 @@ class Game:
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB
-						pass
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
 												
 					elif event.button == 2: #Middle mouse button
 						pass
@@ -1038,21 +1067,22 @@ class Game:
 				if self.selected_model.cohesion:
 					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				#Weapon range radius
-				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+				if self.show_radii == True:
+					#Weapon range radius
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
 
-				#Remaining move radius
-				if self.selected_model.max_move >= 1:
-					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)
+					#Remaining move radius
+					if self.selected_model.max_move >= 1:
+						pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)
 
-				#Melee radius (one inch)
-				for sprite in self.targets:
-					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+					#Melee radius (one inch)
+					for sprite in self.targets:
+						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
 
-				#Cohesion radius (two inches)	
-				for sprite in self.selected_model.unit.models:
-					if sprite != self.selected_model:
-						pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
+					#Cohesion radius (two inches)	
+					for sprite in self.selected_model.unit.models:
+						if sprite != self.selected_model:
+							pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
 
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
@@ -1060,6 +1090,9 @@ class Game:
 			#Buttons
 			self.reset_all_button.draw()
 			self.reset_all_button.fill()
+
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
 
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
@@ -1079,9 +1112,6 @@ class Game:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				#Weapon range radius
-				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
-
 				#Targets in LOS
 				if self.selected_unit != None:
 					if len(self.selected_unit.valid_shots) > 0:
@@ -1092,6 +1122,10 @@ class Game:
 					for model in self.target_unit.models:
 						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
 
+				if self.show_radii == True:
+					#Weapon range radius
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+				
 			if len(self.shooting_models) > 0:
 				for model in self.shooting_models:
 					pygame.draw.circle(self.screen, BLUE, model.rect.center, int((model.radius)/2), 0)
@@ -1099,6 +1133,9 @@ class Game:
 			#Buttons
 			self.attack_button.draw()
 			self.attack_button.fill()
+
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
 
 			#Controls Info Text
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
@@ -1118,9 +1155,6 @@ class Game:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				#Weapon range radius
-				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
-
 				#Targets in LOS
 				if self.selected_unit != None:
 					if len(self.selected_unit.valid_shots) > 0:
@@ -1130,6 +1164,14 @@ class Game:
 				if self.target_unit != None:
 					for model in self.target_unit.models:
 						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+				if self.show_radii == True:
+					#Weapon range radius
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+
+			#Buttons
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
 
 			#Unallocated wound counter
 			self.draw_text("{}Wound(s) to allocate!".format(self.unallocated_wounds), self.generic_font, self.largeText, YELLOW, WIDTH/2, HEIGHT - 2*TILESIZE, "center")
@@ -1153,27 +1195,28 @@ class Game:
 				if self.selected_model.cohesion:
 					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				#Remaining charge move radius
-				if self.selected_model.charge_move != 0:
-					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.charge_range), 1)
-
-				#Max charge move radius
-				if self.selected_model.charge_move == 0:
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), 12*TILESIZE, 1)
-
-				#Melee radius (one inch)
-				for sprite in self.targets:
-					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
-
-				#Cohesion radius (two inches)	
-				for sprite in self.selected_model.unit.models:
-					if sprite != self.selected_model:
-						pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
-
 				#Target unit indicator
 				if self.target_unit != None:
 					for model in self.target_unit.models:
 						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+				if self.show_radii == True:
+					#Remaining charge move radius
+					if self.selected_model.charge_move != 0:
+						pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.charge_range), 1)
+
+					#Max charge move radius
+					if self.selected_model.charge_move == 0:
+						pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), 12*TILESIZE, 1)
+
+					#Melee radius (one inch)
+					for sprite in self.targets:
+						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+
+					#Cohesion radius (two inches)	
+					for sprite in self.selected_model.unit.models:
+						if sprite != self.selected_model:
+							pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
 
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
@@ -1181,6 +1224,9 @@ class Game:
 			#Buttons
 			self.charge_button.draw()
 			self.charge_button.fill()
+
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
 
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
@@ -1199,9 +1245,6 @@ class Game:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				#Weapon range radius
-				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
-
 				#Targets in LOS
 				if self.selected_unit != None:
 					if len(self.selected_unit.valid_shots) > 0:
@@ -1212,6 +1255,10 @@ class Game:
 					for model in self.target_unit.models:
 						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
 
+				if self.show_radii == True:
+					#Weapon range radius
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+
 			if len(self.shooting_models) > 0:
 				for model in self.shooting_models:
 					pygame.draw.circle(self.screen, BLUE, model.rect.center, int((model.radius)/2), 0)
@@ -1219,6 +1266,9 @@ class Game:
 			#Buttons
 			self.attack_button.draw()
 			self.attack_button.fill()
+
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
 
 			#Controls Info Text
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
@@ -1239,25 +1289,26 @@ class Game:
 				if self.selected_model.cohesion:
 					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				#Weapon range radius
-				pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+				if self.show_radii == True:
+					#Weapon range radius
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
 
-				#Remaining move radius
-				if self.selected_model.charge_move >= 1:
-					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.charge_move), 1)
+					#Remaining move radius
+					if self.selected_model.charge_move >= 1:
+						pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.charge_move), 1)
 
-				#Melee radius (one inch)
-				for sprite in self.targets:
-					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+					#Melee radius (one inch)
+					for sprite in self.targets:
+						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
 
-				if self.target_unit != None:
-					for sprite in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, sprite.rect.center, sprite.true_melee_radius, 1)
+					if self.target_unit != None:
+						for sprite in self.target_unit.models:
+							pygame.draw.circle(self.screen, ORANGE, sprite.rect.center, sprite.true_melee_radius, 1)
 
-				#Cohesion radius (two inches)	
-				for sprite in self.selected_model.unit.models:
-					if sprite != self.selected_model:
-						pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
+					#Cohesion radius (two inches)	
+					for sprite in self.selected_model.unit.models:
+						if sprite != self.selected_model:
+							pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
 
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
@@ -1265,6 +1316,9 @@ class Game:
 			#Buttons
 			self.reset_all_button.draw()
 			self.reset_all_button.fill()
+
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
 
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
@@ -1297,6 +1351,9 @@ class Game:
 			self.fight_button.draw()
 			self.fight_button.fill()
 
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
+
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
@@ -1313,31 +1370,33 @@ class Game:
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
+				
 				if self.selected_model.cohesion:
 					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
-
-				#Remaining pile in move radius
-				if self.selected_model.pile_in_move >= 1:
-					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.pile_in_move), 1)
-
-				#Melee radius (one inch)
-				for sprite in self.targets:
-					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
-
-				#Melee fight radius (one inch)
-				for sprite in self.selected_unit.models:
-					if sprite != self.selected_model:
-						pygame.draw.circle(self.screen, ORANGE, sprite.rect.center, sprite.true_melee_radius, 1)
-
-				#Cohesion radius (two inches)	
-				for sprite in self.selected_model.unit.models:
-					if sprite != self.selected_model:
-						pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
 
 				#Target unit indicator
 				if self.target_unit != None:
 					for model in self.target_unit.models:
 						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+				if self.show_radii == True:
+					#Remaining pile in move radius
+					if self.selected_model.pile_in_move >= 1:
+						pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.pile_in_move), 1)
+
+					#Melee radius (one inch)
+					for sprite in self.targets:
+						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+
+					#Melee fight radius (one inch)
+					for sprite in self.selected_unit.models:
+						if sprite != self.selected_model:
+							pygame.draw.circle(self.screen, ORANGE, sprite.rect.center, sprite.true_melee_radius, 1)
+
+					#Cohesion radius (two inches)	
+					for sprite in self.selected_model.unit.models:
+						if sprite != self.selected_model:
+							pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
 
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
@@ -1345,6 +1404,9 @@ class Game:
 			#Buttons
 			self.reset_all_button.draw()
 			self.reset_all_button.fill()
+
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
 
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")

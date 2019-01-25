@@ -16,7 +16,7 @@ class Unit(object):
 
 	"""
 	
-	def __init__(self, game, name=''):
+	def __init__(self, game, name='Unit Name'):
 		"""The constructor for Unit class
 
 		Parameters:
