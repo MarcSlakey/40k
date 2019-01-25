@@ -15,6 +15,8 @@ Basic controls are shown in a rudimentary UI in-game, but detailed controls are 
 They attempt to match the rules in the included 8e Battle Primer PDF as closely as possible.
 See that PDF in the pygame folder (40k\pygame\"8e Battle Primer (Basic Rules)") for the best explanation of the core rules.
 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 GAME BASICS:
 This is a turn based game in which two armies take turns until one of them is destroyed.
 Each army's turn consists of 6 sequential main phases: Movement, Psychic, Shooting, Charge, Fight, Morale.
@@ -30,7 +32,7 @@ The selected model will turn from yellow to green when within 2 squares of a mod
 The semi-circle near the RETURN tooltip on the bottom right will turn green if unit cohesion between the selectable models is established and is red otherwise.
 
 SHOOTING PHASE RULES:
-Selected model is green, other models in the same unit are cyan. 
+Phase Structure: Shooting Phase -> Wound Allocation -> Return to Shooting Phase
 Models that have been cumulatively selected for simultaneous shooting have a blue dot on them.
 Models can only shoot as a group if they are in the same unit, have the same ballistic skill, use the same weapon, and are shooting at the same target unit.
 A model must have line of sight to an enemy and be in range of that enemy in order to shoot it. 
@@ -41,7 +43,7 @@ Enemies are targeted as unit blocks, not as individuals.
 Individual models are allocated damage once a group of shots have been resolved (been tested for hit, wound, and save)
 
 CHARGE PHASE RULES:
-Selected model is green, other models in the same unit are cyan.
+Phase structure: Charge Phase -> Overwatch -> Charge Move -> Return to Charge Phase
 Maximum charge range is indicated by the thin red radius. An enemy unit can only be chosen as a charge target if it is within this range.
 Only one unit can charge at a time, and that unit can only choose one charge target at a time. 
 Pressing the "Confirm Charge Target" button progresses the game to the Overwatch phase, in which each model in the target unit can fire overwatch.
@@ -50,11 +52,17 @@ Pressing enter during Overwatch progresses to the Charge Move. The charging mode
 At least one model from the charging unit must establish melee collision (1 inch) with their target, otherwise the charge is considered a failure and no model may move.
 Pressing enter in either case (successful or failed charge) returns the game to the Charge Phase where other friendly units may attempt charges as well.
 
+FIGHT PHASE RULES:
+
+MORALE PHASE RULES:
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 GENERAL CONTROLS:
 LMB to click any of the buttons on the bottom middle part of the screen.
 
 MOVEMENT PHASE CONTROLS:
-"LMB" on a model to select it. A model will turn green to indicate that it is selected.
+"LMB" on a model to select it. 
 	Clicking empty space will deselect the model/unit.
 "RMB" commands the selected model to move to the clicked location.
 "Spacebar" while a model is selected will reset it to its previous position.
@@ -93,7 +101,11 @@ See "Shooting Phase" controls above.
 CHARGE MOVE CONTROLS:
 See "Movement Phase" controls above.
 
+FIGHT PHASE CONTROLS:
 
+MORALE PHASE CONTROLS
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 CURRENTLY IMPLEMENTED:
 Movement Phase:
@@ -119,9 +131,9 @@ Optimization:
 	Lock/unlock screen around multiple draw() calls
 
 IN PROGRESS:
-Charge Phase:
-	
-	
+Fight Phase:
+	Pile In
+	Targeting
 
 FUTURE WORK:
 Movement Phase:
@@ -130,19 +142,19 @@ Movement Phase:
 		Fall back moves
 Shooting Phase:
 	Weapon type interactions:
-		Multiple weapons (selection)
-		Rapid fire
-		Heavy
-		Assault (requires advance moves)
-		Rapid fire
-		Grenade
-		Pistols (requires basic melee phase)
+		Multiple weapons per model (selection)
+		Weapon Types:
+			Rapid fire
+			Heavy
+			Assault (requires advance moves)
+			Rapid fire
+			Grenade
+			Pistols (requires basic melee phase)
 	Terrain/Cover modifiers
 	Character targeting ruless
 Charge Phase:
 	Heroic intervention
 Fight Phase:
-	Pile in move
 	Targeting
 	Consolidation move
 Morale Phase:
@@ -150,7 +162,7 @@ General:
 	Mortal wounds
 	Buff auras
 Program:
-	Control GUI
+	Control GUI (ThorPy?)
 	Dirty rect animation
 
 Fancy Rules (for the distant future):
@@ -158,10 +170,12 @@ Fancy Rules (for the distant future):
 	Psychic phase
 	Reinforcements
 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 CURRENT BUGS:
 High Priority:
 There is no way to collide the circular model bases with rectangular terrain. Need to write custom collision code for this interaction.
+Pile in move logic does not include requirement to end move closer to the nearest model. 
 
 Low Priority:
 LOS checks are currently very slow, especially when doing multi-shooter LOS checks during the shooting phase.

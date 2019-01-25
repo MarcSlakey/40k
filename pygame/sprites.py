@@ -103,6 +103,11 @@ class Model(pygame.sprite.Sprite):
 
 		self.valid_shots = []	# List of valid shooting targets
 		self.charge_move = 0
+		self.pile_in_move = 3*TILESIZE
+		self.pile_in_move_max = 3*TILESIZE
+		self.consolidate_move = 3*TILESIZE
+		self.consolidate_move_max = 3*TILESIZE
+
 
 		#Special flags
 		self.cohesion = True
@@ -252,9 +257,6 @@ class Model(pygame.sprite.Sprite):
 			"""
 
 		elif self.game.current_phase == "Charge Move":
-			if self.valid_shots != None:
-				self.valid_shots.clear()
-				
 			temp_x = self.x	
 			temp_y = self.y
 			current_move = 0
@@ -336,6 +338,96 @@ class Model(pygame.sprite.Sprite):
 
 				else:
 					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.charge_move))
+					self.dest_x = self.x
+					self.dest_y = self.y
+
+			else:
+				self.dest_x = self.x
+				self.dest_y = self.y
+				self.rect.center = (self.x, self.y)
+
+			#Unit cohesion checker
+			for sprite in self.unit.models:
+				if sprite != self and pygame.sprite.collide_circle_ratio(self.cohesion_ratio)(self, sprite):
+					self.cohesion = True
+				elif len(self.unit.models) <= 1:
+					self.cohesion = True
+
+		elif self.game.current_phase == "Pile In":
+			temp_x = self.x	
+			temp_y = self.y
+			current_move = 0
+			self.cohesion = False
+
+			def revert_move():
+				self.x = temp_x
+				self.y = temp_y
+				self.rect.center = (self.x, self.y)
+				self.dest_x = self.x
+				self.dest_y = self.y
+				#print("Coordinates reverted to ({},{})".format(self.x, self.y))
+
+			if self.dest_x != self.x and self.dest_y != self.y:
+				#print("\n\n-------NEW STEP-------")
+				#print("Pre-move coord: ({},{})".format(self.x, self.y))
+				delta_x = self.x - self.dest_x
+				delta_y = self.y - self.dest_y
+				current_move = find_hypotenuse(delta_x, delta_y)
+				"""
+				print("Current coordinates: {},{}".format(self.x, self.y))
+				print("Target coordinate: {},{}".format(self.dest_x, self.dest_y))
+				print("delta_x: {} pixels".format(delta_x))
+				print("delta_y: {} pixels".format(delta_y))
+				print("delta hypot: {} pixels".format(current_move))
+				"""
+
+				#Attempts to move the model if the desired move is within the unit's max move
+				if self.pile_in_move > 0:
+					model_pos = vec(self.x, self.y)
+					dest_pos = vec(self.dest_x, self.dest_y)
+					self.rot = (dest_pos - model_pos).angle_to(vec(1,0))	#Calculates the angle between desired vector and basic x vector
+					self.acc = vec(self.speed, 0).rotate(-self.rot)		#Sets the acceleration vector's to angle and magnitude
+					self.acc += self.vel * -.4	#Friction coefficient; the higher the velocity, the higher this number is.
+					self.vel += self.acc
+
+					#print("\nRot: {}, Acc: {}, Vel: {}".format(self.rot, self.acc, self.vel))
+					#print("Velocity vector magnitude: {}".format(find_hypotenuse(self.vel[0], self.vel[1])))
+
+					pixels_x = int(self.vel[0])
+					pixels_y = int(self.vel[1])
+					distance_moved = find_hypotenuse(pixels_x, pixels_y)
+
+					self.x += pixels_x
+					self.y += pixels_y
+					self.rect.center = (self.x, self.y)
+
+					#Model base collision
+					for sprite_x in self.game.all_models:
+						if sprite_x != self:
+							if pygame.sprite.collide_circle(self, sprite_x):
+								#print("\n!Collision with between self and model!")
+								revert_move()
+
+					#Terrain collision
+					for sprite_x in self.game.walls:
+						if pygame.sprite.collide_rect(self, sprite_x):
+							print("\n!Collision with between self and terrain!")
+							revert_move()
+
+					#Max move reduced if model moved at all
+					if self.x != temp_x or self.y != temp_y:	
+						self.pile_in_move -= distance_moved
+						#print("\nSuccessful move!")
+						#print("Max move reduced by {} (rounded velocity hypotenuse)".format(distance_moved))
+						#print("Max move Remaining: {}".format(self.charge_move))
+						#print("\nPost-move coord: ({},{})".format(self.x, self.y))
+					else:
+						pass
+						#print("\nFailed move.")
+						#print("Coordinates unchanged.")
+
+				else:
+					#print("\nMOVE CANCELED: Current move of {} > Remaining max move of {}".format(current_move, self.pile_in_move))
 					self.dest_x = self.x
 					self.dest_y = self.y
 
