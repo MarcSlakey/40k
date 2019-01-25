@@ -179,6 +179,7 @@ Pile in move logic does not include requirement to end move closer to the neares
 
 Low Priority:
 LOS checks are currently very slow, especially when doing multi-shooter LOS checks during the shooting phase.
-Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This is because I've implemented the RAW; a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency.
-Models "stick" to walls and other models when they collide; although this is workable, it feels terrible and should be improved by pathfinding.
+Weapon ranges are checked from the shooter's exact pos coordinates to the target's exact pos coordinates. This works fine for small models, but a more accurate system would use a scaled circle collision.
+Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This follows the RAW (rules as written); a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency within a unit.
+Models "stick" to walls and other models when they collide; although this is workable, it could be improved by pathfinding.
 During shooting phase, can "add" models to the shooting group even if they have fired all their weapons (although they do not fire again).

@@ -881,6 +881,7 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
+						self.ineligible_fight_units.empty()
 						self.change_phase("Morale Phase")
 
 				#Mouse event handling
@@ -937,10 +938,8 @@ class Game:
 						if self.cohesion_check():
 							self.refresh_moves()
 							self.clear_selections()
-							self.ineligible_fight_units.empty
-							self.change_phase("Fight Phase")
+							self.change_phase("Fight Targeting")
 						
-
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB
@@ -965,6 +964,37 @@ class Game:
 						if self.selected_model != None:
 							self.selected_model.dest_x = pygame.mouse.get_pos()[0]
 							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
+
+		elif self.current_phase == "Fight Targeting":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif keys[pygame.K_SPACE]:
+						pass
+
+					elif keys[pygame.K_RETURN]:
+						self.change_phase("Fight Phase")
+
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+												
+					elif event.button == 2: #Middle mouse button
+						pass
+
+					elif event.button == 3:	#RMB
+						pass
+
 
 		elif self.current_phase == "Morale Phase":
 			for event in pygame.event.get():
