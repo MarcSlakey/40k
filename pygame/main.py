@@ -309,6 +309,7 @@ class Game:
 		return True
 
 	def clear_selections(self):
+		#print("\nClearing all selections...")
 		self.selected_model = None
 		self.selected_unit = None
 		self.target_model = None
@@ -390,8 +391,10 @@ class Game:
 						print("Models selected: {}".format(game.shooting_models))
 
 			elif len(game.shooting_models) > 0:
+				x = 0
 				for model in game.selectable_models:
 					if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						x += 1
 						if self.current_phase == "Shooting Phase" or self.current_phase == "Overwatch":
 							if model.in_melee == True:
 								print("\nModel is engaged in melee and cannot shoot.")
@@ -415,6 +418,9 @@ class Game:
 							print("Chosen model not in same unit as currently selected shooting models.")
 							print("Please choose a different model or reset shooting models selection with the spacebar.")
 							return
+				if x == 0:
+					self.shooting_models.clear()
+					self.clear_selections()
 
 		def mass_selection(game):
 			if len(game.shooting_models) == 0:
@@ -518,6 +524,18 @@ class Game:
 						if self.toggle_radii_button.mouse_over():
 							self.toggle_radii()
 
+						if self.attack_button.mouse_over():
+							if len(self.shooting_models) > 0:
+								if self.target_unit != None:
+									for model in self.shooting_models:
+										model.attack_with_weapon(self.target_unit)
+									if self.unallocated_wounds > 0:
+										self.change_phase("Wound Allocation")
+								else:
+									print("\nNo target selected. Select a target to shoot at.")
+							else:
+								print("\nNo shooting models selected. Select models to shoot with.")
+
 						elif len(self.shooting_models) == 0:
 							multiple_selection(self)
 							if len(self.shooting_models) > 0:
@@ -525,21 +543,8 @@ class Game:
 								self.selected_unit.valid_shots = self.selected_model.valid_shots
 									
 						elif len(self.shooting_models) > 0:
-							#Attack button
-							if self.target_unit != None:
-								if self.attack_button.mouse_over():
-									for model in self.shooting_models:
-										model.attack_with_weapon(self.target_unit)
-									if self.unallocated_wounds > 0:
-										self.change_phase("Wound Allocation")
-
-								else:
-									multiple_selection(self)
-									self.los_check(self.selected_model)
-									self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
-
-							else:
-								multiple_selection(self)
+							multiple_selection(self)
+							if len(self.shooting_models) > 0:
 								self.los_check(self.selected_model)
 								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
 
@@ -645,31 +650,39 @@ class Game:
 							for model in self.selectable_models:
 								self.reset_moves(model)
 
-						elif self.toggle_radii_button.mouse_over():
+						if self.toggle_radii_button.mouse_over():
 							self.toggle_radii()
 
-						elif self.charge_button.mouse_over() and self.selected_model != None and self.target_model != None:
-							for item in self.selected_unit.charge_attempt_list:
-								if item == self.target_unit:
-									print("\nA charge against this target has already been attempted by the selected unit on this turn.")
-									print("Select a different charge target.")
-									return
-							
-							self.selected_unit.charge_attempt_list.append(self.target_unit)
-							self.selectable_models.empty()
-							self.targets.empty()
-							for model in self.selected_unit.models:
-								self.targets.add(model)
-							for model in self.target_unit.models:
-								self.selectable_models.add(model)
+						if self.charge_button.mouse_over():
+							if self.selected_model != None and self.target_model != None:
+								for item in self.selected_unit.charge_attempt_list:
+									if item == self.target_unit:
+										print("\nA charge against this target has already been attempted by the selected unit on this turn.")
+										print("Select a different charge target.")
+										return
+								
+								self.selected_unit.charge_attempt_list.append(self.target_unit)
+								self.selectable_models.empty()
+								self.targets.empty()
+								for model in self.selected_unit.models:
+									self.targets.add(model)
+								for model in self.target_unit.models:
+									self.selectable_models.add(model)
 
-							self.charging_unit = self.selected_unit
-							self.charge_target_unit = self.target_unit
-							self.clear_selections()
-							self.target_unit = self.charging_unit
-							self.selected_unit = self.charge_target_unit
-							print("\nCharge target confirmed. Proceeding to overwatch response.")
-							self.change_phase("Overwatch")
+								self.charging_unit = self.selected_unit
+								self.charge_target_unit = self.target_unit
+								self.clear_selections()
+								self.target_unit = self.charging_unit
+								self.selected_unit = self.charge_target_unit
+								print("\nCharge target confirmed. Proceeding to overwatch response.")
+								self.change_phase("Overwatch")
+
+							elif self.selected_model == None:
+								print("\nNo unit selected. Select a unit to charge with.")
+
+							elif self.target_model == None:
+								print("\nNo target selected. Select a charge target.")
+								return
 
 						elif self.selected_model == None:
 							model_selection(self)
@@ -1192,6 +1205,7 @@ class Game:
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
+
 				if self.selected_model.cohesion:
 					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
