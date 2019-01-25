@@ -524,7 +524,7 @@ class Game:
 						if self.toggle_radii_button.mouse_over():
 							self.toggle_radii()
 
-						if self.attack_button.mouse_over():
+						elif self.attack_button.mouse_over():
 							if len(self.shooting_models) > 0:
 								if self.target_unit != None:
 									for model in self.shooting_models:
@@ -766,6 +766,18 @@ class Game:
 						if self.toggle_radii_button.mouse_over():
 							self.toggle_radii()
 
+						elif self.attack_button.mouse_over():
+							if len(self.shooting_models) > 0:
+								if self.target_unit != None:
+									for model in self.shooting_models:
+										model.attack_with_weapon(self.target_unit)
+									if self.unallocated_wounds > 0:
+										self.change_phase("Wound Allocation")
+								else:
+									print("\nNo target selected. Select a target to shoot at.")
+							else:
+								print("\nNo shooting models selected. Select models to shoot with.")
+
 						elif len(self.shooting_models) == 0:
 							multiple_selection(self)
 							if len(self.shooting_models) > 0:
@@ -773,21 +785,8 @@ class Game:
 								self.selected_unit.valid_shots = self.selected_model.valid_shots
 									
 						elif len(self.shooting_models) > 0:
-							#Attack button
-							if self.target_unit != None:
-								if self.attack_button.mouse_over():
-									for model in self.shooting_models:
-										model.attack_with_weapon(self.target_unit)
-									if self.unallocated_wounds > 0:
-										self.change_phase("Wound Allocation")
-
-								else:
-									multiple_selection(self)
-									self.los_check(self.selected_model)
-									self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
-
-							else:
-								multiple_selection(self)
+							multiple_selection(self)
+							if len(self.shooting_models) > 0:
 								self.los_check(self.selected_model)
 								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, self.selected_model.valid_shots)
 
