@@ -409,6 +409,9 @@ class Game:
 
 					print("\nSelected model: {}".format(game.selected_model))
 					print("Selected unit: {}".format(game.selected_unit.name))
+					return
+
+			self.clear_selections()
 
 		def multiple_selection(game):
 			if len(game.shooting_models) == 0:
@@ -489,10 +492,7 @@ class Game:
 							model.unit.valid_melee_targets = intersection(model.unit.valid_melee_targets, model.combined_melee)
 							return
 
-			self.selected_model = None
-			self.selected_unit = None
-			self.target_model = None
-			self.target_unit = None
+			self.clear_selections()
 			self.fighting_models.clear()
 
 		def mass_selection(game):
@@ -977,8 +977,8 @@ class Game:
 									for model in unit.models:
 										self.targets.add(model)
 
+								self.ineligible_fight_units.append(self.selected_unit)
 								self.change_phase("Pile In")
-										
 
 						elif self.selected_model == None:
 							model_selection(self)
@@ -1085,7 +1085,6 @@ class Game:
 										self.target_model = model
 										self.target_unit = model.unit
 
-
 		elif self.current_phase == "Morale Phase":
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -1116,7 +1115,6 @@ class Game:
 
 					elif event.button == 3:	#RMB
 						pass
-
 				
 	#Game Loop - Update
 	def update(self):
