@@ -39,7 +39,7 @@ class Weapon(object):
 		self.wound_function = wound_function
 		self.save_function = save_function
 		self.damage_function = damage_function
-		self.fired = False
+		
 
 	def __str__(self):
 		"""Operator overloading: runs this function on print(Weapon) or str().
@@ -57,6 +57,7 @@ class RangedWeapon(Weapon):
 		self.w_type = w_type
 		self.shot_dice = shot_dice
 		self.shots = shots
+		self.fired = False
 
 class MeleeWeapon(Weapon):
 	"""docstring for MeleeWeapon"""

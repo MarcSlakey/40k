@@ -67,6 +67,7 @@ class Game:
 		self.selected_model = None
 		self.selected_unit = None
 		self.shooting_models = []
+		self.fighting_models = []
 		self.target_model = None
 		self.target_unit = None
 		self.unallocated_wounds = 0
@@ -290,6 +291,36 @@ class Game:
 		ratio = (sprite_1.radius + sprite_2.radius + TILESIZE)/(sprite_1.radius + sprite_2.radius)
 		return ratio
 
+	#Populates a given sprite's "enemies_within_melee" and "squadmates_within_melee"
+	#Only used by unit_wide_melee_check()
+	def direct_melee_check(self, sprite):
+		for target in self.targets:
+			if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
+				sprite.enemies_within_melee.append(target)
+				sprite.combined_melee.append(target)
+
+		for model in sprite.unit.models:
+			if model != sprite:
+				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, model))(sprite, model):
+					sprite.squadmates_within_melee.append(model)
+
+	#Populates a sprite's combined_melee list with the enemies_within_melee of each member of its unit
+	#Only used by unit_wide_melee_check()
+	def combined_melee_check(self, sprite):
+		for squadmate in sprite.squadmates_within_melee:
+			for target in squadmate.enemies_within_melee:
+				sprite.combined_melee.append(target)
+
+	#Runs direct_melee_check and combined_melee_check for every member of a selected unit.
+	#Should be run when a model in a unit is selected for the first time. If subsequent models are selected from the same unit this does not need to run again.
+	#Has to be run because even if only one model is attacking, that model's whole unit must run these melee checks to determine what that model can attack.
+	def unit_wide_melee_check(self, sprite):
+		print("\nRunning unit-wide melee checks, please wait...")
+		for model in sprite.unit.models:
+			self.direct_melee_check(model)
+			self.combined_melee_check(model)
+		print("\nMelee checks complete.")
+
 	#Defines whether or not a charge has succeeded based on melee collision
 	#	Sets relevant sprite.in_melee flag to True if the charge succeeds
 	def charge_success(self):
@@ -315,7 +346,7 @@ class Game:
 		self.target_model = None
 		self.target_unit = None
 
-	def clear_valid_shots(self):		
+	def clear_valid_shots(self):
 		for unit in self.army1.units:
 			unit.valid_shots.clear()
 			for model in unit.models:
@@ -325,6 +356,14 @@ class Game:
 			unit.valid_shots.clear()
 			for model in unit.models:
 				model.valid_shots.clear()
+
+	def clear_melee_lists(self):
+		for unit in self.active_army.units:
+			unit.valid_melee_targets.clear()
+			for model in unit.models:
+				sprite.enemies_within_melee.clear()
+				sprite.combined_melee.clear()
+				sprite.squadmates_within_melee.clear()
 
 	def reset_flags(self):
 		for model in self.selectable_models:
@@ -415,12 +454,42 @@ class Game:
 							print("Models selected: {}".format(game.shooting_models))
 
 						else:
-							print("Chosen model not in same unit as currently selected shooting models.")
+							print("\nChosen model not in same unit as currently selected shooting models.")
 							print("Please choose a different model or reset shooting models selection with the spacebar.")
 							return
 				if x == 0:
 					self.shooting_models.clear()
 					self.clear_selections()
+
+		def multiple_melee_selection(self):
+			for model in self.selectable_models:
+				if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+					if len(self.fighting_models) == 0:
+						self.selected_model = model
+						self.selected_unit = model.unit
+						self.fighting_models.append(model)
+						print("\nSelected model: {}".format(self.selected_model))
+						print("Selected unit: {}".format(self.selected_unit.name))
+						print("# models selected: {}".format(len(self.fighting_models)))
+						self.unit_wide_melee_check(model)
+						model.unit.valid_melee_targets = model.combined_melee
+						return
+
+					elif len(self.fighting_models) > 0:
+						if model.unit == self.selected_unit:
+							self.target_model = None
+							self.target_unit = None
+							self.selected_model = model
+							self.fighting_models.append(model)
+							print("\nSelected model: {}".format(self.selected_model))
+							print("Selected unit: {}".format(self.selected_unit.name))
+							print("# models selected: {}".format(len(self.fighting_models)))
+							model.unit.valid_melee_targets = intersection(model.unit.valid_melee_targets, model.combined_melee)
+							return
+							
+			self.selected_model = None
+			self.selected_unit = None
+			self.fighting_models.clear()
 
 		def mass_selection(game):
 			if len(game.shooting_models) == 0:
@@ -552,12 +621,14 @@ class Game:
 						self.shooting_models.clear()
 						self.selected_unit = None
 						mass_selection(self)
+						print("\nRunning LOS checks on entire unit, please wait...")
 						if len(self.shooting_models) > 0:
 							self.los_check(self.selected_model)
 							self.selected_unit.valid_shots = self.selected_model.valid_shots
 							for model in self.shooting_models:
 								self.los_check(model)
 								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, model.valid_shots)
+						print("\nLOS checks complete.")
 
 					elif event.button == 3:	#RMB
 						if len(self.shooting_models) > 0:
@@ -988,12 +1059,27 @@ class Game:
 					if event.button == 1:	#LMB
 						if self.toggle_radii_button.mouse_over():
 							self.toggle_radii()
+
+						elif len(self.fighting_models) == 0:
+							multiple_melee_selection(self)
+
+						elif len(self.fighting_models) > 0:
+							multiple_melee_selection(self)
+								
 												
 					elif event.button == 2: #Middle mouse button
 						pass
 
 					elif event.button == 3:	#RMB
-						pass
+						if len(self.fighting_models) > 0:
+							self.target_model = None
+							self.target_unit = None
+							#Target selection
+							for model in self.targets:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									if model in self.selected_unit.valid_melee_targets:
+										self.target_model = model
+										self.target_unit = model.unit
 
 
 		elif self.current_phase == "Morale Phase":
@@ -1448,6 +1534,53 @@ class Game:
 			self.reset_all_button.draw()
 			self.reset_all_button.fill()
 
+			self.toggle_radii_button.draw()
+			self.toggle_radii_button.fill()
+
+			#Controls Info Text	
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
+			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+
+		elif self.current_phase == "Fight Targeting":
+			#Model base drawing/coloring
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
+			#Model base drawing/coloring
+			if self.selected_model != None:
+				#Selected model indicator
+				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
+				if len(self.selected_unit.valid_melee_targets) > 0:
+					for model in self.selected_unit.valid_melee_targets:
+						pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
+
+				if self.target_unit != None:
+					for model in self.target_unit.models:
+						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
+
+				if self.show_radii == True:
+					#Melee radius (one inch)
+					for sprite in self.targets:
+						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+
+					#Melee fight radius (one inch)
+					for sprite in self.selected_unit.models:
+						if sprite != self.selected_model:
+							pygame.draw.circle(self.screen, ORANGE, sprite.rect.center, sprite.true_melee_radius, 1)
+				
+			if len(self.fighting_models) > 0:
+				for model in self.fighting_models:
+					pygame.draw.circle(self.screen, BLUE, model.rect.center, int((model.radius)/2), 0)
+
+			#Draws large semi-circle cohesion indicator
+			self.draw_cohesion_indicator()	
+
+			#Buttons
 			self.toggle_radii_button.draw()
 			self.toggle_radii_button.fill()
 

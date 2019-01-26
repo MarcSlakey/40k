@@ -102,6 +102,10 @@ class Model(pygame.sprite.Sprite):
 		self.unit = None
 
 		self.valid_shots = []	# List of valid shooting targets
+		self.enemies_within_melee = []
+		self.squadmates_within_melee = []
+		self.combined_melee = []
+
 		self.charge_move = 0
 		self.pile_in_move = 3*TILESIZE
 		self.pile_in_move_max = 3*TILESIZE
