@@ -98,7 +98,8 @@ class Model(pygame.sprite.Sprite):
 		self.leadership = leadership
 		self.save = save
 		self.invulnerable = invulnerable
-		self.weapons = []
+		self.ranged_weapons = []
+		self.melee_weapons = []
 		self.unit = None
 
 		self.valid_shots = []	# List of valid shooting targets
@@ -125,9 +126,12 @@ class Model(pygame.sprite.Sprite):
 		text = '{}'.format(self.name)
 		return text
 
-	def add_weapon(self, weapon):
+	def add_ranged_weapon(self, weapon):
 		"""Adds a weapon to a given model's list of weapons"""
-		self.weapons.append(weapon)
+		self.ranged_weapons.append(weapon)
+
+	def add_melee_weapon(self, weapon):
+		self.melee_weapons.append(weapon)
 
 	def die(self):
 		if self.game.selected_unit != None:
@@ -447,12 +451,12 @@ class Model(pygame.sprite.Sprite):
 				elif len(self.unit.models) <= 1:
 					self.cohesion = True
 
-	def attack_with_weapon(self, target_unit, weapon_index = 0):
+	def attack_with_ranged_weapon(self, target_unit, weapon_index = 0):
 		"""Initiates an attack against the next valid target in the opposing army.
 
 		First determines how many shots the weapon has, then fires those shots one by one at the target. 
 		"""
-		weapon_used = self.weapons[weapon_index]
+		weapon_used = self.ranged_weapons[weapon_index]
 		if weapon_used.fired == True:
 			print("\nWeapon has already fired this turn. Pick a different weapon or model.")
 			return

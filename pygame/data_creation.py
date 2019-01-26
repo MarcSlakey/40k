@@ -16,8 +16,9 @@ from weapon import *
 
 def get_workbook_data(workbook = '40k_sim_workbook.xlsx'):
 	wb = openpyxl.load_workbook(workbook)
-	global model_sheet, ranged_weapon_sheet
+	global model_sheet, ranged_weapon_sheet, melee_weapon_sheet
 	ranged_weapon_sheet = wb.get_sheet_by_name('Templar Ranged Weapons')
+	melee_weapon_sheet = wb.get_sheet_by_name('Templar Melee Weapons')
 	model_sheet = wb.get_sheet_by_name('Templar Models')
 
 
@@ -89,9 +90,9 @@ def create_melee_weapon_by_name(name):
 	"""
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
-	name_row = find_string_in_column(ranged_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
-	weapon_row = ranged_weapon_sheet.rows[name_row]
-	return RangedWeapon(
+	name_row = find_string_in_column(melee_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
+	weapon_row = melee_weapon_sheet.rows[name_row]
+	return MeleeWeapon(
 		name = weapon_row[0].value,
 		strength = weapon_row[1].value,
 		ap = weapon_row[2].value,

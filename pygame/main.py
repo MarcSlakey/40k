@@ -111,19 +111,22 @@ class Game:
 					model = create_model_by_name('Initiate', self, col, row)
 					self.army1.units[0].add_model(model)
 					model.unit = self.army1.units[0]
-					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Bolter'))
+					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
 
 				elif tile == 'N':
 					model = create_model_by_name('Initiate', self, col, row)
 					self.army1.units[1].add_model(model)
 					model.unit = self.army1.units[1]
-					model.add_weapon(create_ranged_weapon_by_name('Bolter'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Bolter'))
+					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
 
 				elif tile == 'P':
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[0].add_model(model)
 					model.unit = self.army2.units[0]
-					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = self.spritesheet.get_image(424, 882, 28, 33)
 					model.image.set_colorkey(WHITE)
 
@@ -131,7 +134,8 @@ class Game:
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[1].add_model(model)
 					model.unit = self.army2.units[1]
-					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = self.spritesheet.get_image(424, 882, 28, 33)
 					model.image.set_colorkey(WHITE)
 
@@ -139,7 +143,8 @@ class Game:
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[2].add_model(model)
 					model.unit = self.army2.units[2]
-					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = self.spritesheet.get_image(424, 882, 28, 33)
 					model.image.set_colorkey(WHITE)
 
@@ -147,7 +152,8 @@ class Game:
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[3].add_model(model)
 					model.unit = self.army2.units[3]
-					model.add_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = self.spritesheet.get_image(424, 882, 28, 33)
 					model.image.set_colorkey(WHITE)
 
@@ -280,7 +286,7 @@ class Game:
 			shot_x = self.selected_model.x - target.x
 			shot_y = self.selected_model.y - target.y
 			shot_distance = find_hypotenuse(shot_x, shot_y)
-			if shot_distance <= self.selected_model.weapons[0].w_range:
+			if shot_distance <= self.selected_model.ranged_weapons[0].w_range:
 				Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
 			#print("{}".format(x))
 			#x += 1
@@ -588,7 +594,7 @@ class Game:
 						self.clear_selections()
 						self.clear_valid_shots()
 						for model in self.selectable_models:
-							for weapon in model.weapons:
+							for weapon in model.ranged_weapons:
 								weapon.fired = False
 
 				#Mouse event handling
@@ -601,7 +607,7 @@ class Game:
 							if len(self.shooting_models) > 0:
 								if self.target_unit != None:
 									for model in self.shooting_models:
-										model.attack_with_weapon(self.target_unit)
+										model.attack_with_ranged_weapon(self.target_unit)
 									if self.unallocated_wounds > 0:
 										self.change_phase("Wound Allocation")
 								else:
@@ -815,7 +821,7 @@ class Game:
 						self.change_phase("Charge Move")
 
 						for model in self.selectable_models:
-							for weapon in model.weapons:
+							for weapon in model.ranged_weapons:
 								weapon.fired = False
 
 						self.selectable_models.empty()
@@ -845,7 +851,7 @@ class Game:
 							if len(self.shooting_models) > 0:
 								if self.target_unit != None:
 									for model in self.shooting_models:
-										model.attack_with_weapon(self.target_unit)
+										model.attack_with_ranged_weapon(self.target_unit)
 									if self.unallocated_wounds > 0:
 										self.change_phase("Wound Allocation")
 								else:
@@ -1199,7 +1205,7 @@ class Game:
 
 				if self.show_radii == True:
 					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.ranged_weapons[0].w_range), 1)
 
 					#Remaining move radius
 					if self.selected_model.max_move >= 1:
@@ -1254,7 +1260,7 @@ class Game:
 
 				if self.show_radii == True:
 					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.ranged_weapons[0].w_range), 1)
 				
 			if len(self.shooting_models) > 0:
 				for model in self.shooting_models:
@@ -1297,7 +1303,7 @@ class Game:
 
 				if self.show_radii == True:
 					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.ranged_weapons[0].w_range), 1)
 
 			#Buttons
 			self.toggle_radii_button.draw()
@@ -1388,7 +1394,7 @@ class Game:
 
 				if self.show_radii == True:
 					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.ranged_weapons[0].w_range), 1)
 
 			if len(self.shooting_models) > 0:
 				for model in self.shooting_models:
@@ -1422,7 +1428,7 @@ class Game:
 
 				if self.show_radii == True:
 					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.weapons[0].w_range), 1)
+					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.ranged_weapons[0].w_range), 1)
 
 					#Remaining move radius
 					if self.selected_model.charge_move >= 1:
