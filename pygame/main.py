@@ -424,7 +424,6 @@ class Game:
 						game.shooting_models.append(model)
 						print("\nSelected model: {}".format(game.selected_model))
 						print("Selected unit: {}".format(game.selected_unit.name))
-						print("Models selected: {}".format(game.shooting_models))
 
 			elif len(game.shooting_models) > 0:
 				x = 0
@@ -438,7 +437,7 @@ class Game:
 
 						for shooter in game.shooting_models:
 							if model == shooter:
-								print("Model already a shooter; made it the selected_model.")
+								print("Model already selected for shooting; made it the selected_model.")
 								game.selected_model = model
 								return
 
@@ -448,7 +447,7 @@ class Game:
 							game.shooting_models.append(model)
 							print("\nSelected model: {}".format(game.selected_model))
 							print("Selected unit: {}".format(game.selected_unit.name))
-							print("Models selected: {}".format(game.shooting_models))
+							print("# of models selected: {}".format(len(game.shooting_models)))
 
 						else:
 							print("\nChosen model not in same unit as currently selected shooting models.")
@@ -473,6 +472,12 @@ class Game:
 						return
 
 					elif len(self.fighting_models) > 0:
+						for fighter in self.fighting_models:
+							if model == fighter:
+								print("Model already selected for fighting; made it the selected_model.")
+								self.selected_model = model
+								return
+
 						if model.unit == self.selected_unit:
 							self.target_model = None
 							self.target_unit = None
@@ -480,12 +485,14 @@ class Game:
 							self.fighting_models.append(model)
 							print("\nSelected model: {}".format(self.selected_model))
 							print("Selected unit: {}".format(self.selected_unit.name))
-							print("# models selected: {}".format(len(self.fighting_models)))
+							print("# of models selected: {}".format(len(self.fighting_models)))
 							model.unit.valid_melee_targets = intersection(model.unit.valid_melee_targets, model.combined_melee)
 							return
 
 			self.selected_model = None
 			self.selected_unit = None
+			self.target_model = None
+			self.target_unit = None
 			self.fighting_models.clear()
 
 		def mass_selection(game):
