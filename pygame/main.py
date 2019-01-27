@@ -636,8 +636,9 @@ class Game:
 							self.los_check(self.selected_model)
 							self.selected_unit.valid_shots = self.selected_model.valid_shots
 							for model in self.shooting_models:
-								self.los_check(model)
-								self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, model.valid_shots)
+								if model != self.selected_model:
+									self.los_check(model)
+									self.selected_unit.valid_shots = intersection(self.selected_unit.valid_shots, model.valid_shots)
 						print("\nLOS checks complete.")
 
 					elif event.button == 3:	#RMB
