@@ -364,9 +364,9 @@ class Game:
 		for unit in self.active_army.units:
 			unit.valid_melee_targets.clear()
 			for model in unit.models:
-				sprite.enemies_within_melee.clear()
-				sprite.combined_melee.clear()
-				sprite.squadmates_within_melee.clear()
+				model.enemies_within_melee.clear()
+				model.combined_melee.clear()
+				model.squadmates_within_melee.clear()
 
 	def reset_flags(self):
 		for model in self.selectable_models:
@@ -962,7 +962,7 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
-						self.ineligible_fight_units.empty()
+						self.ineligible_fight_units.clear()
 						self.change_phase("Morale Phase")
 
 				#Mouse event handling
@@ -1064,7 +1064,9 @@ class Game:
 						g.new()
 
 					elif keys[pygame.K_SPACE]:
-						pass
+						self.clear_melee_lists()
+						self.selected_unit.valid_melee_targets.clear()
+						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
 						self.change_phase("Fight Phase")
@@ -1078,6 +1080,8 @@ class Game:
 						elif self.attack_button.mouse_over():
 							if len(self.fighting_models) > 0:
 								if self.target_unit != None:
+									self.clear_melee_lists()
+									self.selected_unit.valid_melee_targets.clear()
 									for model in self.fighting_models:
 										model.attack_with_melee_weapon(self.target_unit)
 									if self.unallocated_wounds > 0:
