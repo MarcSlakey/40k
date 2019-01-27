@@ -176,6 +176,7 @@ CURRENT BUGS:
 High Priority:
 There is no way to collide the circular model bases with rectangular terrain. Need to write custom collision code for this interaction.
 Pile in move logic does not include requirement to end move closer to the nearest model. 
+Game sometimes crashes when pressing enter to change phases after a charge move.
 
 Low Priority:
 LOS checks are currently very slow, especially when doing multi-shooter LOS checks during the shooting phase.
@@ -183,4 +184,4 @@ Weapon ranges are checked from the shooter's exact pos coordinates to the target
 Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This follows the RAW (rules as written); a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency within a unit.
 Models "stick" to walls and other models when they collide; although this is workable, it could be improved by pathfinding.
 During shooting phase, can "add" models to the shooting group even if they have fired all their weapons (although they do not fire again).
-When assigning wounds, sometimes a yellow target circle remains after assigning the wound.
+
