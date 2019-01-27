@@ -22,7 +22,6 @@ class Weapon(object):
 		hit_function: placeholder
 		wound_function: placeholder
 		save_function: placeholder
-
 	"""
 	
 	def __init__(self, name, strength, ap, damage_dice, damage, hit_function=None, wound_function=None, save_function=None, damage_function=None):
@@ -39,7 +38,6 @@ class Weapon(object):
 		self.wound_function = wound_function
 		self.save_function = save_function
 		self.damage_function = damage_function
-		
 
 	def __str__(self):
 		"""Operator overloading: runs this function on print(Weapon) or str().

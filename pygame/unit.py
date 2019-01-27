@@ -13,7 +13,6 @@ class Unit(object):
 	Attributes:
 		name (str): unit's name, used solely for output 
 		units (Model): list of this unit's Model-class objects
-
 	"""
 	
 	def __init__(self, game, name='Unit Name'):

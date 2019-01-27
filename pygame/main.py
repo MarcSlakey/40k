@@ -78,7 +78,7 @@ class Game:
 
 		self.toggle_radii_button = Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  3*WIDTH/4, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.reset_all_button = Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.attack_button = Button(self, "FIRE WEAPON", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.attack_button = Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.charge_button = Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.fight_button = Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
@@ -973,6 +973,11 @@ class Game:
 
 						elif self.fight_button.mouse_over():
 							if self.selected_model != None and self.selected_unit != None:
+								for unit in self.ineligible_fight_units:
+									if self.selected_unit == unit:
+										print("Unit already fought this turn. Select a different unit to fight with.")
+										return
+
 								self.refresh_moves()
 								self.selectable_models.empty()
 								self.targets.empty()
@@ -1069,6 +1074,18 @@ class Game:
 					if event.button == 1:	#LMB
 						if self.toggle_radii_button.mouse_over():
 							self.toggle_radii()
+
+						elif self.attack_button.mouse_over():
+							if len(self.fighting_models) > 0:
+								if self.target_unit != None:
+									for model in self.fighting_models:
+										model.attack_with_melee_weapon(self.target_unit)
+									if self.unallocated_wounds > 0:
+										self.change_phase("Wound Allocation")
+								else:
+									print("\nNo target selected. Select a target to shoot at.")
+							else:
+								print("\nNo shooting models selected. Select models to shoot with.")
 
 						elif len(self.fighting_models) == 0:
 							multiple_melee_selection(self)
@@ -1591,6 +1608,9 @@ class Game:
 			#Buttons
 			self.toggle_radii_button.draw()
 			self.toggle_radii_button.fill()
+
+			self.attack_button.draw()
+			self.attack_button.fill()
 
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")

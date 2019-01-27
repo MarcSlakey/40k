@@ -451,43 +451,82 @@ class Model(pygame.sprite.Sprite):
 				elif len(self.unit.models) <= 1:
 					self.cohesion = True
 
-	def attack_with_ranged_weapon(self, target_unit, weapon_index = 0):
+	def attack_with_ranged_weapon(self, target_unit, weapon_index=0):
 		"""Initiates an attack against the next valid target in the opposing army.
 
 		First determines how many shots the weapon has, then fires those shots one by one at the target. 
 		"""
-		weapon_used = self.ranged_weapons[weapon_index]
-		if weapon_used.fired == True:
+		weapon = self.ranged_weapons[weapon_index]
+		if weapon.fired == True:
 			print("\nWeapon has already fired this turn. Pick a different weapon or model.")
 			return
 		else:
-			weapon_used.fired = True
+			weapon.fired = True
 			if True:
-				if weapon_used.shot_dice == 0:
-					shot_count = weapon_used.shots
+				if weapon.shot_dice == 0:
+					shot_count = weapon.shots
 				else:
 					shot_count = 0
-					for i in range(weapon_used.shot_dice):
-						roll = random.randint(1, weapon_used.shots)
+					for i in range(weapon.shot_dice):
+						roll = random.randint(1, weapon.shots)
 						shot_count += roll 
 				
-			print('\n{} takes {} shot(s) against {} with {}.'.format(self.name, shot_count, target_unit.name, weapon_used.name))
+			print('\n{} takes {} shot(s) against {} with {}.'.format(self.name, shot_count, target_unit.name, weapon.name))
 			for i in range(shot_count):
-				print('Taking shot {}'.format(i+1))
-				self.single_shot(weapon_used, target_unit)
+				print('Taking shot #{}'.format(i+1))
+				self.single_shot(weapon, target_unit)
 				x = random.randint(0, len(target_unit.models)-1)
 				Bullet(self.game, self, target_unit.models[x])
+
+	def attack_with_melee_weapon(self, target_unit, weapon_index=0):
+		weapon = self.melee_weapons[weapon_index]
+		attack_count = self.attacks
+		print('\n{} makes {} attack(s) against {} with {}.'.format(self.name, attack_count, target_unit.name, weapon.name))
+		for i in range(attack_count):
+			print('Making attack #{}'.format(i+1))
+			self.single_attack(weapon, target_unit)
+
+	def single_attack(self, weapon, target_unit):
+		roll = random.randint(1,6)
+		if roll < self.weapon_skill:
+			print('  Failed to hit (rolled a {}, needed a {} or higher).'.format(roll, self.weapon_skill))
+			return
+
+		if weapon.strength == 'User':
+			attack_strength = self.strength
+		else:
+			attack_strength = self.strength + weapon.strength
+
+		roll = random.randint(1,6)
+		#Target toughness is always homogeneous within a unit
+		target_toughness = target_unit.models[0].toughness
+		if attack_strength >= 2*target_toughness:
+			wound_roll = 2
+		elif attack_strength > target_toughness:
+			wound_roll = 3
+		elif attack_strength == target_toughness:
+			wound_roll = 4
+		elif attack_strength < target_toughness:
+			wound_roll = 5
+		elif attack_strength <= target_toughness/2:
+			wound_roll = 6
+
+		if roll < wound_roll:
+			print('  Failed to wound (rolled a {}, needed a {} or higher).'.format(roll, wound_roll))
+			return
+
+		target_unit.save_against_wound(weapon)
 
 	def single_shot(self, weapon, target_unit):
 		"""Summary."""
 		roll = random.randint(1,6)
 		if self.game.current_phase == "Shooting Phase":
 			if roll < self.ballistic_skill:
-				print('  Failed to hit.')
+				print('  Failed to hit (rolled a {}, needed a {} or higher).'.format(roll, self.ballistic_skill))
 				return
 		elif self.game.current_phase == "Overwatch":
 			if roll != 6:
-				print('  Overwatch shot failed to hit.')
+				print('  Overwatch shot failed to hit (rolled a {}, needed a 6).'.format(roll))
 				return
 
 		roll = random.randint(1,6)
@@ -505,7 +544,7 @@ class Model(pygame.sprite.Sprite):
 			wound_roll = 6
 
 		if roll < wound_roll:
-			print('  Failed to wound.')
+			print('  Failed to wound (rolled a {}, needed a {} or higher).'.format(roll, wound_roll))
 			return
 
 		target_unit.save_against_wound(weapon)
@@ -531,7 +570,6 @@ class Model(pygame.sprite.Sprite):
 				self.game.unallocated_wounds += roll
 				print('!  {} took {} damage from {}!'.format(self.name, roll, weapon.name))
 
-
 class Wall(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
 		self.groups = [game.all_sprites, game.walls]	
@@ -544,7 +582,6 @@ class Wall(pygame.sprite.Sprite):
 		self.y = y
 		self.rect.x = x * TILESIZE
 		self.rect.y = y * TILESIZE
-
 
 class Bullet(pygame.sprite.Sprite):
 	def __init__(self, game, shooter, target):
