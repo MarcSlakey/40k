@@ -1705,7 +1705,7 @@ class Game:
 				if event.type == pygame.QUIT:
 					waiting = False
 					self.quit()
-				if event.type == pygame.KEYUP or pygame.MOUSEBUTTONUP:
+				if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONDOWN:
 					waiting = False
 
 g = Game()
