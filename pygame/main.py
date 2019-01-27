@@ -335,7 +335,7 @@ class Game:
 				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
 					for model in self.charging_unit.models:
 						model.in_melee = True
-					for model in self.target_unit.models:
+					for model in self.charge_target_unit.models:
 						model.in_melee = True
 					return True
 		print("\nNo charging models in melee radius, charge considered a failure.")
@@ -1070,6 +1070,7 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
+						self.reset_active()
 						self.change_phase("Fight Phase")
 
 				#Mouse event handling
