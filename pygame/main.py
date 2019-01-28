@@ -324,6 +324,7 @@ class Game:
 		print("\nRunning unit-wide melee checks, please wait...")
 		for model in sprite.unit.models:
 			self.direct_melee_check(model)
+		for model in sprite.unit.models:
 			self.combined_melee_check(model)
 		print("\nMelee checks complete.")
 

@@ -106,6 +106,7 @@ class Model(pygame.sprite.Sprite):
 		self.enemies_within_melee = []
 		self.squadmates_within_melee = []
 		self.combined_melee = []
+		self.melee_unit_targets = []
 
 		self.charge_move = 0
 		self.pile_in_move = 3*TILESIZE
