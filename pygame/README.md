@@ -124,6 +124,13 @@ Charge Phase:
 	Unit selection (eligibility)
 	Targeting and charge declarations
 	Overwatch
+Fight Phase:
+	Pile In
+	Targeting/Fighting:
+		Multi-fighter selection ("fast dice rolling")
+		Group target checking
+		Wound Allocation
+		Model death
 Program:
 	Basic buttons
 	Info text
@@ -155,7 +162,9 @@ Shooting Phase:
 Charge Phase:
 	Heroic intervention
 Fight Phase:
-	Targeting
+	Targeting/Fighting:
+		Splitting attacks between different weapons/targets
+		
 	Consolidation move
 Morale Phase:
 General:

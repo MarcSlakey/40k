@@ -117,6 +117,7 @@ class Model(pygame.sprite.Sprite):
 		#Special flags
 		self.cohesion = True
 		self.in_melee = False
+		self.fought = False
 		self.charged = False
 		self.advanced = False
 		self.fell_back = False

@@ -695,6 +695,7 @@ class Game:
 										self.selected_model = None
 										self.selected_unit = None
 										self.shooting_models.clear()
+										self.fighting_models.clear()
 										self.target_model = None
 										self.target_unit = None
 									
@@ -964,6 +965,10 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						self.ineligible_fight_units.clear()
+						self.clear_selections()
+						for unit in self.active_army.units:
+							for model in unit.models:
+								model.fought = False
 						self.change_phase("Morale Phase")
 
 				#Mouse event handling
@@ -976,7 +981,7 @@ class Game:
 							if self.selected_model != None and self.selected_unit != None:
 								for unit in self.ineligible_fight_units:
 									if self.selected_unit == unit:
-										print("Unit already fought this turn. Select a different unit to fight with.")
+										print("\nUnit already fought this turn. Select a different unit to fight with.")
 										return
 
 								self.refresh_moves()
@@ -1085,7 +1090,11 @@ class Game:
 									self.clear_melee_lists()
 									self.selected_unit.valid_melee_targets.clear()
 									for model in self.fighting_models:
-										model.attack_with_melee_weapon(self.target_unit)
+										if model.fought == False:
+											model.fought = True
+											model.attack_with_melee_weapon(self.target_unit)
+										else:
+											print("\nCannot attack; {} has no attacks remaining this turn.".format(model.name))
 									if self.unallocated_wounds > 0:
 										self.change_phase("Wound Allocation")
 								else:
@@ -1104,7 +1113,7 @@ class Game:
 						pass
 
 					elif event.button == 3:	#RMB
-						if len(self.fighting_models) > 0:
+						if len(self.fighting_models) > 0 and self.selected_model != None and self.selected_unit != None:
 							self.target_model = None
 							self.target_unit = None
 							#Target selection
@@ -1130,7 +1139,7 @@ class Game:
 						pass
 
 					elif keys[pygame.K_RETURN]:
-						self.change_phase("Move Phase")
+						self.change_phase("Movement Phase")
 						self.change_active()
 
 				#Mouse event handling
@@ -1582,7 +1591,7 @@ class Game:
 					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
 
 			#Model base drawing/coloring
-			if self.selected_model != None:
+			if self.selected_model != None and self.selected_unit != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
@@ -1637,34 +1646,10 @@ class Game:
 				if self.selected_model.cohesion:
 					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				#Remaining charge move radius
-				if self.selected_model.charge_move != 0:
-					pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.charge_range), 1)
-
-				#Max charge move radius
-				if self.selected_model.charge_move == 0:
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), 12*TILESIZE, 1)
-
-				#Melee radius (one inch)
-				for sprite in self.targets:
-					pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
-
-				#Cohesion radius (two inches)	
-				for sprite in self.selected_model.unit.models:
-					if sprite != self.selected_model:
-						pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
-
-				#Target unit indicator
-				if self.target_unit != None:
-					for model in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, model.rect.center, model.radius, 0)
-
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
 
 			#Buttons
-			self.charge_button.draw()
-			self.charge_button.fill()
 
 			#Controls Info Text	
 			self.draw_text("|LMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
