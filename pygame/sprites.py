@@ -103,10 +103,10 @@ class Model(pygame.sprite.Sprite):
 		self.unit = None
 
 		self.valid_shots = []	# List of valid shooting targets
-		self.enemies_within_melee = []
-		self.squadmates_within_melee = []
-		self.combined_melee = []
-		self.melee_unit_targets = []
+		self.enemies_within_melee = []		#List of enemy models within 1"
+		self.squadmates_within_melee = []	#List of models in same unit within 1"
+		self.combined_melee = []			#List of all the MODELS this model can target (see main.py multiple_melee_selection)
+		self.melee_unit_targets = []		#List of all UNITS which this model can attack during the fight phase (see main.py multiple_melee_selection)
 
 		self.charge_move = 0
 		self.pile_in_move = 3*TILESIZE

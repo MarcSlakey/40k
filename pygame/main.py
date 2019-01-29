@@ -300,22 +300,22 @@ class Game:
 	#Populates a given sprite's "enemies_within_melee" and "squadmates_within_melee"
 	#Only used by unit_wide_melee_check()
 	def direct_melee_check(self, sprite):
-		for target in self.targets:
-			if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
-				sprite.enemies_within_melee.append(target)
-				sprite.combined_melee.append(target)
+		for target_model in self.targets:
+			if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target_model))(sprite, target_model):
+				sprite.enemies_within_melee.append(target_model)
+				sprite.combined_melee.append(target_model)
 
-		for model in sprite.unit.models:
-			if model != sprite:
-				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, model))(sprite, model):
-					sprite.squadmates_within_melee.append(model)
+		for squadmate in sprite.unit.models:
+			if squadmate != sprite:
+				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, squadmate))(sprite, squadmate):
+					sprite.squadmates_within_melee.append(squadmate)
 
 	#Populates a sprite's combined_melee list with the enemies_within_melee of each member of its unit
 	#Only used by unit_wide_melee_check()
 	def combined_melee_check(self, sprite):
 		for squadmate in sprite.squadmates_within_melee:
-			for target in squadmate.enemies_within_melee:
-				sprite.combined_melee.append(target)
+			for target_model in squadmate.enemies_within_melee:
+				sprite.combined_melee.append(target_model)
 
 	#Runs direct_melee_check and combined_melee_check for every member of a selected unit.
 	#Should be run when a model in a unit is selected for the first time. If subsequent models are selected from the same unit this does not need to run again.
@@ -326,6 +326,13 @@ class Game:
 			self.direct_melee_check(model)
 		for model in sprite.unit.models:
 			self.combined_melee_check(model)
+		for model in sprite.unit.models:
+			for target_model in model.combined_melee:
+				if target_model.unit in model.melee_unit_targets:
+					pass
+				else:
+					model.melee_unit_targets.append(target_model.unit)
+					print("Added a unit to a model's melee_unit_targets")
 		print("\nMelee checks complete.")
 
 	#Defines whether or not a charge has succeeded based on melee collision
@@ -363,11 +370,13 @@ class Game:
 
 	def clear_melee_lists(self):
 		for unit in self.active_army.units:
-			unit.valid_melee_targets.clear()
+			unit.melee_unit_targets.clear()
+			unit.valid_model_targets.clear()
 			for model in unit.models:
 				model.enemies_within_melee.clear()
-				model.combined_melee.clear()
 				model.squadmates_within_melee.clear()
+				model.combined_melee.clear()
+				model.melee_unit_targets.clear()
 
 	def reset_flags(self):
 		for model in self.selectable_models:
@@ -473,12 +482,15 @@ class Game:
 					if len(self.fighting_models) == 0:
 						self.selected_model = model
 						self.selected_unit = model.unit
-						self.fighting_models.append(model)
+						self.fighting_models.append(self.selected_model)
 						print("\nSelected model: {}".format(self.selected_model))
 						print("Selected unit: {}".format(self.selected_unit.name))
 						print("# models selected: {}".format(len(self.fighting_models)))
-						self.unit_wide_melee_check(model)
-						model.unit.valid_melee_targets = model.combined_melee
+						self.unit_wide_melee_check(self.selected_model)
+						self.selected_unit.melee_unit_targets = self.selected_model.melee_unit_targets
+						for target_unit in self.selected_unit.melee_unit_targets:
+							for target_model in target_unit.models:
+								self.selected_unit.valid_model_targets.append(target_model)
 						return
 
 					elif len(self.fighting_models) > 0:
@@ -496,10 +508,15 @@ class Game:
 							print("\nSelected model: {}".format(self.selected_model))
 							print("Selected unit: {}".format(self.selected_unit.name))
 							print("# of models selected: {}".format(len(self.fighting_models)))
-							model.unit.valid_melee_targets = intersection(model.unit.valid_melee_targets, model.combined_melee)
+							self.selected_unit.melee_unit_targets = intersection(self.selected_unit.melee_unit_targets, self.selected_model.melee_unit_targets)
+							self.selected_unit.valid_model_targets.clear()
+							for target_unit in self.selected_unit.melee_unit_targets:
+								for target_model in target_unit.models:
+									self.selected_unit.valid_model_targets.append(target_model)
 							return
 
 			self.clear_selections()
+			self.clear_melee_lists()
 			self.fighting_models.clear()
 
 		def mass_selection(game):
@@ -1072,7 +1089,7 @@ class Game:
 
 					elif keys[pygame.K_SPACE]:
 						self.clear_melee_lists()
-						self.selected_unit.valid_melee_targets.clear()
+						self.selected_unit.valid_model_targets.clear()
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
@@ -1089,7 +1106,7 @@ class Game:
 							if len(self.fighting_models) > 0:
 								if self.target_unit != None:
 									self.clear_melee_lists()
-									self.selected_unit.valid_melee_targets.clear()
+									self.selected_unit.valid_model_targets.clear()
 									for model in self.fighting_models:
 										if model.fought == False:
 											model.fought = True
@@ -1120,7 +1137,7 @@ class Game:
 							#Target selection
 							for model in self.targets:
 								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-									if model in self.selected_unit.valid_melee_targets:
+									if model in self.selected_unit.valid_model_targets:
 										self.target_model = model
 										self.target_unit = model.unit
 
@@ -1210,6 +1227,7 @@ class Game:
 		self.screen.blit(text_surface, text_rect)
 
 	generic_font = 'freesansbold.ttf'
+	smallText = 17
 	mediumText = 20
 	largeText = 32
 
@@ -1596,8 +1614,8 @@ class Game:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
 
-				if len(self.selected_unit.valid_melee_targets) > 0:
-					for model in self.selected_unit.valid_melee_targets:
+				if len(self.selected_unit.valid_model_targets) > 0:
+					for model in self.selected_unit.valid_model_targets:
 						pygame.draw.circle(self.screen, YELLOW, model.rect.center, model.radius, 0)
 
 				if self.target_unit != None:
@@ -1665,6 +1683,31 @@ class Game:
 		fps = int(self.clock.get_fps())
 		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 2*WIDTH/32, TILESIZE, "w")
 		self.bullets.draw
+
+		#Side Panel Info (Debug Info)
+		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 4*TILESIZE, "w")
+		if self.selected_model != None:
+			self.draw_text("in_melee: {}".format(self.selected_model.in_melee), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 5*TILESIZE, "w")
+			self.draw_text("fought: {}".format(self.selected_model.fought), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 6*TILESIZE, "w")
+			self.draw_text("charged: {}".format(self.selected_model.charged), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 7*TILESIZE, "w")
+			self.draw_text("advanced: {}".format(self.selected_model.advanced), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 8*TILESIZE, "w")
+			self.draw_text("fell_back: {}".format(self.selected_model.fell_back), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 9*TILESIZE, "w")
+
+
+		if self.selected_unit == None:
+			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 15*TILESIZE, "w")
+		if self.selected_unit != None:
+			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 15*TILESIZE, "w")
+			if self.current_phase == "Shooting Phase":
+				self.draw_text("# of models selected: {}".format(len(self.shooting_models)), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 17*TILESIZE, "w")
+			elif self.current_phase == "Fight Targeting":
+				self.draw_text("# of models selected: {}".format(len(self.fighting_models)), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 17*TILESIZE, "w")
+
+
+		self.draw_text("Target Model: {}".format(self.target_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 24*TILESIZE, "w")
+
+		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 25*TILESIZE, "w")
+		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 26*TILESIZE, "w")
 
 		pygame.display.update()
 		
