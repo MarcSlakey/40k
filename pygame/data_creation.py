@@ -27,8 +27,9 @@ def find_string_in_column(sheet, name, column, starting_row=0):
 	
 	Works by using .index(search_term, search_start_position).
 	(not 100% that that is how this works)
+
 	'''
-	return [x.value for x in sheet.columns[column]].index(name, starting_row)
+	return [x.value for x in list(sheet.columns)[column]].index(name, starting_row)
 
 
 def create_model_by_name(name, game, x, y):
@@ -40,7 +41,7 @@ def create_model_by_name(name, game, x, y):
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(model_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
-	model_row = model_sheet.rows[name_row]
+	model_row = list(model_sheet.rows)[name_row]
 	return Model(
 		game = game,
 		x = x,
@@ -69,7 +70,7 @@ def create_ranged_weapon_by_name(name):
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(ranged_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
-	weapon_row = ranged_weapon_sheet.rows[name_row]
+	weapon_row = list(ranged_weapon_sheet.rows)[name_row]
 	return RangedWeapon(
 		name = weapon_row[0].value,
 		w_range = weapon_row[1].value * TILESIZE,
@@ -91,7 +92,7 @@ def create_melee_weapon_by_name(name):
 	NAME_COLUMN = 0
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(melee_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
-	weapon_row = melee_weapon_sheet.rows[name_row]
+	weapon_row = list(melee_weapon_sheet.rows)[name_row]
 	return MeleeWeapon(
 		name = weapon_row[0].value,
 		strength = weapon_row[1].value,
