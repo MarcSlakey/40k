@@ -1,13 +1,22 @@
-Pygame adaptation of the 8th Edition of the Warhammer 40k tabletop game.
+##40k-Pygame.
+This project is a Pygame adaptation of the 8th Edition of the Warhammer 40k tabletop game.  
+To learn more about Pygame, visit [https://www.pygame.org/wiki/about](https://www.pygame.org/wiki/about).  
 
-Both python and pygame are required to run this program. Python 2.7 or newer is recommended.
-To install python, visit https://www.python.org/downloads/.
-To install pygame, use this pip install command in the command line:
-python3 -m pip install -U pygame --user
+**Visit the project's GitHub wiki for information on the controls, rules, and more.**
 
-Note: "python3" might be "python" or "py" instead depending on your version of python.
 
-Once both are installed, download this entire folder.
-Change directory to the pygame folder and run main.py.
+## Download/Installation Instructions
+**Both python and pygame are required to run this program.**  
+
+To install python, visit https://www.python.org/downloads/.  
+To install pygame, use this pip install command in the command line:  
+py -m pip install -U pygame --user  
+To install openpyxl, use this pip install command in the command line:  
+py -m pip install openpyxl  
+
+_Note: "py" might be "python" or "python3" instead depending on your version of python._  
+
+Once all three of those are installed, download the entire folder.  
+Then, in the command line, navigate to the game folder and run main.py.  
 
 
