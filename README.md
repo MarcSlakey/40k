@@ -1,4 +1,4 @@
-##40k-Pygame.
+# 40k-Pygame.
 This project is a Pygame adaptation of the 8th Edition of the Warhammer 40k tabletop game.  
 To learn more about Pygame, visit [https://www.pygame.org/wiki/about](https://www.pygame.org/wiki/about).  
 
