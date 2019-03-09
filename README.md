@@ -3,7 +3,7 @@ This project is a Pygame adaptation of the 8th Edition of the Warhammer 40k tabl
 To learn more about Pygame, visit [https://www.pygame.org/wiki/about](https://www.pygame.org/wiki/about).  
 
 **Visit the project's GitHub wiki for information on the controls, rules, and more:**  
-[https://github.com/MarcSlakey/40k-Pygame/wiki]](https://github.com/MarcSlakey/40k-Pygame/wiki)
+[https://github.com/MarcSlakey/40k-Pygame/wiki](https://github.com/MarcSlakey/40k-Pygame/wiki)
 
 
 ## Download/Installation Instructions
