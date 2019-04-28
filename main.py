@@ -401,7 +401,7 @@ class Game:
 		roll_1 = random.randint(1,6)
 		roll_2 = random.randint(1,6)
 		roll = roll_1 + roll_2
-		print("\nDie rolled; charge distance for {} set to {}".format(unit.name, roll))
+		print("\nDie rolled; charge distance for [{}] set to {}".format(unit.name, roll))
 		self.charge_range = roll*TILESIZE
 		for model in unit.models:
 			model.charge_move = self.charge_range
@@ -417,11 +417,14 @@ class Game:
 		if len(unit.recent_deaths) > 0:
 			roll = random.randint(1,6)
 			result = roll + len(unit.recent_deaths)
-			print("{} had {} recent deaths and rolled {}, so leadership must be higher than {} to pass".format(unit.name, len(unit.recent_deaths), roll, result))
-			if result > leadership:
-				models_lost = result - leadership
-				print("\n   {} lost {} models to morale.".format(unit.name, models_lost))
-
+			unit.recent_deaths.clear()
+			print("[{}] had {} recent deaths and rolled {}, so highest unit leadership must be {} or higher to pass".format(unit.name, len(unit.recent_deaths), roll, result))
+			print("   Highest leadership in unit is {}".format(leadership))
+			if result > leadership: 
+				unit.morale_losses = result - leadership
+				print("\n   [{}] must remove {} models to morale.".format(unit.name, unit.morale_losses))
+			else:
+				print("\n   [{}] passed the test".format(unit.name))
 
 	def find_highest_leadership(self, unit):
 		highest_leadership = 1	#Rules state that leadership can never go below 1, so 1 is the default
@@ -454,8 +457,8 @@ class Game:
 					game.selected_model = model
 					game.selected_unit = model.unit
 
-					print("\nSelected model: {}".format(game.selected_model))
-					print("Selected unit: {}".format(game.selected_unit.name))
+					print("\nSelected model: [{}]".format(game.selected_model))
+					print("Selected unit: [{}]".format(game.selected_unit.name))
 					return
 
 			self.clear_selections()
@@ -472,8 +475,8 @@ class Game:
 						game.selected_model = model
 						game.selected_unit = model.unit
 						game.shooting_models.append(model)
-						print("\nSelected model: {}".format(game.selected_model))
-						print("Selected unit: {}".format(game.selected_unit.name))
+						print("\nSelected model: [{}]".format(game.selected_model))
+						print("Selected unit: [{}]".format(game.selected_unit.name))
 
 			elif len(game.shooting_models) > 0:
 				x = 0
@@ -495,8 +498,8 @@ class Game:
 							game.selected_model = model
 							game.selected_unit = model.unit
 							game.shooting_models.append(model)
-							print("\nSelected model: {}".format(game.selected_model))
-							print("Selected unit: {}".format(game.selected_unit.name))
+							print("\nSelected model: [{}]".format(game.selected_model))
+							print("Selected unit: [{}]".format(game.selected_unit.name))
 							print("# of models selected: {}".format(len(game.shooting_models)))
 
 						else:
@@ -514,8 +517,8 @@ class Game:
 						self.selected_model = model
 						self.selected_unit = model.unit
 						self.fighting_models.append(self.selected_model)
-						print("\nSelected model: {}".format(self.selected_model))
-						print("Selected unit: {}".format(self.selected_unit.name))
+						print("\nSelected model: [{}]".format(self.selected_model))
+						print("Selected unit: [{}]".format(self.selected_unit.name))
 						print("# models selected: {}".format(len(self.fighting_models)))
 						self.unit_wide_melee_check(self.selected_model)
 						self.selected_unit.melee_unit_targets = self.selected_model.melee_unit_targets
@@ -536,8 +539,8 @@ class Game:
 							self.target_unit = None
 							self.selected_model = model
 							self.fighting_models.append(model)
-							print("\nSelected model: {}".format(self.selected_model))
-							print("Selected unit: {}".format(self.selected_unit.name))
+							print("\nSelected model: [{}]".format(self.selected_model))
+							print("Selected unit: [{}]".format(self.selected_unit.name))
 							print("# of models selected: {}".format(len(self.fighting_models)))
 							self.selected_unit.melee_unit_targets = intersection(self.selected_unit.melee_unit_targets, self.selected_model.melee_unit_targets)
 							self.selected_unit.valid_model_targets.clear()
@@ -1018,7 +1021,12 @@ class Game:
 						for unit in self.active_army.units:
 							for model in unit.models:
 								model.fought = False
+
 						self.change_phase("Morale Phase")
+						for unit in self.army1.units:
+							self.morale_test(unit)
+						for unit in self.army2.units:
+							self.morale_test(unit)
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1142,7 +1150,7 @@ class Game:
 											model.fought = True
 											model.attack_with_melee_weapon(self.target_unit)
 										else:
-											print("\nCannot attack; {} has no attacks remaining this turn.".format(model.name))
+											print("\nCannot attack; [{}] has no attacks remaining this turn.".format(model.name))
 									if self.unallocated_wounds > 0:
 										self.change_phase("Wound Allocation")
 								else:
@@ -1220,6 +1228,16 @@ class Game:
 							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
 
 		elif self.current_phase == "Morale Phase":
+			for unit in self.active_army.units:
+				if unit.morale_losses > 0:
+					self.selected_unit = unit
+					self.change_phase("Morale Loss Allocation")
+
+			for unit in self.inactive_army.units:
+				if unit.morale_losses > 0:
+					self.selected_unit = unit
+					self.change_phase("Morale Loss Allocation")
+
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.quit()
@@ -1235,8 +1253,13 @@ class Game:
 						pass
 
 					elif keys[pygame.K_RETURN]:
+						for unit in self.active_army.units:
+							if unit.morale_losses > 0:
+								print("Cannot proceed to next turn: not all units have undergone morale check")
+								return
+
 						for unit in self.inactive_army.units:
-							if len(unit.recent_deaths) > 0:
+							if unit.morale_losses > 0:
 								print("Cannot proceed to next turn: not all units have undergone morale check")
 								return
 
@@ -1250,8 +1273,64 @@ class Game:
 							self.toggle_radii()
 
 					elif event.button == 2: #Middle mouse button
-						for unit in self.inactive_army.units:
-							self.morale_test(unit)
+						pass
+
+					elif event.button == 3:	#RMB
+						pass
+
+		elif self.current_phase == "Morale Loss Allocation":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif keys[pygame.K_SPACE]:
+						pass
+
+					elif keys[pygame.K_RETURN]:
+						pass
+
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						else:
+							for model in self.selected_unit.models:
+								if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+									model.die()
+									print("\nModel being removed as morale loss: ")
+									print(model)
+									print("This model is part of unit:")
+									print(model.unit.name)
+									for model in self.selected_unit.models:
+										model.update()
+
+									self.selected_unit.morale_losses -= 1
+									
+									if self.selected_unit.morale_losses <= 0 or len(self.selected_unit.models) == 0:
+										if self.selected_unit.morale_losses <= 0:
+											print("\nAll morale losses allocated!")
+										elif len(self.selected_unit.models) == 0:
+											print("\nEntire unit eliminated. No valid morale losses remain.")
+											self.selected_unit.morale_losses = 0
+										
+										self.selected_unit = None
+										print("Returning to previous phase")
+										self.change_phase("Morale Phase")
+
+								else:
+									print("\nChosen model not a valid target, please choose a model in the current unit that needs to allocate morale losses.")
+
+					elif event.button == 2: #Middle mouse button
+						pass
 
 					elif event.button == 3:	#RMB
 						pass
@@ -1790,11 +1869,6 @@ class Game:
 			if self.selected_model != None:
 				#Selected model indicator
 				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
-				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
-
-			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
 
 			#Buttons
 
@@ -1804,6 +1878,30 @@ class Game:
 			self.draw_text("|RMB: N/A", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+
+		elif self.current_phase == "Morale Loss Allocation":
+			#Model base drawing/coloring
+			if self.selected_unit != None:
+				for model in self.selected_unit.models:
+					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+
+			#Model base drawing/coloring
+			if self.selected_model != None:
+				#Selected model indicator
+				pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+
+			#Buttons
+
+			#Unallocated wound counter
+			if self.selected_unit != None:
+				self.draw_text("{} morale losses to allocate.".format(self.selected_unit.morale_losses), self.generic_font, self.largeText, YELLOW, WIDTH/2, HEIGHT - 2*TILESIZE, "center")
+
+			#Controls Info Text
+			self.draw_text("|LMB: allocate morale loss to model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
+			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, (8*WIDTH/32), HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
 		#General info text
 		self.draw_text("Turn #{}: {} {}".format(self.turn_count, self.active_army.name, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")

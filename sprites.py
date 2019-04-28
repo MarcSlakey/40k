@@ -146,9 +146,11 @@ class Model(pygame.sprite.Sprite):
 				model.valid_shots.remove(self)
 
 		self.unit.models.remove(self)
-		if self.game.current_phase != "Morale Phase":
+		if self.game.current_phase != "Morale Loss Allocation":
 			self.unit.recent_deaths.append(self)
-		print("{} died!".format(self.name))
+			print("[{}] died!".format(self.name))
+		elif self.game.current_phase == "Morale Loss Allocation":
+			print("[{}] flees in fear!".format(self.name))
 		self.kill()
 
 	def update(self):

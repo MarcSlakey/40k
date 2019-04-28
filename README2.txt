@@ -2,11 +2,13 @@ README2: Bug List, Old README/Wiki content
 
 CURRENT BUGS:
 High Priority:
-There is no way to collide the circular model bases with rectangular terrain. Need to write custom collision code for this interaction.
-Pile in move logic does not include requirement to end move closer to the nearest model. 
+There is no way to collide the circular model bases with rectangular terrain, need to write custom collision code for this interaction.
+Game sometimes does not load sprites at all.
 Game sometimes crashes when pressing enter to change phases after a charge move.
 
 Low Priority:
+Much of game logic is buried in phase changes; this should probably be separated out into clear functions that are executed at phase change.
+Pile in move logic does not include requirement to end move closer to the nearest model. 
 LOS checks are currently very slow, especially when doing multi-shooter LOS checks during the shooting phase.
 Weapon ranges are checked from the shooter's exact pos coordinates to the target's exact pos coordinates. This works fine for small models, but a more accurate system would use a scaled circle collision.
 Models can maintain coherency by simply being next to one of their unit models; thus a pair can break away from the rest of the unit. This follows the RAW (rules as written); a more historically accurate and honest interpretation of the coherency rules would check for a "chain" of coherency within a unit.

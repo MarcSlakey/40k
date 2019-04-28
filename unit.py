@@ -30,12 +30,13 @@ class Unit(object):
 		self.melee_unit_targets = []
 		self.valid_model_targets = []
 		self.recent_deaths = []
+		self.morale_losses = 0
 
 
 	def __str__(self):
-		text = '{} has {} models in it\n'.format(self.name, len(self.models))
+		text = '[{}] has {} models in it\n'.format(self.name, len(self.models))
 		for model in self.models:
-			text += '    {}\n'.format(model.name)
+			text += '    [{}]\n'.format(model.name)
 		return text
 
 	def add_model(self, model):
