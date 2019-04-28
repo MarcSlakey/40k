@@ -55,8 +55,9 @@ class Model(pygame.sprite.Sprite):
 		self.groups = [game.all_sprites, game.all_models]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.game = game
-		image_surf = pygame.image.load(path.join(self.game.img_dir, 'marine_bolter_cropped.png')).convert()
-		self.image = pygame.transform.scale(image_surf, (26, 35))
+		#image_surf = pygame.image.load(path.join(self.game.img_dir, 'marine_bolter_cropped.png')).convert()
+		#self.image = pygame.transform.scale(image_surf, (26, 35))
+		self.image = pygame.image.load(path.join(self.game.img_dir, 'Ork Slugga 3.png')).convert()
 		self.image.set_colorkey(WHITE)
 		self.rect = self.image.get_rect()
 		self.radius = radius 		#represents the model's base size
@@ -145,6 +146,8 @@ class Model(pygame.sprite.Sprite):
 				model.valid_shots.remove(self)
 
 		self.unit.models.remove(self)
+		if self.game.current_phase != "Morale Phase":
+			self.unit.recent_deaths.append(self)
 		print("{} died!".format(self.name))
 		self.kill()
 

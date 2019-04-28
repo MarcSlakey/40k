@@ -29,6 +29,7 @@ class Unit(object):
 		self.charge_attempt_list = []
 		self.melee_unit_targets = []
 		self.valid_model_targets = []
+		self.recent_deaths = []
 
 
 	def __str__(self):

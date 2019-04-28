@@ -115,6 +115,7 @@ class Game:
 					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 4.png')).convert()
 					model.image.set_colorkey(WHITE)
+					model.rect = model.image.get_rect()
 
 				elif tile == 'N':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -124,6 +125,7 @@ class Game:
 					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
 					model.image.set_colorkey(WHITE)
+					model.rect = model.image.get_rect()
 
 				elif tile == 'P':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -133,6 +135,7 @@ class Game:
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
+					model.rect = model.image.get_rect()
 
 				elif tile == 'A':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -142,6 +145,7 @@ class Game:
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
+					model.rect = model.image.get_rect()
 
 				elif tile == 'G':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -151,6 +155,7 @@ class Game:
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
+					model.rect = model.image.get_rect()
 
 				elif tile == 'K':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -160,6 +165,7 @@ class Game:
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
+					model.rect = model.image.get_rect()
 
 		for unit in self.army1.units:
 			for model in unit.models:
@@ -405,6 +411,24 @@ class Game:
 			self.show_radii = False
 		else:
 			self.show_radii = True
+
+	def morale_test(self, unit):
+		leadership = self.find_highest_leadership(unit)
+		if len(unit.recent_deaths) > 0:
+			roll = random.randint(1,6)
+			result = roll + len(unit.recent_deaths)
+			print("{} had {} recent deaths and rolled {}, so leadership must be higher than {} to pass".format(unit.name, len(unit.recent_deaths), roll, result))
+			if result > leadership:
+				models_lost = result - leadership
+				print("\n   {} lost {} models to morale.".format(unit.name, models_lost))
+
+
+	def find_highest_leadership(self, unit):
+		highest_leadership = 1	#Rules state that leadership can never go below 1, so 1 is the default
+		for model in unit.models:
+			if model.leadership > highest_leadership:
+				highest_leadership = model.leadership
+		return highest_leadership
 
 	#Game Loop - Event Handling
 	#The bulk of the game logic is defined here. 
@@ -1211,6 +1235,11 @@ class Game:
 						pass
 
 					elif keys[pygame.K_RETURN]:
+						for unit in self.inactive_army.units:
+							if len(unit.recent_deaths) > 0:
+								print("Cannot proceed to next turn: not all units have undergone morale check")
+								return
+
 						self.change_phase("Movement Phase")
 						self.change_active()
 
@@ -1219,13 +1248,14 @@ class Game:
 					if event.button == 1:	#LMB
 						if self.toggle_radii_button.mouse_over():
 							self.toggle_radii()
-												
+
 					elif event.button == 2: #Middle mouse button
-						pass
+						for unit in self.inactive_army.units:
+							self.morale_test(unit)
 
 					elif event.button == 3:	#RMB
 						pass
-				
+
 	#Game Loop - Update
 	def update(self):
 		self.all_sprites.update()
