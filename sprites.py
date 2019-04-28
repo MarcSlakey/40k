@@ -668,7 +668,7 @@ class Wall(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
 		self.game = game
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
-		self.image.fill(LIGHTGREY)
+		self.image.fill(BLACK)
 		self.rect = self.image.get_rect()
 		self.x = x
 		self.y = y

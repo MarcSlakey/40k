@@ -113,6 +113,8 @@ class Game:
 					model.unit = self.army1.units[0]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Bolter'))
 					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
+					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 4.png')).convert()
+					model.image.set_colorkey(WHITE)
 
 				elif tile == 'N':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -120,6 +122,8 @@ class Game:
 					model.unit = self.army1.units[1]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Bolter'))
 					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
+					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
+					model.image.set_colorkey(WHITE)
 
 				elif tile == 'P':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -127,7 +131,7 @@ class Game:
 					model.unit = self.army2.units[0]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
-					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 
 				elif tile == 'A':
@@ -136,7 +140,7 @@ class Game:
 					model.unit = self.army2.units[1]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
-					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 
 				elif tile == 'G':
@@ -145,7 +149,7 @@ class Game:
 					model.unit = self.army2.units[2]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
-					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 
 				elif tile == 'K':
@@ -154,7 +158,7 @@ class Game:
 					model.unit = self.army2.units[3]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
-					model.image = self.spritesheet.get_image(424, 882, 28, 33)
+					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 
 		for unit in self.army1.units:
@@ -1229,9 +1233,9 @@ class Game:
 	#Draws reference grid
 	def draw_grid(self):
 		for x in range(0, WIDTH, TILESIZE):		#draws horizontal lines
-			pygame.draw.line(self.screen, LIGHTGREY, (x, 0 ), (x, HEIGHT))
+			pygame.draw.line(self.screen, BLACK, (x, 0 ), (x, HEIGHT))
 		for y in range(0, HEIGHT, TILESIZE):		#draws horizontal lines
-			pygame.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+			pygame.draw.line(self.screen, BLACK, (0, y), (WIDTH, y))
 
 	def draw_sprites(self):
 		self.all_sprites.draw(self.screen)
@@ -1283,7 +1287,7 @@ class Game:
 
 	#Game Loop - Draw
 	def draw(self):
-		self.screen.fill(BLACK)	
+		self.screen.fill(LIGHTGREY)	
 		self.draw_grid()
 
 		def text_objects(text, font):
