@@ -111,8 +111,8 @@ class Game:
 					model = create_model_by_name('Initiate', self, col, row)
 					self.army1.units[0].add_model(model)
 					model.unit = self.army1.units[0]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Bolter'))
-					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
+					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
@@ -121,8 +121,8 @@ class Game:
 					model = create_model_by_name('Initiate', self, col, row)
 					self.army1.units[1].add_model(model)
 					model.unit = self.army1.units[1]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Bolter'))
-					model.add_melee_weapon(create_melee_weapon_by_name('Chainsword'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
+					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
@@ -131,7 +131,7 @@ class Game:
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[0].add_model(model)
 					model.unit = self.army2.units[0]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
@@ -141,7 +141,7 @@ class Game:
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[1].add_model(model)
 					model.unit = self.army2.units[1]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
@@ -151,7 +151,7 @@ class Game:
 					model = create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[2].add_model(model)
 					model.unit = self.army2.units[2]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
+					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
@@ -750,9 +750,9 @@ class Game:
 										self.fighting_models.clear()
 										self.target_model = None
 										self.target_unit = None
-									
-								else:
-									print("\nChosen model not a valid target, please select a model in the target unit.")
+									else:
+										return
+							print("\nChosen model not a valid target, please select a model in the target unit.")
 
 					elif event.button == 2:	#Middle mouse button
 						pass
