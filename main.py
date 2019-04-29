@@ -414,12 +414,12 @@ class Game:
 
 	def morale_test(self, unit):
 		leadership = self.find_highest_leadership(unit)
-		if len(unit.recent_deaths) > 0:
+		if len(unit.models) > 0 and len(unit.recent_deaths) > 0:
 			roll = random.randint(1,6)
 			result = roll + len(unit.recent_deaths)
-			unit.recent_deaths.clear()
 			print("[{}] had {} recent deaths and rolled {}, so highest unit leadership must be {} or higher to pass".format(unit.name, len(unit.recent_deaths), roll, result))
 			print("   Highest leadership in unit is {}".format(leadership))
+			unit.recent_deaths.clear()
 			if result > leadership: 
 				unit.morale_losses = result - leadership
 				print("\n   [{}] must remove {} models to morale.".format(unit.name, unit.morale_losses))
@@ -735,6 +735,7 @@ class Game:
 									print(model.unit.name)
 									for model in self.target_unit.models:
 										model.update()
+
 									if self.unallocated_wounds <= 0 or len(self.target_unit.models) == 0:
 										if self.unallocated_wounds <= 0:
 											print("\nAll wounds allocated!")
@@ -750,8 +751,10 @@ class Game:
 										self.fighting_models.clear()
 										self.target_model = None
 										self.target_unit = None
+
 									else:
 										return
+
 							print("\nChosen model not a valid target, please select a model in the target unit.")
 
 					elif event.button == 2:	#Middle mouse button
