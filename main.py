@@ -144,7 +144,7 @@ class Game:
 					model.unit = self.army2.units[1]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
-					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
+					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 
@@ -164,7 +164,7 @@ class Game:
 					model.unit = self.army2.units[3]
 					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
 					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
-					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
+					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 
