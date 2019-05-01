@@ -677,6 +677,10 @@ class Game:
 						elif self.attack_button.mouse_over():
 							if len(self.shooting_models) > 0:
 								if self.target_unit != None:
+									for model in self.target_unit.models:
+										if model.in_melee == True:
+											print('\nCannot shoot at [{}] because it is locked in melee with friendly units.'.format(self.target_unit.name))
+											return
 									for model in self.shooting_models:
 										model.attack_with_ranged_weapon(self.target_unit)
 									if self.unallocated_wounds > 0:
