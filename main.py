@@ -1610,6 +1610,9 @@ class Game:
 			return textSurface, textSurface.get_rect()
 		
 		self.walls.draw(self.screen)
+		self.all_models.draw(self.screen)
+		for model in self.all_models:
+			self.screen.blit(model.outline, model.rect.topleft)
 			
 		if self.current_phase == "Movement Phase":	
 			#Model base drawing/coloring
@@ -2142,9 +2145,9 @@ class Game:
 		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 25*TILESIZE, "w")
 		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 26*TILESIZE, "w")
 
-		self.all_models.draw(self.screen)
-		for model in self.all_models:
-			self.screen.blit(model.outline, model.rect.topleft)
+		#self.all_models.draw(self.screen)
+		#for model in self.all_models:
+		#	self.screen.blit(model.outline, model.rect.topleft)
 
 		pygame.display.update()
 		
