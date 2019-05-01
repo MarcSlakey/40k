@@ -27,6 +27,7 @@ class Unit(object):
 		self.models = []
 		self.valid_shots = []
 		self.charge_attempt_list = []
+		self.charged_this_turn = False
 		self.melee_unit_targets = []
 		self.valid_model_targets = []
 		self.recent_deaths = []

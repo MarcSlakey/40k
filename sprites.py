@@ -330,7 +330,7 @@ class Model(pygame.sprite.Sprite):
 					for sprite in self.game.targets:
 						if sprite.unit != self.game.charge_target_unit:
 							if pygame.sprite.collide_circle_ratio(self.game.melee_ratio(self, sprite))(self, sprite):
-								print("\n!Collision with between self and enemy melee radius!")
+								print("\n!Collision between self and enemy melee radius!")
 								revert_move()
 
 					#Terrain collision

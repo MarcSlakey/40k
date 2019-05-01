@@ -55,6 +55,7 @@ class Game:
 		#self.phases = ["Movement Phase", "Shooting Phase"]
 		self.current_phase = "Movement Phase"
 		self.previous_phase = None
+		self.fight_subphase = None
 		self.all_sprites = pygame.sprite.Group() 
 		self.all_models = pygame.sprite.Group()
 		self.selectable_models = pygame.sprite.Group()
@@ -245,7 +246,10 @@ class Game:
 	def change_phase(self, new_phase):
 		self.previous_phase = self.current_phase
 		self.current_phase = new_phase
-		print("\n------Changing phase from {} to {}.------".format(self.previous_phase, new_phase))
+		print("\n------Changing phase from [{}] to [{}].------".format(self.previous_phase, new_phase))
+		if new_phase == ("Fight Phase: Charging Units" or "Fight Phase: Friendly Units" or "Fight Phase: Enemy Units"):
+			self.fight_subphase = new_phase
+			print("\n(Fight Subphase is now [{}].)".format(self.fight_subphase))
 
 	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self, model):
@@ -358,6 +362,7 @@ class Game:
 						model.in_melee = True
 					for model in self.charge_target_unit.models:
 						model.in_melee = True
+					self.charging_unit.charged_this_turn = True
 					return True
 		print("\nNo charging models in melee radius, charge considered a failure.")
 		print("Reset moves and then press enter to return to charge phase.")
@@ -449,7 +454,21 @@ class Game:
 							print("\nModel is already engaged in melee and therefore cannot charge.")
 							return
 
-					elif self.current_phase == "Fight Phase":
+					elif self.current_phase == "Fight Phase: Charging Units":
+						if model.in_melee == False:
+							print("\nModel is not engaged in melee and therefore cannot fight.")
+							return
+
+						elif model.unit.charged_this_turn == False:
+							print("\nOnly units that charged this turn can fight during this sub-phase.")
+							return
+
+					elif self.current_phase == "Fight Phase: Friendly Units":
+						if model.in_melee == False:
+							print("\nModel is not engaged in melee and therefore cannot fight.")
+							return
+
+					elif self.current_phase == "Fight Phase: Enemy Units":
 						if model.in_melee == False:
 							print("\nModel is not engaged in melee and therefore cannot fight.")
 							return
@@ -779,7 +798,7 @@ class Game:
 							unit.charge_attempt_list.clear()
 						self.refresh_moves()
 						self.clear_selections()
-						self.change_phase("Fight Phase")
+						self.change_phase("Fight Phase: Charging Units")
 						
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1003,7 +1022,123 @@ class Game:
 							self.selected_model.dest_x = pygame.mouse.get_pos()[0]
 							self.selected_model.dest_y = pygame.mouse.get_pos()[1]
 
-		elif self.current_phase == "Fight Phase":
+		elif self.current_phase == "Fight Phase: Charging Units":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif keys[pygame.K_SPACE]:
+						self.clear_selections()
+
+					elif keys[pygame.K_RETURN]:
+						self.clear_selections()
+						
+
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif self.fight_button.mouse_over():
+							if self.selected_model != None and self.selected_unit != None:
+								for unit in self.ineligible_fight_units:
+									if self.selected_unit == unit:
+										print("\nUnit already fought this turn. Select a different unit to fight with.")
+										return
+
+								self.refresh_moves()
+								self.selectable_models.empty()
+								self.targets.empty()
+								for model in self.selected_unit.models:
+									self.selectable_models.add(model)
+
+								for unit in self.inactive_army.units:
+									for model in unit.models:
+										self.targets.add(model)
+
+								self.ineligible_fight_units.append(self.selected_unit)
+								self.change_phase("Pile In")
+
+						elif self.selected_model == None:
+							model_selection(self)
+
+						elif self.selected_model != None:
+							self.selected_model = None
+							model_selection(self)								
+						
+					elif event.button == 2: #Middle mouse button
+						pass
+
+					elif event.button == 3:	#RMB
+						pass
+
+		elif self.current_phase == "Fight Phase: Friendly Units":
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.quit()
+
+				#Keyboard event handling
+				elif event.type == pygame.KEYDOWN:
+					keys = pygame.key.get_pressed()
+
+					if keys[pygame.K_HOME]:
+						g.new()
+
+					elif keys[pygame.K_SPACE]:
+						self.clear_selections()
+
+					elif keys[pygame.K_RETURN]:
+						self.clear_selections()
+						
+
+				#Mouse event handling
+				elif event.type == pygame.MOUSEBUTTONUP:
+					if event.button == 1:	#LMB
+						if self.toggle_radii_button.mouse_over():
+							self.toggle_radii()
+
+						elif self.fight_button.mouse_over():
+							if self.selected_model != None and self.selected_unit != None:
+								for unit in self.ineligible_fight_units:
+									if self.selected_unit == unit:
+										print("\nUnit already fought this turn. Select a different unit to fight with.")
+										return
+
+								self.refresh_moves()
+								self.selectable_models.empty()
+								self.targets.empty()
+								for model in self.selected_unit.models:
+									self.selectable_models.add(model)
+
+								for unit in self.inactive_army.units:
+									for model in unit.models:
+										self.targets.add(model)
+
+								self.ineligible_fight_units.append(self.selected_unit)
+								self.change_phase("Pile In")
+
+						elif self.selected_model == None:
+							model_selection(self)
+
+						elif self.selected_model != None:
+							self.selected_model = None
+							model_selection(self)								
+						
+					elif event.button == 2: #Middle mouse button
+						pass
+
+					elif event.button == 3:	#RMB
+						pass
+
+		elif self.current_phase == "Fight Phase: Enemy Units":
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.quit()
@@ -1030,6 +1165,7 @@ class Game:
 							self.morale_test(unit)
 						for unit in self.army2.units:
 							self.morale_test(unit)
+						
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1203,7 +1339,7 @@ class Game:
 							self.refresh_moves()
 							self.clear_selections()
 							self.reset_active()
-							self.change_phase("Fight Phase")
+							self.change_phase(self.fight_subphase)
 						
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1681,7 +1817,7 @@ class Game:
 			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
-		elif self.current_phase == "Fight Phase":
+		elif self.current_phase == "Fight Phase" or "Fight Phase: Charging Units" or "Fight Phase: Friendly Units" or "Fight Phase: Enemy Units":
 			#Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
