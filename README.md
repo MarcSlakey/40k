@@ -1,4 +1,6 @@
 # 40k-Pygame
+![BigTemplar](https://github.com/MarcSlakey/40k-Pygame/blob/master/img/Templar%204%20Big.png) ![OrkBig](https://github.com/MarcSlakey/40k-Pygame/blob/master/img/Ork%20Slugga%203%20Big.png)
+
 This project is a Pygame adaptation of the 8th Edition of the Warhammer 40k tabletop game.  
 To learn more about Pygame, visit [https://www.pygame.org/wiki/about](https://www.pygame.org/wiki/about).  
 
