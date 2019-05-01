@@ -77,7 +77,7 @@ class Game:
 		self.charge_range = 0
 		self.ineligible_fight_units = []
 
-		self.toggle_radii_button = Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  3*WIDTH/4, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.toggle_radii_button = Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-1*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.reset_all_button = Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.attack_button = Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.charge_button = Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
@@ -247,7 +247,7 @@ class Game:
 		self.previous_phase = self.current_phase
 		self.current_phase = new_phase
 		print("\n------Changing phase from [{}] to [{}].------".format(self.previous_phase, new_phase))
-		if new_phase == ("Fight Phase: Charging Units" or "Fight Phase: Friendly Units" or "Fight Phase: Enemy Units"):
+		if new_phase in ("Fight Phase: Charging Units", "Fight Phase: Friendly Units", "Fight Phase: Enemy Units"):
 			self.fight_subphase = new_phase
 			print("\n(Fight Subphase is now [{}].)".format(self.fight_subphase))
 
@@ -1089,6 +1089,7 @@ class Game:
 				#Keyboard event handling
 				elif event.type == pygame.KEYDOWN:
 					keys = pygame.key.get_pressed()
+					mods = pygame.key.get_mods()
 
 					if keys[pygame.K_HOME]:
 						g.new()
@@ -1097,16 +1098,36 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
-						self.clear_selections()
-						for unit in self.inactive_army.units:
-							for model in unit.models:
-								self.selectable_models.add(model)
+						if mods & pygame.KMOD_SHIFT:
+							self.ineligible_fight_units.clear()
+							self.clear_selections()
+							for unit in self.active_army.units:
+								for model in unit.models:
+									model.fought = False
 
-						for unit in self.active_army.units:
-							for model in unit.models:
-								self.targets.add(model)
+							for unit in self.inactive_army.units:
+								for model in unit.models:
+									model.fought = False
 
-						self.change_phase("Fight Phase: Enemy Units")
+							self.change_phase("Morale Phase")
+							for unit in self.army1.units:
+								self.morale_test(unit)
+							for unit in self.army2.units:
+								self.morale_test(unit)
+
+						else:
+							self.clear_selections()
+							self.selectable_models.empty()
+							self.targets.empty()
+							for unit in self.inactive_army.units:
+								for model in unit.models:
+									self.selectable_models.add(model)
+
+							for unit in self.active_army.units:
+								for model in unit.models:
+									self.targets.add(model)
+
+							self.change_phase("Fight Phase: Enemy Units")
 						
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1156,6 +1177,7 @@ class Game:
 				#Keyboard event handling
 				elif event.type == pygame.KEYDOWN:
 					keys = pygame.key.get_pressed()
+					mods = pygame.key.get_mods()
 
 					if keys[pygame.K_HOME]:
 						g.new()
@@ -1164,18 +1186,36 @@ class Game:
 						self.clear_selections()
 
 					elif keys[pygame.K_RETURN]:
-						self.ineligible_fight_units.clear()
-						self.clear_selections()
-						for unit in self.active_army.units:
-							for model in unit.models:
-								model.fought = False
+						if mods & pygame.KMOD_SHIFT:
+							self.ineligible_fight_units.clear()
+							self.clear_selections()
+							for unit in self.active_army.units:
+								for model in unit.models:
+									model.fought = False
 
-						self.change_phase("Morale Phase")
-						for unit in self.army1.units:
-							self.morale_test(unit)
-						for unit in self.army2.units:
-							self.morale_test(unit)
-						
+							for unit in self.inactive_army.units:
+								for model in unit.models:
+									model.fought = False
+
+							self.change_phase("Morale Phase")
+							for unit in self.army1.units:
+								self.morale_test(unit)
+							for unit in self.army2.units:
+								self.morale_test(unit)
+
+						else:
+							self.clear_selections()
+							self.selectable_models.empty()
+							self.targets.empty()
+							for unit in self.active_army.units:
+								for model in unit.models:
+									self.selectable_models.add(model)
+
+							for unit in self.inactive_army.units:
+								for model in unit.models:
+									self.targets.add(model)
+
+							self.change_phase("Fight Phase: Friendly Units")
 
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1349,7 +1389,6 @@ class Game:
 						if self.cohesion_check():
 							self.refresh_moves()
 							self.clear_selections()
-							self.reset_active()
 							self.change_phase(self.fight_subphase)
 						
 				#Mouse event handling
@@ -1860,7 +1899,9 @@ class Game:
 			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
 			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next Fight sub-phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|SHIFT+RETURN: end the Fight Phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-4*TILESIZE, "w")
+
 
 		elif self.current_phase == "Pile In":
 			#Model base drawing/coloring
