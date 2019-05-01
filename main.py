@@ -1387,6 +1387,8 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						if self.cohesion_check():
+							if self.fight_subphase == "Fight Phase: Charging Units":
+								self.reset_active()
 							self.refresh_moves()
 							self.clear_selections()
 							self.change_phase(self.fight_subphase)
