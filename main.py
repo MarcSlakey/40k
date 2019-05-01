@@ -1054,7 +1054,6 @@ class Game:
 										print("\nUnit already fought this turn. Select a different unit to fight with.")
 										return
 
-								self.refresh_moves()
 								self.selectable_models.empty()
 								self.targets.empty()
 								for model in self.selected_unit.models:
@@ -1065,6 +1064,7 @@ class Game:
 										self.targets.add(model)
 
 								self.ineligible_fight_units.append(self.selected_unit)
+								self.clear_selections()
 								self.change_phase("Pile In")
 
 						elif self.selected_model == None:
@@ -1847,7 +1847,7 @@ class Game:
 			#Controls Info Text	
 			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: N/A", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|RMB: TEST FIGHT|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
