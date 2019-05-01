@@ -1039,6 +1039,8 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						self.clear_selections()
+						self.reset_active()
+						self.change_phase("Fight Phase: Friendly Units")
 						
 
 				#Mouse event handling
@@ -1096,8 +1098,16 @@ class Game:
 
 					elif keys[pygame.K_RETURN]:
 						self.clear_selections()
-						
+						for unit in self.inactive_army.units:
+							for model in unit.models:
+								self.selectable_models.add(model)
 
+						for unit in self.active_army.units:
+							for model in unit.models:
+								self.targets.add(model)
+
+						self.change_phase("Fight Phase: Enemy Units")
+						
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if event.button == 1:	#LMB
@@ -1114,6 +1124,7 @@ class Game:
 								self.refresh_moves()
 								self.selectable_models.empty()
 								self.targets.empty()
+
 								for model in self.selected_unit.models:
 									self.selectable_models.add(model)
 
@@ -1182,10 +1193,11 @@ class Game:
 								self.refresh_moves()
 								self.selectable_models.empty()
 								self.targets.empty()
+
 								for model in self.selected_unit.models:
 									self.selectable_models.add(model)
 
-								for unit in self.inactive_army.units:
+								for unit in self.active_army.units:
 									for model in unit.models:
 										self.targets.add(model)
 
@@ -1816,7 +1828,7 @@ class Game:
 			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
-		elif self.current_phase == "Fight Phase: Charging Units":
+		elif self.current_phase in ("Fight Phase: Charging Units", "Fight Phase: Friendly Units", "Fight Phase: Enemy Units"):
 			#Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
