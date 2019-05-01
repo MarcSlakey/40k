@@ -117,6 +117,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
+					model.outline = get_outline(model.image)
 
 				elif tile == 'N':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -127,6 +128,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
+					model.outline = get_outline(model.image)
 
 				elif tile == 'P':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -137,6 +139,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
+					model.outline = get_outline(model.image)
 
 				elif tile == 'A':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -147,6 +150,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
+					model.outline = get_outline(model.image)
 
 				elif tile == 'G':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -157,6 +161,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
+					model.outline = get_outline(model.image)
 
 				elif tile == 'K':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -167,6 +172,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
+					model.outline = get_outline(model.image)
 
 		for unit in self.army1.units:
 			for model in unit.models:
@@ -374,6 +380,8 @@ class Game:
 		self.selected_unit = None
 		self.target_model = None
 		self.target_unit = None
+		for model in self.all_models:
+			model.color_outline(BLACK)
 
 	def clear_valid_shots(self):
 		for unit in self.army1.units:
@@ -475,6 +483,9 @@ class Game:
 
 					game.selected_model = model
 					game.selected_unit = model.unit
+					for model in self.all_models:
+						model.color_outline(BLACK)
+					self.selected_model.color_outline(WHITE)
 
 					print("\nSelected model: [{}]".format(game.selected_model))
 					print("Selected unit: [{}]".format(game.selected_unit.name))
@@ -2132,6 +2143,8 @@ class Game:
 		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 26*TILESIZE, "w")
 
 		self.all_models.draw(self.screen)
+		for model in self.all_models:
+			self.screen.blit(model.outline, model.rect.topleft)
 
 		pygame.display.update()
 		

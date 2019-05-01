@@ -12,6 +12,20 @@ def find_hypotenuse(x, y):
 	hypotenuse = sqrt(x*x + y*y)
 	return hypotenuse
 
+#Taken from: https://www.reddit.com/r/pygame/comments/1jcdeg/how_would_i_draw_the_outline_of_an_image_that_is/
+def get_outline(image, color = BLACK):
+    """Returns an outlined image of the same size.  the image argument must
+    either be a convert surface with a set colorkey, or a convert_alpha
+    surface. color is the color which the outline will be drawn."""
+    rect = image.get_rect()
+    mask = pygame.mask.from_surface(image)
+    outline = mask.outline()
+    outline_image = pygame.Surface(rect.size).convert_alpha()
+    outline_image.fill((0,0,0,0))
+    for point in outline:
+        outline_image.set_at(point,color)
+    return outline_image
+
 class Spritesheet:
 	# utility class for loading and parsing spritesheets
 	def __init__(self, filename):
@@ -59,6 +73,7 @@ class Model(pygame.sprite.Sprite):
 		#self.image = pygame.transform.scale(image_surf, (26, 35))
 		self.image = pygame.image.load(path.join(self.game.img_dir, 'Ork Slugga 3.png')).convert()
 		self.image.set_colorkey(WHITE)
+		self.outline = None
 		self.rect = self.image.get_rect()
 		self.radius = radius 		#represents the model's base size
 
@@ -128,6 +143,16 @@ class Model(pygame.sprite.Sprite):
 	def __str__(self):
 		text = '{}'.format(self.name)
 		return text
+
+	def color_outline(self, color):
+		rect = self.image.get_rect()
+		mask = pygame.mask.from_surface(self.image)
+		outline = mask.outline()
+		outline_image = pygame.Surface(rect.size).convert_alpha()
+		outline_image.fill((0,0,0,0))
+		for point in outline:
+			outline_image.set_at(point,color)
+			self.outline = outline_image
 
 	def add_ranged_weapon(self, weapon):
 		"""Adds a weapon to a given model's list of weapons"""
