@@ -2,7 +2,7 @@ import pygame, random
 from os import path
 from math import *
 from settings import *
-from ray_casting import *
+#import ray_casting
 
 vec = pygame.math.Vector2		# Pygame's vector functions (Vector2 indicates 2-dimensional vector)
 								#	Example usage: self.vel = pygame.math.Vector2(x, y)
@@ -291,7 +291,7 @@ class Model(pygame.sprite.Sprite):
 					print("Valid shots is empty")
 					x = 1
 					for target in self.game.targets:
-						Ray(self.game, self, target, (self.x, self.y), (target.x, target.y)).cast()
+						ray_casting.Ray(self.game, self, target, (self.x, self.y), (target.x, target.y)).cast()
 						print("{}".format(x))
 						x += 1
 			"""

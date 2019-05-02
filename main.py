@@ -2,17 +2,18 @@
 Please see README.md for details on game rules and controls.
 """
 
-import pygame, random
+import pygame
 from pygame.locals import *
 import sys
 from os import path
 from settings import *
-from buttons import *
-from sprites import *
-from weapon import *
-from unit import Unit
-from army import Army
+import random
+import buttons
+import sprites
+import unit_mod
+import army
 from data_creation import *
+import ray_casting
 
 get_workbook_data()
 
@@ -45,7 +46,7 @@ class Game:
 			for line in f:
 				self.map_data.append(line)
 
-		self.spritesheet = Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
+		self.spritesheet = sprites.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 
 	#Initialize a new game
 	def new(self):
@@ -77,11 +78,11 @@ class Game:
 		self.charge_range = 0
 		self.ineligible_fight_units = []
 
-		self.toggle_radii_button = Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-1*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.reset_all_button = Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.attack_button = Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.charge_button = Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.fight_button = Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.toggle_radii_button = buttons.Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-1*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.reset_all_button = buttons.Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
 		
 
@@ -89,15 +90,15 @@ class Game:
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
 		
 		#Initialize army, unit objects
-		self.army1 = Army('Black Templars')
-		self.army1.add_unit(Unit(self, 'Crusader Squad 1'))
-		self.army1.add_unit(Unit(self, 'Crusader Squad 2'))
+		self.army1 = army.Army('Black Templars')
+		self.army1.add_unit(unit_mod.Unit(self, 'Crusader Squad 1'))
+		self.army1.add_unit(unit_mod.Unit(self, 'Crusader Squad 2'))
 
-		self.army2 = Army('Orkz')
-		self.army2.add_unit(Unit(self, 'Ork Boyz 1'))
-		self.army2.add_unit(Unit(self, 'Ork Boyz 2'))
-		self.army2.add_unit(Unit(self, 'Ork Boyz 3'))
-		self.army2.add_unit(Unit(self, 'Ork Boyz 4'))
+		self.army2 = army.Army('Orkz')
+		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 1'))
+		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 2'))
+		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 3'))
+		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 4'))
 		
 		self.active_army = self.army1
 		self.inactive_army = self.army2
@@ -106,7 +107,7 @@ class Game:
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
-					Wall(self, col, row)
+					sprites.Wall(self, col, row)
 
 				elif tile == 'M':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -117,7 +118,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = get_outline(model.image)
+					model.outline = sprites.get_outline(model.image)
 
 				elif tile == 'N':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -128,7 +129,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = get_outline(model.image)
+					model.outline = sprites.get_outline(model.image)
 
 				elif tile == 'P':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -139,7 +140,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = get_outline(model.image)
+					model.outline = sprites.get_outline(model.image)
 
 				elif tile == 'A':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -150,7 +151,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = get_outline(model.image)
+					model.outline = sprites.get_outline(model.image)
 
 				elif tile == 'G':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -161,7 +162,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = get_outline(model.image)
+					model.outline = sprites.get_outline(model.image)
 
 				elif tile == 'K':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -172,7 +173,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = get_outline(model.image)
+					model.outline = sprites.get_outline(model.image)
 
 		for unit in self.army1.units:
 			for model in unit.models:
@@ -308,9 +309,9 @@ class Game:
 		for target in self.targets:
 			shot_x = self.selected_model.x - target.x
 			shot_y = self.selected_model.y - target.y
-			shot_distance = find_hypotenuse(shot_x, shot_y)
+			shot_distance = sprites.find_hypotenuse(shot_x, shot_y)
 			if shot_distance <= self.selected_model.ranged_weapons[0].w_range:
-				Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
+				ray_casting.Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
 			#print("{}".format(x))
 			#x += 1
 		#print("\n")
@@ -873,7 +874,7 @@ class Game:
 							self.target_unit = None
 							charge_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 							charge_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-							charge_distance = find_hypotenuse(charge_x, charge_y)
+							charge_distance = sprites.find_hypotenuse(charge_x, charge_y)
 
 							#Target selection
 							for model in self.targets:
@@ -979,7 +980,7 @@ class Game:
 							self.target_unit = None
 							#shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 							#shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-							#shot_distance = find_hypotenuse(shot_x, shot_y)
+							#shot_distance = sprites.find_hypotenuse(shot_x, shot_y)
 
 							#Target selection
 							for model in self.targets:
@@ -1611,6 +1612,8 @@ class Game:
 		
 		self.walls.draw(self.screen)
 		self.all_models.draw(self.screen)
+		self.bullets.draw(self.screen)
+
 		for model in self.all_models:
 			self.screen.blit(model.outline, model.rect.topleft)
 			
@@ -2119,7 +2122,6 @@ class Game:
 		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*2), TILESIZE, "e")
 		fps = int(self.clock.get_fps())
 		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 2*WIDTH/32, TILESIZE, "w")
-		self.bullets.draw
 
 		#Side Panel Info (Debug Info)
 		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 4*TILESIZE, "w")
