@@ -12,10 +12,10 @@ import buttons
 import sprite_module
 import unit_module
 import army_module
-from data_creation import *
+import data_creation
 import ray_casting
 
-get_workbook_data()
+data_creation.get_workbook_data()
 
 #Load game graphics
 
@@ -110,66 +110,66 @@ class Game:
 					sprite_module.Wall(self, col, row)
 
 				elif tile == 'M':
-					model = create_model_by_name('Initiate', self, col, row)
+					model = data_creation.create_model_by_name('Initiate', self, col, row)
 					self.army1.units[0].add_model(model)
 					model.unit = self.army1.units[0]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
-					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
+					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Test Gun'))
+					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'N':
-					model = create_model_by_name('Initiate', self, col, row)
+					model = data_creation.create_model_by_name('Initiate', self, col, row)
 					self.army1.units[1].add_model(model)
 					model.unit = self.army1.units[1]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
-					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
+					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Test Gun'))
+					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'P':
-					model = create_model_by_name('Ork Boy', self, col, row)
+					model = data_creation.create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[0].add_model(model)
 					model.unit = self.army2.units[0]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
-					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
+					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Test Gun'))
+					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'A':
-					model = create_model_by_name('Ork Boy', self, col, row)
+					model = data_creation.create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[1].add_model(model)
 					model.unit = self.army2.units[1]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
-					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
+					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Test Gun'))
+					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'G':
-					model = create_model_by_name('Ork Boy', self, col, row)
+					model = data_creation.create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[2].add_model(model)
 					model.unit = self.army2.units[2]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Test Gun'))
-					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
+					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Test Gun'))
+					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'K':
-					model = create_model_by_name('Ork Boy', self, col, row)
+					model = data_creation.create_model_by_name('Ork Boy', self, col, row)
 					self.army2.units[3].add_model(model)
 					model.unit = self.army2.units[3]
-					model.add_ranged_weapon(create_ranged_weapon_by_name('Shoota'))
-					model.add_melee_weapon(create_melee_weapon_by_name('CCW'))
+					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Shoota'))
+					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
