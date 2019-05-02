@@ -9,9 +9,9 @@ from os import path
 from settings import *
 import random
 import buttons
-import sprites
-import unit_mod
-import army
+import sprite_module
+import unit_module
+import army_module
 from data_creation import *
 import ray_casting
 
@@ -46,7 +46,7 @@ class Game:
 			for line in f:
 				self.map_data.append(line)
 
-		self.spritesheet = sprites.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
+		self.spritesheet = sprite_module.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 
 	#Initialize a new game
 	def new(self):
@@ -90,15 +90,15 @@ class Game:
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
 		
 		#Initialize army, unit objects
-		self.army1 = army.Army('Black Templars')
-		self.army1.add_unit(unit_mod.Unit(self, 'Crusader Squad 1'))
-		self.army1.add_unit(unit_mod.Unit(self, 'Crusader Squad 2'))
+		self.army1 = army_module.Army('Black Templars')
+		self.army1.add_unit(unit_module.Unit(self, 'Crusader Squad 1'))
+		self.army1.add_unit(unit_module.Unit(self, 'Crusader Squad 2'))
 
-		self.army2 = army.Army('Orkz')
-		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 1'))
-		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 2'))
-		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 3'))
-		self.army2.add_unit(unit_mod.Unit(self, 'Ork Boyz 4'))
+		self.army2 = army_module.Army('Orkz')
+		self.army2.add_unit(unit_module.Unit(self, 'Ork Boyz 1'))
+		self.army2.add_unit(unit_module.Unit(self, 'Ork Boyz 2'))
+		self.army2.add_unit(unit_module.Unit(self, 'Ork Boyz 3'))
+		self.army2.add_unit(unit_module.Unit(self, 'Ork Boyz 4'))
 		
 		self.active_army = self.army1
 		self.inactive_army = self.army2
@@ -107,7 +107,7 @@ class Game:
 		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
-					sprites.Wall(self, col, row)
+					sprite_module.Wall(self, col, row)
 
 				elif tile == 'M':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -118,7 +118,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = sprites.get_outline(model.image)
+					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'N':
 					model = create_model_by_name('Initiate', self, col, row)
@@ -129,7 +129,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = sprites.get_outline(model.image)
+					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'P':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -140,7 +140,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = sprites.get_outline(model.image)
+					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'A':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -151,7 +151,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = sprites.get_outline(model.image)
+					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'G':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -162,7 +162,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = sprites.get_outline(model.image)
+					model.outline = sprite_module.get_outline(model.image)
 
 				elif tile == 'K':
 					model = create_model_by_name('Ork Boy', self, col, row)
@@ -173,7 +173,7 @@ class Game:
 					model.image = pygame.image.load(path.join(self.img_dir, 'Ork Slugga 4.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
-					model.outline = sprites.get_outline(model.image)
+					model.outline = sprite_module.get_outline(model.image)
 
 		for unit in self.army1.units:
 			for model in unit.models:
@@ -309,7 +309,7 @@ class Game:
 		for target in self.targets:
 			shot_x = self.selected_model.x - target.x
 			shot_y = self.selected_model.y - target.y
-			shot_distance = sprites.find_hypotenuse(shot_x, shot_y)
+			shot_distance = sprite_module.find_hypotenuse(shot_x, shot_y)
 			if shot_distance <= self.selected_model.ranged_weapons[0].w_range:
 				ray_casting.Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
 			#print("{}".format(x))
@@ -874,7 +874,7 @@ class Game:
 							self.target_unit = None
 							charge_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 							charge_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-							charge_distance = sprites.find_hypotenuse(charge_x, charge_y)
+							charge_distance = sprite_module.find_hypotenuse(charge_x, charge_y)
 
 							#Target selection
 							for model in self.targets:
@@ -980,7 +980,7 @@ class Game:
 							self.target_unit = None
 							#shot_x = self.selected_model.x - pygame.mouse.get_pos()[0]
 							#shot_y = self.selected_model.y - pygame.mouse.get_pos()[1]
-							#shot_distance = sprites.find_hypotenuse(shot_x, shot_y)
+							#shot_distance = sprite_module.find_hypotenuse(shot_x, shot_y)
 
 							#Target selection
 							for model in self.targets:

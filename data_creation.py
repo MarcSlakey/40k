@@ -11,8 +11,8 @@ Functions:
 
 import openpyxl			#Module for interacting with excel spreadsheet
 from settings import *
-import sprites
-import weapon
+import sprite_module
+import weapon_module
 
 def get_workbook_data(workbook = '40k_sim_workbook.xlsx'):
 	wb = openpyxl.load_workbook(workbook)
@@ -42,7 +42,7 @@ def create_model_by_name(name, game, x, y):
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(model_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
 	model_row = list(model_sheet.rows)[name_row]
-	return sprites.Model(
+	return sprite_module.Model(
 		game = game,
 		x = x,
 		y = y,
@@ -71,7 +71,7 @@ def create_ranged_weapon_by_name(name):
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(ranged_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
 	weapon_row = list(ranged_weapon_sheet.rows)[name_row]
-	return weapon.RangedWeapon(
+	return weapon_module.RangedWeapon(
 		name = weapon_row[0].value,
 		w_range = weapon_row[1].value * TILESIZE,
 		w_type = weapon_row[2].value,
@@ -93,7 +93,7 @@ def create_melee_weapon_by_name(name):
 	SEARCH_START_ROW = 2
 	name_row = find_string_in_column(melee_weapon_sheet, name, NAME_COLUMN, SEARCH_START_ROW)
 	weapon_row = list(melee_weapon_sheet.rows)[name_row]
-	return weapon.MeleeWeapon(
+	return weapon_module.MeleeWeapon(
 		name = weapon_row[0].value,
 		strength = weapon_row[1].value,
 		ap = weapon_row[2].value,
