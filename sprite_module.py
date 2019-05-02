@@ -1,4 +1,5 @@
-import pygame, random
+import pygame
+import random
 from os import path
 from math import *
 from settings import *
