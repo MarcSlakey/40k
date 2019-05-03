@@ -3,6 +3,7 @@ Please see README.md for details on game rules and controls.
 """
 
 import pygame
+import thorpy
 from pygame.locals import *
 import sys
 from os import path
@@ -78,13 +79,20 @@ class Game:
 		self.charge_range = 0
 		self.ineligible_fight_units = []
 
+		#Custom rudimentary buttons
 		self.toggle_radii_button = buttons.Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-1*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.reset_all_button = buttons.Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
-		
+		#Thorpy elements
+		self.thorpy_button = thorpy.make_button("Quit", func = thorpy.functions.quit_func)
+		self.thorpy_box = thorpy.Box(elements = [self.thorpy_button])
+		self.thorpy_menu = thorpy.Menu(self.thorpy_box)
+
+		for element in self.thorpy_menu.get_population():
+			element.surface = self.screen
 
 		#TEST SPAWNS
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
@@ -650,6 +658,8 @@ class Game:
 							if self.selected_model.in_melee != True:
 								self.selected_model.dest_x = pygame.mouse.get_pos()[0]
 								self.selected_model.dest_y = pygame.mouse.get_pos()[1]
+
+				self.thorpy_menu.react(event)
 
 		elif self.current_phase == "Shooting Phase":
 			for event in pygame.event.get():
@@ -2150,6 +2160,10 @@ class Game:
 		#self.all_models.draw(self.screen)
 		#for model in self.all_models:
 		#	self.screen.blit(model.outline, model.rect.topleft)
+
+		self.thorpy_box.set_topleft((WIDTH-TILESIZE*15,HEIGHT/2))
+		self.thorpy_box.blit()
+		self.thorpy_box.update()
 
 		pygame.display.update()
 		
