@@ -11,11 +11,13 @@ To learn more about Pygame, visit [https://www.pygame.org/wiki/about](https://ww
 ## Download/Installation Instructions
 **Python, pygame, and openpyxl are required to run this program.**  
 
-To install python, visit https://www.python.org/downloads/.  
+To install python, visit https://www.python.org/downloads/. Python 3.7.2 or newer is recommended to avoid errors.  
+
 To install pygame, use this pip install command in the command line:  
-py -m pip install -U pygame --user  
+- py -m pip install -U pygame --user  
+
 To install openpyxl, use this pip install command in the command line:  
-py -m pip install openpyxl  
+- py -m pip install openpyxl  
 
 _Note: "py" might be "python" or "python3" instead depending on your version of python._  
 
