@@ -88,11 +88,19 @@ class Game:
 
 		#Thorpy elements
 		self.thorpy_button = thorpy.make_button("Quit", func = thorpy.functions.quit_func)
-		self.thorpy_box = thorpy.Box(elements = [self.thorpy_button])
-		self.thorpy_menu = thorpy.Menu(self.thorpy_box)
 
-		for element in self.thorpy_menu.get_population():
-			element.surface = self.screen
+		self.slider = thorpy.SliderX(100, (12, 35), "My Slider")
+
+		self.thorpy_dropdown = thorpy.DropDownList(titles=["a", "b", "D"])
+		self.thorpy_dropdown_launcher = thorpy.DropDownListLauncher(const_text="Choose Ranged Weapon:", var_text="", titles=self.thorpy_dropdown)
+		self.thorpy_dropdown_launcher.scale_to_title()
+
+		self.thorpy_box = thorpy.Box(elements = [self.thorpy_dropdown_launcher])
+		self.thorpy_menu = thorpy.Menu(self.thorpy_box)
+		self.thorpy_menu.play
+
+		#for element in self.thorpy_menu.get_population():
+		#	element.surface = self.screen
 
 		#TEST SPAWNS
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
