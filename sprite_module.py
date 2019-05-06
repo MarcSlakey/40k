@@ -617,6 +617,10 @@ class Model(pygame.sprite.Sprite):
 
 		if weapon.strength == 'User':
 			attack_strength = self.strength
+		elif weapon.strength == '2x':
+			attack_strength = 2*self.strength
+		elif weapon.strength == '3x':
+			attack_strength = 3*self.strength
 		else:
 			attack_strength = self.strength + weapon.strength
 

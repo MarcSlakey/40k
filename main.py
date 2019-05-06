@@ -93,6 +93,7 @@ class Game:
 		self.army1 = army_module.Army('Black Templars')
 		self.army1.add_unit(unit_module.Unit(self, 'Crusader Squad 1'))
 		self.army1.add_unit(unit_module.Unit(self, 'Crusader Squad 2'))
+		self.army1.add_unit(unit_module.Unit(self, 'Dreadnought 1'))
 
 		self.army2 = army_module.Army('Orkz')
 		self.army2.add_unit(unit_module.Unit(self, 'Ork Boyz 1'))
@@ -127,6 +128,17 @@ class Game:
 					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Test Gun'))
 					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
 					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
+					model.image.set_colorkey(WHITE)
+					model.rect = model.image.get_rect()
+					model.outline = sprite_module.get_outline(model.image)
+
+				elif tile == 'L':
+					model = data_creation.create_model_by_name('Dreadnought', self, col, row)
+					self.army1.units[2].add_model(model)
+					model.unit = self.army1.units[2]
+					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Assault Cannon'))
+					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('Dreadnought Combat Weapon'))
+					model.image = pygame.image.load(path.join(self.img_dir, 'dreadnaught base 1.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)

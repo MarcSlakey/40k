@@ -5,6 +5,7 @@ High Priority:
 There is no way to collide the circular model bases with rectangular terrain, need to write custom collision code for this interaction.
 Game sometimes does not load sprites at all.
 Game sometimes crashes when pressing enter to change phases after a charge move.
+Damage is not allocated appropriately: single attacks that do 3 damage are treated the same as 3 attacks that do 1 damage.
 
 Low Priority:
 Much of game logic is buried in phase changes; this should probably be separated out into clear functions that are executed at phase change.
