@@ -1609,6 +1609,8 @@ class Game:
 		self.screen.blit(text_surface, text_rect)
 
 	generic_font = 'freesansbold.ttf'
+	#generic_font = pygame.font.match_font('freesansbold')
+	#castellar, rod, fangsong, ebrima
 	smallText = 17
 	mediumText = 20
 	largeText = 32
@@ -2167,15 +2169,15 @@ class Game:
 		
 	def show_start_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("40k Pygame Adaptation", self.generic_font, 120, YELLOW, WIDTH/2, HEIGHT*1/4, "center")
-		self.draw_text("Please see the readme for game rules", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*2/4, "center")
-		self.draw_text("Press any key to start...", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		self.draw_text("40k Pygame Adaptation", pygame.font.match_font('castellar'), 120, YELLOW, WIDTH/2, HEIGHT*1/4, "center")
+		self.draw_text("Please see the readme/wiki for game rules", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*4/8, "center")
+		self.draw_text("Press any key to start...", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*5/8, "center")
 		pygame.display.flip()
 		self.wait_for_key()
 
 	def show_game_over_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("Victory!", self.generic_font, 120, GREEN, WIDTH/2, HEIGHT*1/4, "center")
+		self.draw_text("Victory!", pygame.font.match_font('castellar'), 120, GREEN, WIDTH/2, HEIGHT*1/4, "center")
 		self.draw_text("All targets eliminated", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*2/4, "center")
 		self.draw_text("Press any key to start a new game", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
 		pygame.display.flip()
