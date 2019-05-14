@@ -132,13 +132,13 @@ class Game:
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
 
-				elif tile == 'L':
+				elif tile == 'Z':
 					model = data_creation.create_model_by_name('Dreadnought', self, col, row)
 					self.army1.units[2].add_model(model)
 					model.unit = self.army1.units[2]
 					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Assault Cannon'))
 					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('Dreadnought Combat Weapon'))
-					model.image = pygame.image.load(path.join(self.img_dir, 'dreadnaught base 1.png')).convert()
+					model.image = pygame.image.load(path.join(self.img_dir, 'dreadnaught 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
