@@ -14,6 +14,7 @@ import unit_module
 import army_module
 import data_creation
 import ray_casting
+import tile_map
 
 data_creation.get_workbook_data()
 
@@ -41,10 +42,7 @@ class Game:
 	def load_data(self):
 		self.game_folder = path.dirname(__file__)
 		self.img_dir = path.join(self.game_folder, 'img')
-		self.map_data = []
-		with open(path.join(self.game_folder, 'map.txt'), 'rt') as f:
-			for line in f:
-				self.map_data.append(line)
+		self.map = tile_map.Map(path.join(self.game_folder, 'map.txt'))
 
 		self.spritesheet = sprite_module.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 
@@ -64,6 +62,7 @@ class Game:
 		self.walls = pygame.sprite.Group()
 		self.bullets = pygame.sprite.Group()
 		self.rays = pygame.sprite.Group()
+		self.focus = pygame.sprite.Group()
 		self.buttons = []
 		self.show_radii = True
 		self.selected_model = None
@@ -84,7 +83,8 @@ class Game:
 		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
-		
+		self.camera = tile_map.Camera(self.map.width, self.map.height)
+		self.camera_focus = sprite_module.Focus(self, GRIDWIDTH/2, GRIDHEIGHT/2)
 
 		#TEST SPAWNS
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
@@ -105,7 +105,7 @@ class Game:
 		self.inactive_army = self.army2
 
 		#Create models and wall sprites from map.txt
-		for row, tiles in enumerate(self.map_data):		#enumerate gets the index as well as the value
+		for row, tiles in enumerate(self.map.data):		#enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
 					sprite_module.Wall(self, col, row)
@@ -636,6 +636,18 @@ class Game:
 							self.clear_selections()
 							self.refresh_moves()
 							self.change_phase("Shooting Phase")
+
+					elif keys[pygame.K_LEFT]:
+						self.camera_focus.move(-1, 0)
+
+					elif keys[pygame.K_RIGHT]:
+						self.camera_focus.move(1, 0)
+
+					elif keys[pygame.K_UP]:
+						self.camera_focus.move(0, -1)
+
+					elif keys[pygame.K_DOWN]:
+						self.camera_focus.move(0, 1)
 	
 				#Mouse event handling
 				elif event.type == pygame.MOUSEBUTTONUP:
@@ -1557,6 +1569,7 @@ class Game:
 	#Game Loop - Update
 	def update(self):
 		self.all_sprites.update()
+		self.camera.update(self.camera_focus)
 
 	#Draws reference grid
 	def draw_grid(self):
@@ -1618,18 +1631,22 @@ class Game:
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(LIGHTGREY)	
-		self.draw_grid()
+		self.draw_grid() 
 
 		def text_objects(text, font):
 			textSurface = font.render(text, True, WHITE)
 			return textSurface, textSurface.get_rect()
 		
-		self.walls.draw(self.screen)
-		self.all_models.draw(self.screen)
-		self.bullets.draw(self.screen)
+		for sprite in self.all_sprites:
+			self.screen.blit(sprite.image, self.camera.apply(sprite))
 
-		for model in self.all_models:
-			self.screen.blit(model.outline, model.rect.topleft)
+		#self.walls.draw(self.screen)
+		#self.all_models.draw(self.screen)
+		#self.bullets.draw(self.screen)
+		#self.focus.draw(self.screen)
+
+		#for model in self.all_models:
+	#		self.screen.blit(model.outline, model.rect.topleft)
 			
 		if self.current_phase == "Movement Phase":	
 			#Model base drawing/coloring
