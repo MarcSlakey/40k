@@ -1637,6 +1637,7 @@ class Game:
 			textSurface = font.render(text, True, WHITE)
 			return textSurface, textSurface.get_rect()
 		
+		#Essential modification (camera.apply) that allows camera movement through changed sprite locations
 		for sprite in self.all_sprites:
 			self.screen.blit(sprite.image, self.camera.apply(sprite))
 
@@ -2212,11 +2213,12 @@ class Game:
 				if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONDOWN:
 					waiting = False
 
-g = Game()
-g.show_start_screen()
+if __name__ == "__main__":
+	g = Game()
+	g.show_start_screen()
 
-while g.running:
-	g.new()
-	g.show_game_over_screen()
+	while g.running:
+		g.new()
+		g.show_game_over_screen()
 
-pygame.quit()
+	pygame.quit()
