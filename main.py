@@ -44,7 +44,7 @@ class Game:
 	def load_data(self):
 		self.game_folder = path.dirname(__file__)
 		self.img_dir = path.join(self.game_folder, 'img')
-		self.map = tile_map.Map(path.join(self.game_folder, 'realistic_map.txt'))
+		self.map = tile_map.Map(path.join(self.game_folder, 'map.txt'))
 
 		self.spritesheet = sprite_module.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 

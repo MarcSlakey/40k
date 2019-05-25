@@ -1,5 +1,3 @@
-displayObject = None
-
 #Create and set Window size and FPS constants
 TITLE = "40k pygame"
 WIDTH = 1920	#Should be evenly divisible by TILESIZE value below 
