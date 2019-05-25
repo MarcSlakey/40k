@@ -35,15 +35,16 @@ class Game:
 		pygame.init() 
 		#pygame.mixer.init()
 		#flags = FULLSCREEN | DOUBLEBUF | HWSURFACE
-		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+		self.screen = pygame.display.set_mode((0, 0), FULLSCREEN)
 		pygame.display.set_caption(TITLE)
+
 		self.clock = pygame.time.Clock()
 		self.running = True
 
 	def load_data(self):
 		self.game_folder = path.dirname(__file__)
 		self.img_dir = path.join(self.game_folder, 'img')
-		self.map = tile_map.Map(path.join(self.game_folder, 'map.txt'))
+		self.map = tile_map.Map(path.join(self.game_folder, 'realistic_map.txt'))
 
 		self.spritesheet = sprite_module.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 
@@ -562,7 +563,7 @@ class Game:
 	#Game Loop - Draw
 	def draw(self):
 		self.screen.fill(LIGHTGREY)	
-		self.draw_grid() 
+		#self.draw_grid() 
 
 		def text_objects(text, font):
 			textSurface = font.render(text, True, WHITE)

@@ -1,9 +1,9 @@
-
+displayObject = None
 
 #Create and set Window size and FPS constants
 TITLE = "40k pygame"
-WIDTH = 1900	#Should be evenly divisible by TILESIZE value below 
-HEIGHT = 900	
+WIDTH = 1920	#Should be evenly divisible by TILESIZE value below 
+HEIGHT = 1080	
 FPS = 120		#locks the FPS
 
 #define simple color constants
@@ -18,7 +18,10 @@ YELLOW = (255, 255, 0)
 ORANGE = (255, 150, 0)
 
 
-TILESIZE = 25 	#should always represent 1" in gameplay; for reference: 25.4 mm / inch
+TILESIZE = 25 	#Should always represent 1" in gameplay; for reference: 25.4 mm / inch
+				#Standard battlefield size is 4' x 6' (48 tiles x 72 tiles)
+				#Recommend a large terrain feature in each 2' x 2' (24 tiles x 24 tiles) section
+				#Units are deployed 12" away from the line that divides the two halves of the boards
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
