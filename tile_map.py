@@ -1,5 +1,7 @@
 import pygame
+import main
 from settings import *
+
 
 #Basic map class structure from https://www.youtube.com/watch?v=3zV2ewk-IGU&list=PLsk-HSGFjnaH5yghzu7PcOzm9NhsW0Urw&index=40
 class Map:
@@ -30,6 +32,8 @@ class Camera:
 		x = -target.rect.x + int(WIDTH / 2)
 		y = -target.rect.y + int(HEIGHT / 2)
 		self.camera = pygame.Rect(x, y, self.width, self.height)
+
+
 
 
 		

@@ -1,6 +1,8 @@
 """Army module
 
 """
+import unit_module
+
 
 class Army(object):
 
@@ -32,3 +34,20 @@ class Army(object):
 
 	def add_unit(self, unit):
 		self.units.append(unit)
+
+
+def create_army1(game):
+	army1 = Army('Black Templars')
+	army1.add_unit(unit_module.Unit(game, 'Crusader Squad 1'))
+	army1.add_unit(unit_module.Unit(game, 'Crusader Squad 2'))
+	army1.add_unit(unit_module.Unit(game, 'Dreadnought 1'))
+	return army1
+
+def create_army2(game):
+	army2 = Army('Orkz')
+	army2.add_unit(unit_module.Unit(game, 'Ork Boyz 1'))
+	army2.add_unit(unit_module.Unit(game, 'Ork Boyz 2'))
+	army2.add_unit(unit_module.Unit(game, 'Ork Boyz 3'))
+	army2.add_unit(unit_module.Unit(game, 'Ork Boyz 4'))
+	return army2
+
