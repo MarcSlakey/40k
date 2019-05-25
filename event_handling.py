@@ -175,6 +175,7 @@ def movement_phase(game):
 		elif event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif game.selected_model != None and keys[pygame.K_SPACE]:
@@ -234,6 +235,7 @@ def shooting_phase(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
@@ -321,6 +323,7 @@ def wound_allocation(game):
 		elif event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_RETURN]:
@@ -380,6 +383,7 @@ def charge_phase(game):
 		elif event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_RETURN]:
@@ -469,6 +473,7 @@ def overwatch(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
@@ -571,6 +576,7 @@ def charge_move(game):
 		elif event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif game.selected_model != None and keys[pygame.K_SPACE]:
@@ -621,6 +627,7 @@ def fight_phase_charging_units(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
@@ -680,6 +687,7 @@ def fight_phase_charging_units(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
@@ -740,6 +748,7 @@ def fight_phase_friendly_units(game):
 			mods = pygame.key.get_mods()
 
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
@@ -828,6 +837,7 @@ def fight_phase_enemy_units(game):
 			mods = pygame.key.get_mods()
 
 			if keys[pygame.K_HOME]:
+				main.Game().show_start_screen()
 				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
@@ -915,7 +925,8 @@ def pile_in(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
-				g.new()
+				main.Game().show_start_screen()
+				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
 				if game.selected_model != None:
@@ -962,7 +973,8 @@ def fight_targeting(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
-				g.new()
+				main.Game().show_start_screen()
+				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
 				game.clear_melee_lists()
@@ -1027,7 +1039,8 @@ def consolidate(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
-				g.new()
+				main.Game().show_start_screen()
+				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
 				if game.selected_model != None:
@@ -1086,7 +1099,8 @@ def morale_phase(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
-				g.new()
+				main.Game().show_start_screen()
+				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
 				pass
@@ -1127,7 +1141,8 @@ def morale_loss_allocation(game):
 			keys = pygame.key.get_pressed()
 
 			if keys[pygame.K_HOME]:
-				g.new()
+				main.Game().show_start_screen()
+				main.Game().new()
 
 			elif keys[pygame.K_SPACE]:
 				pass

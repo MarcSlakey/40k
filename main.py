@@ -584,30 +584,34 @@ class Game:
 			#Model base drawing/coloring
 			if self.selected_unit != None and self.selected_model != None:
 				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+					#pygame.draw.circle(self.screen, CYAN, model.rect.center, model.radius, 0)
+					pygame.draw.circle(self.screen, CYAN, (self.camera.apply(model)).center, model.radius, 0)
 
 			if self.selected_model != None:
 				#Selected model indicator
-				pygame.draw.circle(self.screen, YELLOW, self.selected_model.rect.center, self.selected_model.radius, 0)
+				pygame.draw.circle(self.screen, YELLOW, (self.camera.apply(self.selected_model)).center, self.selected_model.radius, 0)
 				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, self.selected_model.rect.center, self.selected_model.radius, 0)
+					pygame.draw.circle(self.screen, GREEN, (self.camera.apply(self.selected_model)).center, self.selected_model.radius, 0)
 
 				if self.show_radii == True:
 					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.ranged_weapons[0].w_range), 1)
+					#pygame.draw.circle(self.screen, RED, (self.selected_model.x, self.selected_model.y), int(self.selected_model.ranged_weapons[0].w_range), 1)
+					pygame.draw.circle(self.screen, RED, (self.camera.apply(self.selected_model).center[0], self.camera.apply(self.selected_model).center[1]), int(self.selected_model.ranged_weapons[0].w_range), 1)
+
 
 					#Remaining move radius
 					if self.selected_model.max_move >= 1:
-						pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)
+						#pygame.draw.circle(self.screen, YELLOW, (self.selected_model.x, self.selected_model.y), int(self.selected_model.max_move), 1)
+						pygame.draw.circle(self.screen, YELLOW, (self.camera.apply(self.selected_model).center[0], self.camera.apply(self.selected_model).center[1]), int(self.selected_model.max_move), 1)
 
 					#Melee radius (one inch)
 					for sprite in self.targets:
-						pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.true_melee_radius, 1)
+						pygame.draw.circle(self.screen, RED, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
 
 					#Cohesion radius (two inches)	
 					for sprite in self.selected_model.unit.models:
 						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, GREEN, (sprite.x, sprite.y), sprite.true_cohesion_radius, 1)
+							pygame.draw.circle(self.screen, GREEN, (self.camera.apply(sprite).center[0], self.camera.apply(sprite).center[1]), sprite.true_cohesion_radius, 1)
 
 			#Draws large semi-circle cohesion indicator
 			self.draw_cohesion_indicator()	
@@ -1145,11 +1149,10 @@ class Game:
 					waiting = False
 
 if __name__ == "__main__":
-	g = Game()
-	g.show_start_screen()
+	Game().show_start_screen()
 
-	while g.running:
-		g.new()
-		g.show_game_over_screen()
+	while Game().running:
+		Game().new()
+		Game().show_game_over_screen()
 
 	pygame.quit()
