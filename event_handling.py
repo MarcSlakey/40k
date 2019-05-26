@@ -13,7 +13,8 @@ def intersection(a, b):
 
 def model_selection(game):
 	for model in game.selectable_models:
-		if model.rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+		adjusted_model_rect = game.camera.apply(model)
+		if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
 			if game.current_phase == "Shooting Phase" or game.current_phase == "Overwatch":
 				if model.in_melee == True:
 					print("\nModel is engaged in melee and therefore cannot shoot.")
@@ -234,8 +235,15 @@ def movement_phase(game):
 			elif event.button == 3: #RMB
 				if game.selected_model != None:
 					if game.selected_model.in_melee != True:
-						game.selected_model.dest_x = pygame.mouse.get_pos()[0]
-						game.selected_model.dest_y = pygame.mouse.get_pos()[1]
+						#game.selected_model.dest_x = pygame.mouse.get_pos()[0]
+						#game.selected_model.dest_y = pygame.mouse.get_pos()[1]
+
+						game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.camera.topleft[0]
+						game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.camera.topleft[1]
+
+						#self.camera.topleft[0]
+						#self.camera.topleft[1]
+
 
 def shooting_phase(game):
 	for event in pygame.event.get():

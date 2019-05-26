@@ -24,6 +24,7 @@ class Camera:
 	Width and height are the size of the screen, thus the camera is just a rect that spans the entire screen.
 	The camera is initialized with its top left corner at the natural top left of screen, the coordinates (0,0).
 	When the target (the camera_focus sprite) moves, the camera is updated by redefining it as rect with the same screen size as before but with a new top left corner coordinate.
+	Thus the camera x, y (topleft coords) directly correspond to the shift required to match the camera shift
 	"""
 	def __init__(self, width, height):
 		self.camera = pygame.Rect(0, 0 , width, height)
@@ -31,7 +32,7 @@ class Camera:
 		self.height	= height
 
 	# Determines the necessary shift according to the movement of a target; the target is the camera_focus sprite
-	# The 
+	# The camera x, y (topleft coords) directly correspond to the shift required to match the camera shift
 
 	def update(self, target):
 		x = -target.rect.x + int(WIDTH / 2)
