@@ -963,8 +963,8 @@ def pile_in(game):
 
 			elif event.button == 3:	#RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = pygame.mouse.get_pos()[0]
-					game.selected_model.dest_y = pygame.mouse.get_pos()[1]
+					game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.cam_rect.topleft[0]
+					game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.cam_rect.topleft[1]
 
 def fight_targeting(game):
 	for event in pygame.event.get():
@@ -1078,8 +1078,8 @@ def consolidate(game):
 
 			elif event.button == 3:	#RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = pygame.mouse.get_pos()[0]
-					game.selected_model.dest_y = pygame.mouse.get_pos()[1]
+					game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.cam_rect.topleft[0]
+					game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.cam_rect.topleft[1]
 
 def morale_phase(game):
 	for unit in game.active_army.units:
