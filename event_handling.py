@@ -455,17 +455,26 @@ def charge_phase(game):
 				if game.selected_model != None:
 					game.target_model = None
 					game.target_unit = None
-					charge_x = game.selected_model.x - pygame.mouse.get_pos()[0]
-					charge_y = game.selected_model.y - pygame.mouse.get_pos()[1]
-					charge_distance = sprite_module.find_hypotenuse(charge_x, charge_y)
+					
+					#if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+					#charge_x = game.selected_model.x - (pygame.mouse.get_pos()[0] + game.camera.cam_rect.topleft[0])
+					#charge_y = game.selected_model.y - (pygame.mouse.get_pos()[1] + game.camera.cam_rect.topleft[1])
+					#charge_distance = sprite_module.find_hypotenuse(charge_x, charge_y)
 
 					#Target selection
+					
+					adjusted_model_rect = game.camera.apply(game.selected_model)
 					for model in game.targets:
-						adjusted_model_rect = game.camera.apply(model)
-						if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						adjusted_target_rect = game.camera.apply(model)
+						if adjusted_target_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+							charge_x = adjusted_model_rect.center[0] - adjusted_target_rect.center[0]
+							charge_y = adjusted_model_rect.center[1] - adjusted_target_rect.center[1]
+							charge_distance = sprite_module.find_hypotenuse(charge_x, charge_y)
+
 							if charge_distance <= 12*TILESIZE:
 								game.target_model = model
 								game.target_unit = model.unit
+								print("\nSelected {}.".format(game.target_model))
 							else:
 								print("\nAttempted selection outside of max charge range.")
 								print("Select a different charge target.")
