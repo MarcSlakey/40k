@@ -235,15 +235,8 @@ def movement_phase(game):
 			elif event.button == 3: #RMB
 				if game.selected_model != None:
 					if game.selected_model.in_melee != True:
-						#game.selected_model.dest_x = pygame.mouse.get_pos()[0]
-						#game.selected_model.dest_y = pygame.mouse.get_pos()[1]
-
-						game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.camera.topleft[0]
-						game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.camera.topleft[1]
-
-						#self.camera.topleft[0]
-						#self.camera.topleft[1]
-
+						game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.cam_rect.topleft[0]
+						game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.cam_rect.topleft[1]
 
 def shooting_phase(game):
 	for event in pygame.event.get():

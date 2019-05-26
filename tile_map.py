@@ -27,7 +27,7 @@ class Camera:
 	Thus the camera x, y (topleft coords) directly correspond to the shift required to match the camera shift
 	"""
 	def __init__(self, width, height):
-		self.camera = pygame.Rect(0, 0 , width, height)
+		self.cam_rect = pygame.Rect(0, 0 , width, height)
 		self.width = width
 		self.height	= height
 
@@ -37,8 +37,8 @@ class Camera:
 	def update(self, target):
 		x = -target.rect.x + int(WIDTH / 2)
 		y = -target.rect.y + int(HEIGHT / 2)
-		self.camera = pygame.Rect(x, y, self.width, self.height)
+		self.cam_rect = pygame.Rect(x, y, self.width, self.height)
 
 	# Performs the necessary rect position shift to a single entity by returning a shifted rect; looping this over all sprites creates the moving camera effect
 	def apply(self, entity):
-		return entity.rect.move(self.camera.topleft)
+		return entity.rect.move(self.cam_rect.topleft)

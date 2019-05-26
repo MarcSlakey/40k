@@ -510,15 +510,6 @@ class Game:
 		for y in range(0, HEIGHT, TILESIZE):		#draws horizontal lines
 			pygame.draw.line(self.screen, BLACK, (0, y), (WIDTH, y))
 
-	def draw_sprites(self):
-		self.all_sprites.draw(self.screen)
-
-		#for sprite in self.selectable_models:
-			#pygame.draw.circle(self.screen, WHITE, sprite.rect.center, sprite.radius, 0)
-
-		#for sprite in self.targets:
-			#pygame.draw.circle(self.screen, RED, sprite.rect.center, sprite.radius, 0)
-
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
 		pygame.draw.circle(self.screen, RED, (int(23*WIDTH/32), int(HEIGHT-5*TILESIZE)), 15, 0)	
@@ -570,8 +561,10 @@ class Game:
 			return textSurface, textSurface.get_rect()
 		
 		#Essential modification (camera.apply) that allows camera movement through changed sprite locations
+		#Draws all sprites explicitly.
 		for sprite in self.all_sprites:
-			self.screen.blit(sprite.image, self.camera.apply(sprite))
+			if sprite != self.camera_focus:
+				self.screen.blit(sprite.image, self.camera.apply(sprite))
 
 		#self.walls.draw(self.screen)
 		#self.all_models.draw(self.screen)
