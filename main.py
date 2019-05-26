@@ -35,7 +35,7 @@ class Game:
 		pygame.init() 
 		#pygame.mixer.init()
 		#flags = FULLSCREEN | DOUBLEBUF | HWSURFACE
-		self.screen = pygame.display.set_mode((0, 0), FULLSCREEN)
+		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 		pygame.display.set_caption(TITLE)
 
 		self.clock = pygame.time.Clock()
@@ -44,7 +44,7 @@ class Game:
 	def load_data(self):
 		self.game_folder = path.dirname(__file__)
 		self.img_dir = path.join(self.game_folder, 'img')
-		self.map = tile_map.Map(path.join(self.game_folder, 'map.txt'))
+		self.map = tile_map.Map(path.join(self.game_folder, 'realistic_map.txt'))
 
 		self.spritesheet = sprite_module.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 
@@ -86,7 +86,7 @@ class Game:
 		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
 		self.camera = tile_map.Camera(self.map.width, self.map.height)
-		self.camera_focus = sprite_module.Focus(self, GRIDWIDTH/2, GRIDHEIGHT/2)
+		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
 
 		#TEST SPAWNS
 		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
@@ -566,11 +566,7 @@ class Game:
 			if sprite != self.camera_focus:
 				self.screen.blit(sprite.image, self.camera.apply(sprite))
 
-		#self.walls.draw(self.screen)
-		#self.all_models.draw(self.screen)
-		#self.bullets.draw(self.screen)
-		#self.focus.draw(self.screen)
-
+		#Draws the outline of all model sprites.
 		#for model in self.all_models:
 			#self.screen.blit(model.outline, model.rect.topleft)
 			

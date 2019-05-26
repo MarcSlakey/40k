@@ -200,18 +200,6 @@ def movement_phase(game):
 					game.refresh_moves()
 					game.change_phase("Shooting Phase")
 
-			elif keys[pygame.K_LEFT]:
-				game.camera_focus.move(-1, 0)
-
-			elif keys[pygame.K_RIGHT]:
-				game.camera_focus.move(1, 0)
-
-			elif keys[pygame.K_UP]:
-				game.camera_focus.move(0, -1)
-
-			elif keys[pygame.K_DOWN]:
-				game.camera_focus.move(0, 1)
-
 		#Mouse event handling
 		elif event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)

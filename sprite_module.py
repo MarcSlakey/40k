@@ -765,7 +765,7 @@ class Bullet(pygame.sprite.Sprite):
 
 class Focus(pygame.sprite.Sprite):
 	"""docstring for Focus"""
-	def __init__(self, game, x, y):
+	def __init__(self, game, x, y, map_x, map_y):
 		self.groups = game.all_sprites, game.focus
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.game = game
@@ -774,11 +774,45 @@ class Focus(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.x = x
 		self.y = y
+		self.vx = 0
+		self.vy = 0
 
-	def move(self, dx=0, dy=0):
-		self.x += dx
-		self.y += dy
+		self.map_x = map_x
+		self.map_y = map_y
+
+	def get_keys(self):
+		self.vx = 0
+		self.vy = 0
+
+		keys = pygame.key.get_pressed()
+
+		if keys[pygame.K_LEFT]:
+			self.vx = -CAMERA_SPEED
+
+		if keys[pygame.K_RIGHT]:
+			self.vx = CAMERA_SPEED
+
+		if keys[pygame.K_UP]:
+			self.vy = -CAMERA_SPEED
+
+		if keys[pygame.K_DOWN]:
+			self.vy = CAMERA_SPEED
 
 	def update(self):
-		self.rect.x = self.x * TILESIZE
-		self.rect.y = self.y * TILESIZE
+		self.get_keys()
+
+		self.x += self.vx
+		self.y += self.vy
+
+		self.x = max(WIDTH/2, self.x)
+		self.x = min(self.map_x - WIDTH/2, self.x)
+
+		self.y = max(HEIGHT/2, self.y)
+		self.y = min(self.map_y - HEIGHT/2, self.y)
+
+		self.rect.topleft = (self.x, self.y)
+
+		#self.vx, self.vy = 0, 0
+
+		#self.rect.x = self.x * TILESIZE
+		#self.rect.y = self.y * TILESIZE
