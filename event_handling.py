@@ -455,14 +455,8 @@ def charge_phase(game):
 				if game.selected_model != None:
 					game.target_model = None
 					game.target_unit = None
-					
-					#if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
-					#charge_x = game.selected_model.x - (pygame.mouse.get_pos()[0] + game.camera.cam_rect.topleft[0])
-					#charge_y = game.selected_model.y - (pygame.mouse.get_pos()[1] + game.camera.cam_rect.topleft[1])
-					#charge_distance = sprite_module.find_hypotenuse(charge_x, charge_y)
 
 					#Target selection
-					
 					adjusted_model_rect = game.camera.apply(game.selected_model)
 					for model in game.targets:
 						adjusted_target_rect = game.camera.apply(model)
@@ -630,8 +624,8 @@ def charge_move(game):
 
 			elif event.button == 3: #RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = pygame.mouse.get_pos()[0]
-					game.selected_model.dest_y = pygame.mouse.get_pos()[1]
+					game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.cam_rect.topleft[0]
+					game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.cam_rect.topleft[1]
 
 def fight_phase_charging_units(game):
 	for event in pygame.event.get():
