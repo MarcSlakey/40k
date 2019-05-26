@@ -5,9 +5,11 @@ Please see README.md for details on game rules and controls.
 import pygame
 from pygame.locals import *
 import sys
+import os
 from os import path
-from settings import *
 import random
+
+from settings import *
 import event_handling
 import buttons
 import sprite_module
@@ -16,6 +18,7 @@ import army_module
 import data_creation
 import ray_casting
 import tile_map
+
 
 data_creation.get_workbook_data()
 
@@ -32,11 +35,23 @@ def intersection(a, b):
 class Game:
 	#Initialize program, game window, etc.
 	def __init__(self):
+		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(25) + "," + str(25)
 		pygame.init() 
 		#pygame.mixer.init()
-		#flags = FULLSCREEN | DOUBLEBUF | HWSURFACE
-		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+		#Fullscreen
+		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
+
+		#Windowed Borderless
+		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
+		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), NOFRAME)
+
+		#Windowed
+		os.environ['SDL_VIDEO_WINDOW_POS'] = str(15) + "," + str(50)
+		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), RESIZABLE)
+
 		pygame.display.set_caption(TITLE)
+		#self.displayInfo = pygame.display.Info()
 
 		self.clock = pygame.time.Clock()
 		self.running = True

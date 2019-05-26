@@ -1,7 +1,9 @@
 #Create and set Window size and FPS constants
 TITLE = "40k pygame"
+#WIDTH = 1920
+#HEIGHT = 1080	
 WIDTH = 1600
-HEIGHT = 900	
+HEIGHT = 850	
 FPS = 120		#locks the FPS
 
 CAMERA_SPEED = 20
