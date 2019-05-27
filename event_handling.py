@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 import main
 import sprite_module
 from settings import *
@@ -187,6 +188,11 @@ def movement_phase(game):
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			game.quit()
+
+		elif event.type == VIDEORESIZE:
+			game.screen = pygame.display.set_mode(event.dict['size'], RESIZABLE)
+			WIDTH = event.dict['size'][0]
+			HEIGHT = event.dict['size'][1]
 
 		#Keyboard event handling
 		elif event.type == pygame.KEYDOWN:

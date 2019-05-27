@@ -42,9 +42,9 @@ class Game:
 		#Creates a "video display information object"
 		# current_w/h gets width/height of the either the current video mode or the desktop mode depending
 		#	on whether it was called before or after pygame.display.set_mode(...)
-		self.displayInfo = pygame.display.Info()
-		WIDTH = self.displayInfo.current_w
-		HEIGHT = self.displayInfo.current_h
+		#self.displayInfo = pygame.display.Info()
+		#WIDTH = self.displayInfo.current_w
+		#HEIGHT = self.displayInfo.current_h
 
 		#Fullscreen
 		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
@@ -521,8 +521,8 @@ class Game:
 
 	#Game Loop - Update
 	def update(self):
-		self.all_sprites.update()
 		self.camera.update(self.camera_focus)
+		self.all_sprites.update()
 
 	#Draws reference grid
 	def draw_grid(self):
