@@ -39,6 +39,13 @@ class Game:
 		pygame.init() 
 		#pygame.mixer.init()
 
+		#Creates a "video display information object"
+		# current_w/h gets width/height of the either the current video mode or the desktop mode depending
+		#	on whether it was called before or after pygame.display.set_mode(...)
+		self.displayInfo = pygame.display.Info()
+		WIDTH = self.displayInfo.current_w
+		HEIGHT = self.displayInfo.current_h
+
 		#Fullscreen
 		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
 
@@ -47,11 +54,10 @@ class Game:
 		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), NOFRAME)
 
 		#Windowed
-		os.environ['SDL_VIDEO_WINDOW_POS'] = str(15) + "," + str(50)
+		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), RESIZABLE)
 
 		pygame.display.set_caption(TITLE)
-		#self.displayInfo = pygame.display.Info()
 
 		self.clock = pygame.time.Clock()
 		self.running = True
