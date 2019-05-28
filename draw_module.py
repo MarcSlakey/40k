@@ -98,8 +98,8 @@ def draw_radii(game, weapon_range=False, move_radius=False, enemy_melee_radius=F
 
 	#Remaining charge move radius
 	if charge_move_radius == True:
-		if game.selected_model.charge_move != 0:
-			pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.charge_range), 1)
+		if game.selected_model.charge_move > 1:
+			pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.selected_model.charge_move), 1)
 
 	if max_charge_move_radius == True:
 		if game.selected_model.charge_move == 0:
@@ -171,7 +171,7 @@ def charge_phase(game):
 		draw_target_unit_indicator(game)
 
 		if game.show_radii == True:
-			draw_radii(game, enemy_melee_radius=True, cohesion_radius=True, charge_move_radius=True, max_charge_move_radius=True)
+			draw_radii(game, enemy_melee_radius=True, cohesion_radius=True, max_charge_move_radius=True)
 
 	#Draws circle cohesion indicator
 	game.draw_cohesion_indicator()	
