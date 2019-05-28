@@ -530,7 +530,7 @@ class Game:
 	#Draws reference grid
 	def draw_grid(self):
 		for x in range(0, WIDTH, TILESIZE):		#draws horizontal lines
-			pygame.draw.line(self.screen, BLACK, (x, 0 ), (x, HEIGHT))
+			pygame.draw.line(self.screen, BLACK, (x, 0), (x, HEIGHT))
 		for y in range(0, HEIGHT, TILESIZE):		#draws horizontal lines
 			pygame.draw.line(self.screen, BLACK, (0, y), (WIDTH, y))
 
@@ -577,7 +577,7 @@ class Game:
 
 	#Game Loop - Draw
 	def draw(self):
-		self.background.fill(BLUE)
+		self.background.fill(BLACK)
 		self.screen.fill(LIGHTGREY)	
 		#self.draw_grid() 
 
@@ -593,7 +593,7 @@ class Game:
 
 		#Draws the outline of all model sprites.
 		#for model in self.all_models:
-			#self.screen.blit(model.outline, model.rect.topleft)
+		#	self.screen.blit(model.outline, self.camera.apply(model))
 			
 		if self.current_phase == "Movement Phase":	
 			draw_module.movement_phase(self)
@@ -608,132 +608,13 @@ class Game:
 			draw_module.charge_phase(self)
 
 		elif self.current_phase == "Overwatch":
-			#Model base drawing/coloring
-			if self.selected_unit != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
-
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-
-				#Targets in LOS
-				if self.selected_unit != None:
-					if len(self.selected_unit.valid_shots) > 0:
-						for model in self.selected_unit.valid_shots:
-							pygame.draw.circle(self.screen, YELLOW, self.camera.apply(model).center, model.radius, 0)
-
-				if self.target_unit != None:
-					for model in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, self.camera.apply(model).center, model.radius, 0)
-
-				if self.show_radii == True:
-					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, self.camera.apply(self.selected_model).center, int(self.selected_model.ranged_weapons[0].w_range), 1)
-
-			if len(self.shooting_models) > 0:
-				for model in self.shooting_models:
-					pygame.draw.circle(self.screen, BLUE, self.camera.apply(model).center, int((model.radius)/2), 0)
-
-			#Buttons
-			self.attack_button.draw()
-			self.attack_button.fill()
-
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Controls Info Text
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: select entire unit|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: select target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: deselect shooters|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")	
+			draw_module.overwatch(self)
 
 		elif self.current_phase == "Charge Move":	
-			#Model base drawing/coloring
-			if self.selected_unit != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
-
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-
-				if self.show_radii == True:
-					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, self.camera.apply(self.selected_model).center, int(self.selected_model.ranged_weapons[0].w_range), 1)
-
-					#Remaining move radius
-					if self.selected_model.charge_move >= 1:
-						pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, int(self.selected_model.charge_move), 1)
-
-					#Melee radius (one inch)
-					for sprite in self.targets:
-						pygame.draw.circle(self.screen, RED, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
-
-					if self.target_unit != None:
-						for sprite in self.target_unit.models:
-							pygame.draw.circle(self.screen, ORANGE, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
-
-					#Cohesion radius (two inches)	
-					for sprite in self.selected_model.unit.models:
-						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, GREEN, self.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
-
-			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
-
-			#Buttons
-			self.reset_all_button.draw()
-			self.reset_all_button.fill()
-
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			draw_module.charge_move(self)
 
 		elif self.current_phase in ("Fight Phase: Charging Units", "Fight Phase: Friendly Units", "Fight Phase: Enemy Units"):
-			#Model base drawing/coloring
-			if self.selected_unit != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
-
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)			
-
-				#Target unit indicator
-				if self.target_unit != None:
-					for model in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, self.camera.apply(model).center, model.radius, 0)
-
-			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
-
-			#Buttons
-			self.fight_button.draw()
-			self.fight_button.fill()
-
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next Fight sub-phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SHIFT+RETURN: end the Fight Phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-4*TILESIZE, "w")
-
+			draw_module.fight_phase(self)
 
 		elif self.current_phase == "Pile In":
 			#Model base drawing/coloring
@@ -956,25 +837,25 @@ class Game:
 		#self.all_models.draw(self.screen)
 		#for model in self.all_models:
 		#	self.screen.blit(model.outline, model.rect.topleft)
-		pygame.draw.circle(self.screen, YELLOW, (0,0), 25)
+		#pygame.draw.circle(self.screen, YELLOW, (0,0), 25)
 		self.background.blit(self.screen, (self.screen_topleft_pos))
-		pygame.draw.circle(self.background, YELLOW, (0,0), 25)
+		#pygame.draw.circle(self.background, YELLOW, (0,0), 25)
 		pygame.display.update()
 		
 	def show_start_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("40k Pygame Adaptation", pygame.font.match_font('castellar'), 120, YELLOW, WIDTH/2, HEIGHT*1/4, "center")
-		self.draw_text("Please see the readme/wiki for game rules", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*4/8, "center")
-		self.draw_text("Press any key to start...", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*5/8, "center")
+		self.draw_text("40k Pygame Adaptation", pygame.font.match_font('castellar'), 80, YELLOW, WIDTH/2, HEIGHT*1/4, "center")
+		self.draw_text("Please see the readme/wiki for game rules", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*4/8, "center")
+		self.draw_text("Press any key to start...", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*5/8, "center")
 		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()
 
 	def show_game_over_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("Victory!", pygame.font.match_font('castellar'), 120, GREEN, WIDTH/2, HEIGHT*1/4, "center")
-		self.draw_text("All targets eliminated", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*2/4, "center")
-		self.draw_text("Press any key to start a new game", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		self.draw_text("Victory!", pygame.font.match_font('castellar'), 80, GREEN, WIDTH/2, HEIGHT*1/4, "center")
+		self.draw_text("All targets eliminated", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*2/4, "center")
+		self.draw_text("Press any key to start a new game", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*3/4, "center")
 		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()

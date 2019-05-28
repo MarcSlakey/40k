@@ -34,14 +34,15 @@ def draw_info_text(game):
 	draw_text(game, game.background, "FPS: {}".format(fps), game.generic_font, game.mediumText, WHITE, 2*WIDTH/32, 15, "w")
 	draw_text(game, game.background, "Camera Offset: {},{}".format(game.camera.cam_rect.x, game.camera.cam_rect.y), game.generic_font, game.mediumText, WHITE, 4*WIDTH/32, 15, "w")	
 
-def draw_controls(game, lmb, mmb, rmb, spacebar, enter):
+def draw_controls(game, lmb, mmb, rmb, spacebar, enter, shift_enter="N/A"):
 	#Controls Info Text	
-	draw_text(game, game.background, "|LMB: " +str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|MMB: " +str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
-	draw_text(game, game.background, "|RMB: " +str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|SPACEBAR: " +str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
+	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
 	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
-	draw_text(game, game.background, "|RETURN: " +str(enter)+"|", game.generic_font, game.mediumText, WHITE, 24*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font, game.mediumText, WHITE, 20*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|SHIFT+RETURN: "+str(enter)+"|", game.generic_font, game.mediumText, WHITE, 20*WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
 
 def draw_selected_model_indicators(game):
 	if game.selected_unit != None:
@@ -68,7 +69,7 @@ def draw_target_unit_indicator(game):
 def draw_blue_dot_selections(game, model):
 	pygame.draw.circle(game.screen, BLUE, game.camera.apply(model).center, int((model.radius)/2), 0)
 
-def draw_radii(game, weapon_range=False, move_radius=False, enemy_melee_radius=False, cohesion_radius=False, charge_move_radius=False, max_charge_move_radius=False):
+def draw_radii(game, weapon_range=False, move_radius=False, enemy_melee_radius=False, target_melee_radius=False, cohesion_radius=False, charge_move_radius=False, max_charge_move_radius=False):
 	#Weapon range radius
 	if weapon_range == True:
 		pygame.draw.circle(game.screen, RED, game.camera.apply(game.selected_model).center, int(game.selected_model.ranged_weapons[0].w_range), 1)
@@ -82,6 +83,12 @@ def draw_radii(game, weapon_range=False, move_radius=False, enemy_melee_radius=F
 	if enemy_melee_radius == True:
 		for sprite in game.targets:
 			pygame.draw.circle(game.screen, RED, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+
+	#Target melee radius
+	if target_melee_radius == True:
+		if game.target_unit != None:
+			for sprite in game.target_unit.models:
+				pygame.draw.circle(game.screen, ORANGE, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
 
 	#Cohesion radius (two inches)
 	if cohesion_radius == True:
@@ -116,7 +123,7 @@ def movement_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset selected model's move", enter="progress to next phase")
+	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="progress to next phase")
 
 def shooting_phase(game):
 	if game.selected_model != None:
@@ -166,7 +173,7 @@ def charge_phase(game):
 		if game.show_radii == True:
 			draw_radii(game, enemy_melee_radius=True, cohesion_radius=True, charge_move_radius=True, max_charge_move_radius=True)
 
-	#Draws large semi-circle cohesion indicator
+	#Draws circle cohesion indicator
 	game.draw_cohesion_indicator()	
 
 	#Buttons
@@ -178,4 +185,64 @@ def charge_phase(game):
 
 	#Controls Info Text	
 	draw_controls(game, lmb="select model", mmb="N/A", rmb="select charge target", spacebar="N/A", enter="progress to next phase")
-	
+
+def overwatch(game):
+	if game.selected_model != None:
+		draw_selected_model_indicators(game)
+		draw_shooting_target_indicators(game)
+		draw_target_unit_indicator(game)
+		if game.show_radii == True:
+			draw_radii(game, weapon_range=True)
+
+	if len(game.shooting_models) > 0:
+		for model in game.shooting_models:
+			draw_blue_dot_selections(game, model)
+
+	#Buttons
+	game.attack_button.draw()
+	game.attack_button.fill()
+
+	game.toggle_radii_button.draw()
+	game.toggle_radii_button.fill()
+
+	#Controls Info Text
+	draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="progress to next phase") 
+
+def charge_move(game):
+	if game.selected_model != None:
+		draw_selected_model_indicators(game)
+		if game.show_radii == True:
+			draw_radii(game, weapon_range=True, cohesion_radius=True, charge_move_radius=True, enemy_melee_radius=True)
+
+	#Draws circle cohesion indicator
+	game.draw_cohesion_indicator()	
+
+	#Buttons
+	game.reset_all_button.draw()
+	game.reset_all_button.fill()
+
+	game.toggle_radii_button.draw()
+	game.toggle_radii_button.fill()
+
+	#Controls Info Text	
+	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="progress to next phase") 
+
+
+def fight_phase(game):
+	if game.selected_model != None:
+		draw_selected_model_indicators(game)
+		draw_target_unit_indicator(game)
+
+	#Draws large semi-circle cohesion indicator
+	game.draw_cohesion_indicator()	
+
+	#Buttons
+	game.fight_button.draw()
+	game.fight_button.fill()
+
+	game.toggle_radii_button.draw()
+	game.toggle_radii_button.fill()
+
+	#Controls Info Text	
+	draw_controls(game, lmb="select model", mmb="N/A", rmb="N/A", spacebar="N/A", enter="progress to next Fight sub-phase", shift_enter="end the Fight Phase")
+
