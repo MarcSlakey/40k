@@ -112,9 +112,6 @@ class Game:
 
 		self.camera = tile_map.Camera(self.map.width, self.map.height)
 		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
-
-		#TEST SPAWNS
-		#Bullet(self, create_ranged_weapon_by_name('Bolter'), self.selected_model)
 		
 		#Initialize army, unit objects
 		self.army1 = army_module.create_army1(self)
@@ -597,185 +594,16 @@ class Game:
 			#self.screen.blit(model.outline, model.rect.topleft)
 			
 		if self.current_phase == "Movement Phase":	
-			#Model base drawing/coloring
-			if self.selected_unit != None and self.selected_model != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, (self.camera.apply(model)).center, model.radius, 0)
-
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, YELLOW, (self.camera.apply(self.selected_model)).center, self.selected_model.radius, 0)
-				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, (self.camera.apply(self.selected_model)).center, self.selected_model.radius, 0)
-
-				if self.show_radii == True:
-					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, self.camera.apply(self.selected_model).center, int(self.selected_model.ranged_weapons[0].w_range), 1)
-
-					#Remaining move radius
-					if self.selected_model.max_move >= 1:
-						pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, int(self.selected_model.max_move), 1)
-
-					#Melee radius (one inch)
-					for sprite in self.targets:
-						pygame.draw.circle(self.screen, RED, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
-
-					#Cohesion radius (two inches)	
-					for sprite in self.selected_model.unit.models:
-						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, GREEN, self.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
-
-			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
-
-			#Buttons
-			self.reset_all_button.draw()
-			self.reset_all_button.fill()
-
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			draw_module.movement_phase(self)
 
 		elif self.current_phase == "Shooting Phase":
-			#Model base drawing/coloring
-			if self.selected_unit != None and self.selected_model != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, (self.camera.apply(model)).center, model.radius, 0)
-
-			#Model base drawing/coloring
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-
-				#Targets in LOS
-				if self.selected_unit != None:
-					if len(self.selected_unit.valid_shots) > 0:
-						for model in self.selected_unit.valid_shots:
-							pygame.draw.circle(self.screen, YELLOW, self.camera.apply(model).center, model.radius, 0)
-
-				if self.target_unit != None:
-					for model in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, self.camera.apply(model).center, model.radius, 0)
-
-				if self.show_radii == True:
-					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, self.camera.apply(self.selected_model).center, int(self.selected_model.ranged_weapons[0].w_range), 1)
-				
-			if len(self.shooting_models) > 0:
-				for model in self.shooting_models:
-					pygame.draw.circle(self.screen, BLUE, self.camera.apply(model).center, int((model.radius)/2), 0)
-
-			#Buttons
-			self.attack_button.draw()
-			self.attack_button.fill()
-
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Controls Info Text
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: select entire unit|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: select target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: deselect shooters|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-
+			draw_module.shooting_phase(self)
+			
 		elif self.current_phase == "Wound Allocation":
-			#Model base drawing/coloring
-			if self.selected_unit != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
-
-			#Model base drawing/coloring
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-
-				#Targets in LOS
-				if self.selected_unit != None:
-					if len(self.selected_unit.valid_shots) > 0:
-						for model in self.selected_unit.valid_shots:
-							pygame.draw.circle(self.screen, YELLOW, self.camera.apply(model).center, model.radius, 0)
-
-				if self.target_unit != None:
-					for model in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, self.camera.apply(model).center, model.radius, 0)
-
-				if self.show_radii == True:
-					#Weapon range radius
-					pygame.draw.circle(self.screen, RED, self.camera.apply(self.selected_model).center, int(self.selected_model.ranged_weapons[0].w_range), 1)
-
-			#Buttons
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Unallocated wound counter
-			self.draw_text("{}Wound(s) to allocate!".format(self.unallocated_wounds), self.generic_font, self.largeText, YELLOW, WIDTH/2, HEIGHT - 2*TILESIZE, "center")
-
-			#Controls Info Text
-			self.draw_text("|LMB: allocate wound to model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, (8*WIDTH/32), HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			draw_module.wound_allocation(self)
 
 		elif self.current_phase == "Charge Phase":
-			#Model base drawing/coloring
-			if self.selected_unit != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
-
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-
-				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-
-				#Target unit indicator
-				if self.target_unit != None:
-					for model in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, self.camera.apply(model).center, model.radius, 0)
-
-				if self.show_radii == True:
-					#Remaining charge move radius
-					if self.selected_model.charge_move != 0:
-						pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, int(self.charge_range), 1)
-
-					#Max charge move radius
-					if self.selected_model.charge_move == 0:
-						pygame.draw.circle(self.screen, RED, self.camera.apply(self.selected_model).center, 12*TILESIZE, 1)
-
-					#Melee radius (one inch)
-					for sprite in self.targets:
-						pygame.draw.circle(self.screen, RED, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
-
-					#Cohesion radius (two inches)	
-					for sprite in self.selected_model.unit.models:
-						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, GREEN, self.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
-
-			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
-
-			#Buttons
-			self.charge_button.draw()
-			self.charge_button.fill()
-
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: select charge target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			draw_module.charge_phase(self)
 
 		elif self.current_phase == "Overwatch":
 			#Model base drawing/coloring
