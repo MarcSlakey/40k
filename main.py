@@ -11,6 +11,7 @@ import random
 
 from settings import *
 import event_handling
+import draw_module
 import buttons
 import sprite_module
 import unit_module
@@ -18,6 +19,7 @@ import army_module
 import data_creation
 import ray_casting
 import tile_map
+import ui
 
 
 data_creation.get_workbook_data()
@@ -55,7 +57,9 @@ class Game:
 
 		#Windowed
 		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
-		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), RESIZABLE)
+		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), RESIZABLE)
+		self.background = pygame.display.set_mode((WIDTH+100, HEIGHT+100), RESIZABLE)
+		self.screen = pygame.Surface((WIDTH, HEIGHT))
 
 		pygame.display.set_caption(TITLE)
 
@@ -574,6 +578,7 @@ class Game:
 
 	#Game Loop - Draw
 	def draw(self):
+		self.background.fill(BLUE)
 		self.screen.fill(LIGHTGREY)	
 		#self.draw_grid() 
 
@@ -1096,6 +1101,7 @@ class Game:
 		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*2), TILESIZE, "e")
 		fps = int(self.clock.get_fps())
 		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 2*WIDTH/32, TILESIZE, "w")
+		self.draw_text("Camera Offset: {},{}".format(self.camera.cam_rect.x, self.camera.cam_rect.y), self.generic_font, self.mediumText, WHITE, 4*WIDTH/32, TILESIZE, "w")	
 
 		#Side Panel Info (Debug Info)
 		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 4*TILESIZE, "w")
@@ -1124,7 +1130,9 @@ class Game:
 		#self.all_models.draw(self.screen)
 		#for model in self.all_models:
 		#	self.screen.blit(model.outline, model.rect.topleft)
-
+		pygame.draw.circle(self.screen, YELLOW, (0,0), 25)
+		self.background.blit(self.screen, (50,50))
+		pygame.draw.circle(self.background, YELLOW, (0,0), 25)
 		pygame.display.update()
 		
 	def show_start_screen(self):
@@ -1132,6 +1140,7 @@ class Game:
 		self.draw_text("40k Pygame Adaptation", pygame.font.match_font('castellar'), 120, YELLOW, WIDTH/2, HEIGHT*1/4, "center")
 		self.draw_text("Please see the readme/wiki for game rules", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*4/8, "center")
 		self.draw_text("Press any key to start...", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*5/8, "center")
+		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()
 
@@ -1140,6 +1149,7 @@ class Game:
 		self.draw_text("Victory!", pygame.font.match_font('castellar'), 120, GREEN, WIDTH/2, HEIGHT*1/4, "center")
 		self.draw_text("All targets eliminated", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*2/4, "center")
 		self.draw_text("Press any key to start a new game", self.generic_font, 60, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()
 

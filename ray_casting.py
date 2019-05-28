@@ -40,7 +40,7 @@ class Ray(object):
 				self.shooter.valid_shots.append(self.target)
 				#print("\nRay hit intended target with length {}".format(length))
 				#print("Ray's end pos: {}".format(endpoint))
-				pygame.draw.line(self.game.screen, GREEN, self.adjusted_shooter_rect.center, endpoint)
+				pygame.draw.line(self.game.background, GREEN, self.adjusted_shooter_rect.center, endpoint)
 				pygame.display.update()
 				return
 
@@ -49,7 +49,7 @@ class Ray(object):
 				if adjusted_model_rect.collidepoint(endpoint):
 					#print("\nRay hit non-target model with length {}".format(length))
 					#print("Ray's end pos: {}".format(endpoint))
-					pygame.draw.line(self.game.screen, ORANGE, self.adjusted_shooter_rect.center, endpoint)
+					pygame.draw.line(self.game.background, ORANGE, self.adjusted_shooter_rect.center, endpoint)
 					pygame.display.update()
 					return
 
@@ -58,7 +58,7 @@ class Ray(object):
 				if adjusted_wall_rect.collidepoint(endpoint):
 					#print("Ray hit a wall with length {}".format(length))
 					#print("Ray's end pos: {}".format(endpoint))
-					pygame.draw.line(self.game.screen, RED, self.adjusted_shooter_rect.center, endpoint)
+					pygame.draw.line(self.game.background, RED, self.adjusted_shooter_rect.center, endpoint)
 					pygame.display.update()
 					return
 

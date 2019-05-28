@@ -28,7 +28,7 @@ class Camera:
 	Thus the camera x, y (topleft coords) directly correspond to the shift required to match the camera shift
 	"""
 	def __init__(self, map_width, map_height):
-		self.cam_rect = pygame.Rect(0, 0 , map_width, map_height)
+		self.cam_rect = pygame.Rect(0, 0, map_width, map_height)
 		self.width = map_width
 		self.height	= map_height
 
