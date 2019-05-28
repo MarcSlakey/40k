@@ -58,7 +58,10 @@ class Game:
 		#Windowed
 		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
 		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), RESIZABLE)
-		self.background = pygame.display.set_mode((WIDTH+100, HEIGHT+100), RESIZABLE)
+		self.background_x_offset = 0
+		self.background_y_offset = 100
+
+		self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), RESIZABLE)
 		self.screen = pygame.Surface((WIDTH, HEIGHT))
 
 		pygame.display.set_caption(TITLE)
@@ -924,12 +927,7 @@ class Game:
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
-		#General info text
-		self.draw_text("Turn #{}: {} {}".format(self.turn_count, self.active_army.name, self.current_phase), self.generic_font, self.largeText, WHITE, WIDTH/2, TILESIZE, "center")
-		self.draw_text("|HOME: reset game|", self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*2), TILESIZE, "e")
-		fps = int(self.clock.get_fps())
-		self.draw_text("FPS: {}".format(fps), self.generic_font, self.mediumText, WHITE, 2*WIDTH/32, TILESIZE, "w")
-		self.draw_text("Camera Offset: {},{}".format(self.camera.cam_rect.x, self.camera.cam_rect.y), self.generic_font, self.mediumText, WHITE, 4*WIDTH/32, TILESIZE, "w")	
+		draw_module.draw_info_text(self)
 
 		#Side Panel Info (Debug Info)
 		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 4*TILESIZE, "w")
@@ -959,7 +957,7 @@ class Game:
 		#for model in self.all_models:
 		#	self.screen.blit(model.outline, model.rect.topleft)
 		pygame.draw.circle(self.screen, YELLOW, (0,0), 25)
-		self.background.blit(self.screen, (50,50))
+		self.background.blit(self.screen, (self.background_x_offset/2, self.background_y_offset/3))
 		pygame.draw.circle(self.background, YELLOW, (0,0), 25)
 		pygame.display.update()
 		

@@ -2,7 +2,7 @@ import pygame
 #from pygame.locals import *
 from settings import *
 
-def draw_text(game, text, font_name, size, color, x, y, align="nw"):
+def draw_text(game, surface, text, font_name, size, color, x, y, align="nw"):
 		font = pygame.font.Font(font_name, size)
 		text_surface = font.render(text, True, color)
 		text_rect = text_surface.get_rect()
@@ -24,15 +24,23 @@ def draw_text(game, text, font_name, size, color, x, y, align="nw"):
 			text_rect.midleft = (x, y)
 		if align == "center":
 			text_rect.center = (x, y)
-		game.screen.blit(text_surface, text_rect)
+		surface.blit(text_surface, text_rect)
+
+def draw_info_text(game):
+	#General info text
+	draw_text(game, game.background, "Turn #{}: {} {}".format(game.turn_count, game.active_army.name, game.current_phase), game.generic_font, game.largeText, WHITE, WIDTH/2, 15, "center")
+	draw_text(game, game.background, "|HOME: reset game|", game.generic_font, game.mediumText, WHITE, WIDTH-(TILESIZE*2), 15, "e")
+	fps = int(game.clock.get_fps())
+	draw_text(game, game.background, "FPS: {}".format(fps), game.generic_font, game.mediumText, WHITE, 2*WIDTH/32, 15, "w")
+	draw_text(game, game.background, "Camera Offset: {},{}".format(game.camera.cam_rect.x, game.camera.cam_rect.y), game.generic_font, game.mediumText, WHITE, 4*WIDTH/32, 15, "w")	
 
 def draw_controls(game, lmb, mmb, rmb, spacebar, enter):
 	#Controls Info Text	
-	draw_text(game, "|LMB: " +str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-	draw_text(game, "|MMB: " +str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-	draw_text(game, "|RMB: " +str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-	draw_text(game, "|SPACEBAR: " +str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-	draw_text(game, "|RETURN: " +str(enter)+"|", game.generic_font, game.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+	draw_text(game, game.background, "|LMB: " +str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+50, "w")
+	draw_text(game, game.background, "|MMB: " +str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+80, "w")
+	draw_text(game, game.background, "|RMB: " +str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT+50, "w")
+	draw_text(game, game.background, "|SPACEBAR: " +str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+50, "w")
+	draw_text(game, game.background, "|RETURN: " +str(enter)+"|", game.generic_font, game.mediumText, WHITE, 24*WIDTH/32, HEIGHT+50, "w")
 
 def draw_selected_model_indicators(game):
 	if game.selected_unit != None:
@@ -89,8 +97,6 @@ def draw_radii(game, weapon_range=False, move_radius=False, enemy_melee_radius=F
 		if game.selected_model.charge_move == 0:
 			pygame.draw.circle(game.screen, RED, game.camera.apply(game.selected_model).center, 12*TILESIZE, 1)
 
-
-
 def movement_phase(game):
 	#Model base drawing/coloring
 	if game.selected_model != None:
@@ -146,7 +152,7 @@ def wound_allocation(game):
 	game.toggle_radii_button.fill()
 
 	#Unallocated wound counter
-	draw_text(game, "{}Wound(s) to allocate!".format(game.unallocated_wounds), game.generic_font, game.largeText, YELLOW, WIDTH/2, HEIGHT - 2*TILESIZE, "center")
+	draw_text(game, game.screen, "{}Wound(s) to allocate!".format(game.unallocated_wounds), game.generic_font, game.largeText, YELLOW, WIDTH/2, HEIGHT - 2*TILESIZE, "center")
 
 	#Controls Info Text
 	draw_controls(game, lmb="allocate wound", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A")
@@ -170,10 +176,5 @@ def charge_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_text(game, "|LMB: select model|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-	draw_text(game, "|MMB: N/A|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-	draw_text(game, "|RMB: select charge target|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-	draw_text(game, "|SPACEBAR: N/A|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-	draw_text(game, "|RETURN: progress to next phase|", game.generic_font, game.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-
+	draw_controls(game, lmb="select model", mmb="N/A", rmb="select charge target", spacebar="N/A", enter="progress to next phase")
 	
