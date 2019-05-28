@@ -36,11 +36,12 @@ def draw_info_text(game):
 
 def draw_controls(game, lmb, mmb, rmb, spacebar, enter):
 	#Controls Info Text	
-	draw_text(game, game.background, "|LMB: " +str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+50, "w")
-	draw_text(game, game.background, "|MMB: " +str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+80, "w")
-	draw_text(game, game.background, "|RMB: " +str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT+50, "w")
-	draw_text(game, game.background, "|SPACEBAR: " +str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+50, "w")
-	draw_text(game, game.background, "|RETURN: " +str(enter)+"|", game.generic_font, game.mediumText, WHITE, 24*WIDTH/32, HEIGHT+50, "w")
+	draw_text(game, game.background, "|LMB: " +str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|MMB: " +str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
+	draw_text(game, game.background, "|RMB: " +str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|SPACEBAR: " +str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
+	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
+	draw_text(game, game.background, "|RETURN: " +str(enter)+"|", game.generic_font, game.mediumText, WHITE, 24*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
 
 def draw_selected_model_indicators(game):
 	if game.selected_unit != None:

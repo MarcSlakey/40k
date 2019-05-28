@@ -48,24 +48,23 @@ class Game:
 		#WIDTH = self.displayInfo.current_w
 		#HEIGHT = self.displayInfo.current_h
 
+		self.background_x_offset = 0
+		self.background_y_offset = 200
+		self.screen_topleft_pos = (self.background_x_offset/2, self.background_y_offset/3)
+
 		#Fullscreen
-		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
+		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), FULLSCREEN)
 
 		#Windowed Borderless
 		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
-		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), NOFRAME)
+		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), NOFRAME)
 
 		#Windowed
 		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
-		#self.screen = pygame.display.set_mode((WIDTH, HEIGHT), RESIZABLE)
-		self.background_x_offset = 0
-		self.background_y_offset = 100
-
 		self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), RESIZABLE)
+
 		self.screen = pygame.Surface((WIDTH, HEIGHT))
-
 		pygame.display.set_caption(TITLE)
-
 		self.clock = pygame.time.Clock()
 		self.running = True
 
@@ -927,6 +926,7 @@ class Game:
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
+		#Draws things like Turn Name/Counter, FPS, Camera Offset
 		draw_module.draw_info_text(self)
 
 		#Side Panel Info (Debug Info)
@@ -957,7 +957,7 @@ class Game:
 		#for model in self.all_models:
 		#	self.screen.blit(model.outline, model.rect.topleft)
 		pygame.draw.circle(self.screen, YELLOW, (0,0), 25)
-		self.background.blit(self.screen, (self.background_x_offset/2, self.background_y_offset/3))
+		self.background.blit(self.screen, (self.screen_topleft_pos))
 		pygame.draw.circle(self.background, YELLOW, (0,0), 25)
 		pygame.display.update()
 		
@@ -988,7 +988,7 @@ class Game:
 				if event.type == pygame.QUIT:
 					waiting = False
 					self.quit()
-				if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONDOWN:
+				if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
 					waiting = False
 
 if __name__ == "__main__":

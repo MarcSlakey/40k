@@ -12,13 +12,13 @@ def intersection(a, b):
 	c = [value for value in b if value in a]
 	return c
 
-def adjusted_mouse_pos(game):
-	return (pygame.mouse.get_pos()[0]-game.background_x_offset/2, pygame.mouse.get_pos()[1]-game.background_y_offset/2)
+def get_adjusted_mouse_pos(game):
+	return (pygame.mouse.get_pos()[0]-game.screen_topleft_pos[0], pygame.mouse.get_pos()[1]-game.screen_topleft_pos[1])
 
 def model_selection(game):
 	for model in game.selectable_models:
 		adjusted_model_rect = game.camera.apply(model)
-		if adjusted_model_rect.collidepoint(adjusted_mouse_pos(game)):
+		if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 			if game.current_phase == "Shooting Phase" or game.current_phase == "Overwatch":
 				if model.in_melee == True:
 					print("\nModel is engaged in melee and therefore cannot shoot.")
@@ -64,7 +64,7 @@ def multiple_selection(game):
 	if len(game.shooting_models) == 0:
 		for model in game.selectable_models:
 			adjusted_model_rect = game.camera.apply(model)
-			if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+			if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 				if game.current_phase == "Shooting Phase" or game.current_phase == "Overwatch":
 					if model.in_melee == True:
 						print("\nModel is engaged in melee and cannot shoot.")
@@ -80,7 +80,7 @@ def multiple_selection(game):
 		x = 0
 		for model in game.selectable_models:
 			adjusted_model_rect = game.camera.apply(model)
-			if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+			if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 				x += 1
 				if game.current_phase == "Shooting Phase" or game.current_phase == "Overwatch":
 					if model.in_melee == True:
@@ -112,7 +112,7 @@ def multiple_selection(game):
 def multiple_melee_selection(game):
 	for model in game.selectable_models:
 		adjusted_model_rect = game.camera.apply(model)
-		if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+		if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 			if len(game.fighting_models) == 0:
 				game.selected_model = model
 				game.selected_unit = model.unit
@@ -157,7 +157,7 @@ def mass_selection(game):
 	if len(game.shooting_models) == 0:
 		for model in game.selectable_models:
 			adjusted_model_rect = game.camera.apply(model)
-			if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+			if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 				if game.current_phase == "Shooting Phase" or game.current_phase == "Overwatch":
 					if model.in_melee == True:
 						print("\nModel is engaged in melee and cannot shoot.")
@@ -193,9 +193,10 @@ def movement_phase(game):
 			game.quit()
 
 		elif event.type == VIDEORESIZE:
-			game.screen = pygame.display.set_mode(event.dict['size'], RESIZABLE)
-			WIDTH = event.dict['size'][0]
-			HEIGHT = event.dict['size'][1]
+			pass
+			#game.screen = pygame.display.set_mode(event.dict['size'], RESIZABLE)
+			#WIDTH = event.dict['size'][0]
+			#HEIGHT = event.dict['size'][1]
 
 		#Keyboard event handling
 		elif event.type == pygame.KEYDOWN:
@@ -236,8 +237,8 @@ def movement_phase(game):
 			elif event.button == 3: #RMB
 				if game.selected_model != None:
 					if game.selected_model.in_melee != True:
-						game.selected_model.dest_x = adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
-						game.selected_model.dest_y = adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
+						game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
+						game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
 
 def shooting_phase(game):
 	for event in pygame.event.get():
@@ -323,7 +324,7 @@ def shooting_phase(game):
 					#Target selection
 					for model in game.targets:
 						adjusted_model_rect = game.camera.apply(model)
-						if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 							if model in game.selected_unit.valid_shots:
 								game.target_model = model
 								game.target_unit = model.unit
@@ -352,7 +353,7 @@ def wound_allocation(game):
 				else:
 					for model in game.target_unit.models:
 						adjusted_model_rect = game.camera.apply(model)
-						if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 							model.wounds -= 1
 							game.unallocated_wounds -= 1
 							print("\nAllocating wound to: ")
@@ -469,7 +470,7 @@ def charge_phase(game):
 					adjusted_model_rect = game.camera.apply(game.selected_model)
 					for model in game.targets:
 						adjusted_target_rect = game.camera.apply(model)
-						if adjusted_target_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if adjusted_target_rect.collidepoint(get_adjusted_mouse_pos(game)):
 							charge_x = adjusted_model_rect.center[0] - adjusted_target_rect.center[0]
 							charge_y = adjusted_model_rect.center[1] - adjusted_target_rect.center[1]
 							charge_distance = sprite_module.find_hypotenuse(charge_x, charge_y)
@@ -581,7 +582,7 @@ def overwatch(game):
 					#Target selection
 					for model in game.targets:
 						adjusted_model_rect = game.camera.apply(model)
-						if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 							if model in game.selected_unit.valid_shots:
 								game.target_model = model
 								game.target_unit = model.unit
@@ -633,8 +634,8 @@ def charge_move(game):
 
 			elif event.button == 3: #RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.cam_rect.topleft[0]
-					game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.cam_rect.topleft[1]
+					game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
+					game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
 
 def fight_phase_charging_units(game):
 	for event in pygame.event.get():
@@ -972,8 +973,8 @@ def pile_in(game):
 
 			elif event.button == 3:	#RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.cam_rect.topleft[0]
-					game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.cam_rect.topleft[1]
+					game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
+					game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
 
 def fight_targeting(game):
 	for event in pygame.event.get():
@@ -1036,7 +1037,7 @@ def fight_targeting(game):
 					#Target selection
 					for model in game.targets:
 						adjusted_model_rect = game.camera.apply(model)
-						if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 							if model in game.selected_unit.valid_model_targets:
 								game.target_model = model
 								game.target_unit = model.unit
@@ -1087,8 +1088,8 @@ def consolidate(game):
 
 			elif event.button == 3:	#RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = pygame.mouse.get_pos()[0] - game.camera.cam_rect.topleft[0]
-					game.selected_model.dest_y = pygame.mouse.get_pos()[1] - game.camera.cam_rect.topleft[1]
+					game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
+					game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
 
 def morale_phase(game):
 	for unit in game.active_army.units:
@@ -1168,7 +1169,7 @@ def morale_loss_allocation(game):
 				else:
 					for model in game.selected_unit.models:
 						adjusted_model_rect = game.camera.apply(model)
-						if adjusted_model_rect.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+						if adjusted_model_rect.collidepoint(get_adjusted_mouse_pos(game)):
 							model.die()
 							print("\nModel being removed as morale loss: ")
 							print(model)

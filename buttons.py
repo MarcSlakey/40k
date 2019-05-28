@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+import event_handling
 
 class Button(object):
 	""" Basic button constructor class
@@ -72,7 +73,8 @@ class Button(object):
 		self.game.screen.blit(self.text_surface, self.text_rect)
 
 	def mouse_over(self):
-		pos = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+		#pos = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+		pos = event_handling.get_adjusted_mouse_pos(self.game)
 		if self.outline.collidepoint(pos):
 			return True
 		return False

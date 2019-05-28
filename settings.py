@@ -2,8 +2,8 @@
 TITLE = "40k pygame"
 #WIDTH = 1920
 #HEIGHT = 1080	
-WIDTH = 1600
-HEIGHT = 850	
+WIDTH = 1500
+HEIGHT = 700	
 FPS = 120		#locks the FPS
 
 CAMERA_SPEED = 20
