@@ -805,11 +805,11 @@ class Focus(pygame.sprite.Sprite):
 		self.x += self.vx
 		self.y += self.vy
 
-		self.x = max(WIDTH/2, self.x)
-		self.x = min(self.map_x - WIDTH/2, self.x)
+		self.x = max(self.game.screen_w/2, self.x)
+		self.x = min(self.map_x - self.game.screen_w/2, self.x)
 
-		self.y = max(HEIGHT/2, self.y)
-		self.y = min(self.map_y - HEIGHT/2, self.y)
+		self.y = max(self.game.screen_h/2, self.y)
+		self.y = min(self.map_y - self.game.screen_h/2, self.y)
 
 		self.rect.topleft = (self.x, self.y)
 

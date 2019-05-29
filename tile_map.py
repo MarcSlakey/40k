@@ -27,7 +27,8 @@ class Camera:
 	When the target (the camera_focus sprite) moves, the camera is updated by redefining it as rect with the same size as before but with a new top left corner coordinate.
 	Thus the camera x, y (topleft coords) directly correspond to the shift required to match the camera shift
 	"""
-	def __init__(self, map_width, map_height):
+	def __init__(self, game, map_width, map_height):
+		self.game = game
 		self.cam_rect = pygame.Rect(0, 0, map_width, map_height)
 		self.width = map_width
 		self.height	= map_height
@@ -36,15 +37,15 @@ class Camera:
 	# The camera x, y (topleft coords) directly correspond to the shift required to match the camera shift
 
 	def update(self, target):
-		x = -target.rect.x + int(WIDTH / 2)
-		y = -target.rect.y + int(HEIGHT / 2)
+		x = -target.rect.x + int(self.game.screen_w / 2)
+		y = -target.rect.y + int(self.game.screen_h / 2)
 
 		# Limit scrolling to map size
 		x = min(0, x)	# left
-		x = max(-(self.width - WIDTH), x)	# right; if x offset becomes smaller than this value, set it equal to this value instead 
+		x = max(-(self.width - self.game.screen_w), x)	# right; if x offset becomes smaller than this value, set it equal to this value instead 
 
 		y = min(0, y)	# top
-		y = max(-(self.height - HEIGHT), y)	# bottom
+		y = max(-(self.height - self.game.screen_h), y)	# bottom
 
 		self.cam_rect = pygame.Rect(x, y, self.width, self.height)
 

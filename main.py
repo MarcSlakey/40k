@@ -46,26 +46,48 @@ class Game:
 		# current_w/h gets width/height of the either the current video mode or the desktop mode depending
 		#	on whether it was called before or after pygame.display.set_mode(...)
 		#self.displayInfo = pygame.display.Info()
-		#WIDTH = self.displayInfo.current_w
-		#HEIGHT = self.displayInfo.current_h
+		#self.screen_w = self.displayInfo.current_w
+		#self.screen_h = self.displayInfo.current_h
 
-		
+
+
+		self.title = "40k pygame"
+
+		#self.screen_w = 1920
+		#self.screen_h = 1080	
+		self.background_w = 1600
+		self.background_h = 800
+
+		#background_w = 1920
+		#background_h = 1080
+
+		#	!IMPORTANT!
+		#Used in draw_module and in main to define the important screen_topleft_pos
+		self.background_x_offset = 50
+		self.background_y_offset = 200
+
+		self.screen_w = self.background_w - self.background_x_offset
+		self.screen_h = self.background_h - self.background_y_offset
+
+
+
+		#	!IMPORTANT!
 		#Used to adjust mouse input, raycasting
-		self.screen_topleft_pos = (background_x_offset/2, background_y_offset/3)
+		self.screen_topleft_pos = (self.background_x_offset/2, self.background_y_offset/3)
 
 		#Fullscreen
-		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), FULLSCREEN)
+		#self.background = pygame.display.set_mode((self.screen_w+self.background_x_offset, self.screen_h+self.background_y_offset), FULLSCREEN)
 
 		#Windowed Borderless
 		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
-		#self.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), NOFRAME)
+		#self.background = pygame.display.set_mode((self.background_w, self.background_h), NOFRAME)
 
 		#Windowed
 		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
-		self.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), RESIZABLE)
+		self.background = pygame.display.set_mode((self.background_w, self.background_h), RESIZABLE)
 
-		self.screen = pygame.Surface((WIDTH, HEIGHT))
-		pygame.display.set_caption(TITLE)
+		self.screen = pygame.Surface((self.screen_w, self.screen_h))
+		pygame.display.set_caption(self.title)
 		self.clock = pygame.time.Clock()
 		self.running = True
 
@@ -107,13 +129,13 @@ class Game:
 		self.charge_range = 0
 		self.ineligible_fight_units = []
 
-		self.toggle_radii_button = buttons.Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-1*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.reset_all_button = buttons.Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  WIDTH/2, HEIGHT-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.toggle_radii_button = buttons.Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-1*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.reset_all_button = buttons.Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
 
-		self.camera = tile_map.Camera(self.map.width, self.map.height)
+		self.camera = tile_map.Camera(self, self.map.width, self.map.height)
 		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
 		
 		#Initialize army, unit objects
@@ -530,19 +552,19 @@ class Game:
 
 	#Draws reference grid
 	def draw_grid(self):
-		for x in range(0, WIDTH, TILESIZE):		#draws horizontal lines
-			pygame.draw.line(self.screen, BLACK, (x, 0), (x, HEIGHT))
-		for y in range(0, HEIGHT, TILESIZE):		#draws horizontal lines
-			pygame.draw.line(self.screen, BLACK, (0, y), (WIDTH, y))
+		for x in range(0, self.screen_w, TILESIZE):		#draws horizontal lines
+			pygame.draw.line(self.screen, BLACK, (x, 0), (x, self.screen_h))
+		for y in range(0, self.screen_h, TILESIZE):		#draws horizontal lines
+			pygame.draw.line(self.screen, BLACK, (0, y), (self.screen_w, y))
 
 	#Total Unit Cohesion Checker
 	def draw_cohesion_indicator(self):
-		pygame.draw.circle(self.screen, RED, (int(23*WIDTH/32), int(HEIGHT-5*TILESIZE)), 15, 0)	
+		pygame.draw.circle(self.screen, RED, (int(23*self.screen_w/32), int(self.screen_h-5*TILESIZE)), 15, 0)	
 		unit_cohesions = []
 		for sprite in self.selectable_models:
 			unit_cohesions.append(sprite.cohesion)
 		if all(unit_cohesions):
-			pygame.draw.circle(self.screen, GREEN, (int(23*WIDTH/32), int(HEIGHT-5*TILESIZE)), 15, 0)
+			pygame.draw.circle(self.screen, GREEN, (int(23*self.screen_w/32), int(self.screen_h-5*TILESIZE)), 15, 0)
 
 	#Text constructor from https://www.youtube.com/watch?v=MJ2GLVA7kaU
 	def draw_text(self, text, font_name, size, color, x, y, align="nw"):
@@ -660,11 +682,11 @@ class Game:
 			self.toggle_radii_button.fill()
 
 			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Fight Targeting":
 			#Model base drawing/coloring
@@ -710,11 +732,11 @@ class Game:
 			self.attack_button.fill()
 
 			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: select target|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: deselect all models|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			self.draw_text("|RMB: select target|", self.generic_font, self.mediumText, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: deselect all models|", self.generic_font, self.mediumText, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Consolidate":
 			#Model base drawing/coloring
@@ -759,11 +781,11 @@ class Game:
 			self.toggle_radii_button.fill()
 
 			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Morale Phase":
 			#Model base drawing/coloring
@@ -778,11 +800,11 @@ class Game:
 			#Buttons
 
 			#Controls Info Text	
-			self.draw_text("|LMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: N/A", self.generic_font, self.mediumText, WHITE, 6*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|LMB: N/A|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			self.draw_text("|RMB: N/A", self.generic_font, self.mediumText, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Morale Loss Allocation":
 			#Model base drawing/coloring
@@ -799,38 +821,38 @@ class Game:
 
 			#Unallocated wound counter
 			if self.selected_unit != None:
-				self.draw_text("{} morale losses to allocate.".format(self.selected_unit.morale_losses), self.generic_font, self.largeText, YELLOW, WIDTH/2, HEIGHT - 2*TILESIZE, "center")
+				self.draw_text("{} morale losses to allocate.".format(self.selected_unit.morale_losses), self.generic_font, self.largeText, YELLOW, self.screen_w/2, self.screen_h - 2*TILESIZE, "center")
 
 			#Controls Info Text
-			self.draw_text("|LMB: allocate morale loss to model|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, WIDTH/32, HEIGHT-4*TILESIZE, "w")
-			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, (8*WIDTH/32), HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
-			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
+			self.draw_text("|LMB: allocate morale loss to model|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, (8*self.screen_w/32), self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		#Side Panel Info (Debug Info)
-		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 4*TILESIZE, "w")
+		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 4*TILESIZE, "w")
 		if self.selected_model != None:
-			self.draw_text("in_melee: {}".format(self.selected_model.in_melee), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 5*TILESIZE, "w")
-			self.draw_text("fought: {}".format(self.selected_model.fought), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 6*TILESIZE, "w")
-			self.draw_text("charged: {}".format(self.selected_model.unit.charged_this_turn), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 7*TILESIZE, "w")
-			self.draw_text("advanced: {}".format(self.selected_model.advanced), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 8*TILESIZE, "w")
-			self.draw_text("fell_back: {}".format(self.selected_model.fell_back), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 9*TILESIZE, "w")
+			self.draw_text("in_melee: {}".format(self.selected_model.in_melee), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 5*TILESIZE, "w")
+			self.draw_text("fought: {}".format(self.selected_model.fought), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 6*TILESIZE, "w")
+			self.draw_text("charged: {}".format(self.selected_model.unit.charged_this_turn), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 7*TILESIZE, "w")
+			self.draw_text("advanced: {}".format(self.selected_model.advanced), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 8*TILESIZE, "w")
+			self.draw_text("fell_back: {}".format(self.selected_model.fell_back), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 9*TILESIZE, "w")
 
 
 		if self.selected_unit == None:
-			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 15*TILESIZE, "w")
+			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 15*TILESIZE, "w")
 		if self.selected_unit != None:
-			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 15*TILESIZE, "w")
+			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 15*TILESIZE, "w")
 			if self.current_phase == "Shooting Phase":
-				self.draw_text("# of models selected: {}".format(len(self.shooting_models)), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 17*TILESIZE, "w")
+				self.draw_text("# of models selected: {}".format(len(self.shooting_models)), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 17*TILESIZE, "w")
 			elif self.current_phase == "Fight Targeting":
-				self.draw_text("# of models selected: {}".format(len(self.fighting_models)), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 17*TILESIZE, "w")
+				self.draw_text("# of models selected: {}".format(len(self.fighting_models)), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 17*TILESIZE, "w")
 
 
-		self.draw_text("Target Model: {}".format(self.target_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 24*TILESIZE, "w")
-		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 25*TILESIZE, "w")
-		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 26*TILESIZE, "w")
+		self.draw_text("Target Model: {}".format(self.target_model), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 24*TILESIZE, "w")
+		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 25*TILESIZE, "w")
+		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 26*TILESIZE, "w")
 
 		#self.all_models.draw(self.screen)
 		#for model in self.all_models:
@@ -848,18 +870,18 @@ class Game:
 		
 	def show_start_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("40k Pygame Adaptation", pygame.font.match_font('castellar'), 80, YELLOW, WIDTH/2, HEIGHT*1/4, "center")
-		self.draw_text("Please see the readme/wiki for game rules", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*4/8, "center")
-		self.draw_text("Press any key to start...", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*5/8, "center")
+		self.draw_text("40k Pygame Adaptation", pygame.font.match_font('castellar'), 80, YELLOW, self.screen_w/2, self.screen_h*1/4, "center")
+		self.draw_text("Please see the readme/wiki for game rules", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*4/8, "center")
+		self.draw_text("Press any key to start...", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*5/8, "center")
 		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()
 
 	def show_game_over_screen(self):
 		self.screen.fill(BLACK)
-		self.draw_text("Victory!", pygame.font.match_font('castellar'), 80, GREEN, WIDTH/2, HEIGHT*1/4, "center")
-		self.draw_text("All targets eliminated", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*2/4, "center")
-		self.draw_text("Press any key to start a new game", self.generic_font, 40, WHITE, WIDTH/2, HEIGHT*3/4, "center")
+		self.draw_text("Victory!", pygame.font.match_font('castellar'), 80, GREEN, self.screen_w/2, self.screen_h*1/4, "center")
+		self.draw_text("All targets eliminated", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*2/4, "center")
+		self.draw_text("Press any key to start a new game", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*3/4, "center")
 		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()

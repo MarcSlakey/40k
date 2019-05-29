@@ -196,21 +196,21 @@ def movement_phase(game):
 		elif event.type == VIDEORESIZE:
 			#pass
 			#game.screen = pygame.display.set_mode(event.dict['size'], RESIZABLE)
-			BACKGROUND_W = event.w
-			BACKGROUND_H = event.h
+			game.background_w = event.w
+			game.background_h = event.h
 
-			WIDTH = BACKGROUND_W - background_x_offset
-			HEIGHT = BACKGROUND_H - background_y_offset
+			game.screen_w = game.background_w - game.background_x_offset
+			game.screen_h = game.background_h - game.background_y_offset
 
 			old_background = game.background
 			old_screen = game.screen
 
-			game.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), RESIZABLE)
-			game.screen = pygame.Surface((WIDTH, HEIGHT))
+			game.background = pygame.display.set_mode((game.background_w, game.background_h), RESIZABLE)
+			game.screen = pygame.Surface((game.screen_w, game.screen_h))
 			game.camera.update(game.camera_focus)
 
 			#game.background.blit(old_background, (0,0))
-			#game.background.blit(old_screen, (background_x_offset, background_y_offset))
+			#game.background.blit(old_screen, (game.background_x_offset, game.background_y_offset))
 
 			#del old_background, old_screen
 
