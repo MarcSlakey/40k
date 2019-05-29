@@ -3,6 +3,7 @@ from pygame.locals import *
 import main
 import sprite_module
 from settings import *
+import settings
 
 def intersection(a, b):
 	#c = []
@@ -193,10 +194,25 @@ def movement_phase(game):
 			game.quit()
 
 		elif event.type == VIDEORESIZE:
-			pass
+			#pass
 			#game.screen = pygame.display.set_mode(event.dict['size'], RESIZABLE)
-			#WIDTH = event.dict['size'][0]
-			#HEIGHT = event.dict['size'][1]
+			BACKGROUND_W = event.w
+			BACKGROUND_H = event.h
+
+			WIDTH = BACKGROUND_W - background_x_offset
+			HEIGHT = BACKGROUND_H - background_y_offset
+
+			old_background = game.background
+			old_screen = game.screen
+
+			game.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), RESIZABLE)
+			game.screen = pygame.Surface((WIDTH, HEIGHT))
+			game.camera.update(game.camera_focus)
+
+			#game.background.blit(old_background, (0,0))
+			#game.background.blit(old_screen, (background_x_offset, background_y_offset))
+
+			#del old_background, old_screen
 
 		#Keyboard event handling
 		elif event.type == pygame.KEYDOWN:

@@ -57,12 +57,12 @@ class Game:
 		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), FULLSCREEN)
 
 		#Windowed Borderless
-		os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
-		self.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), NOFRAME)
+		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
+		#self.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), NOFRAME)
 
 		#Windowed
-		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
-		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), RESIZABLE)
+		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
+		self.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), RESIZABLE)
 
 		self.screen = pygame.Surface((WIDTH, HEIGHT))
 		pygame.display.set_caption(TITLE)

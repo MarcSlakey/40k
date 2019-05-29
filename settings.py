@@ -2,11 +2,11 @@
 TITLE = "40k pygame"
 #WIDTH = 1920
 #HEIGHT = 1080	
-BACKGROUND_W = 1920
-BACKGROUND_H = 1080
+BACKGROUND_W = 1600
+BACKGROUND_H = 800
 
-#BACKGROUND_W = 1500
-#BACKGROUND_H = 900
+#BACKGROUND_W = 1920
+#BACKGROUND_H = 1080
 
 #Used in draw_module and in main to define the important screen_topleft_pos
 background_x_offset = 50
