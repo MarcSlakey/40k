@@ -2,8 +2,19 @@
 TITLE = "40k pygame"
 #WIDTH = 1920
 #HEIGHT = 1080	
-WIDTH = 1500
-HEIGHT = 700	
+BACKGROUND_W = 1920
+BACKGROUND_H = 1080
+
+#BACKGROUND_W = 1500
+#BACKGROUND_H = 900
+
+#Used in draw_module and in main to define the important screen_topleft_pos
+background_x_offset = 50
+background_y_offset = 200
+
+WIDTH = BACKGROUND_W - background_x_offset
+HEIGHT = BACKGROUND_H - background_y_offset
+
 FPS = 120		#locks the FPS
 
 CAMERA_SPEED = 20
@@ -22,7 +33,7 @@ ORANGE = (255, 150, 0)
 
 
 TILESIZE = 25 	#Should always represent 1" in gameplay; for reference: 25.4 mm / inch
-				#Standard battlefield size is 4' x 6' (48 tiles x 72 tiles)
+				#Standard battlefield size is 4' x 6' (48 tiles x 72 tiles) (1200 x 1800 pixels)
 				#Recommend a large terrain feature in each 2' x 2' (24 tiles x 24 tiles) section
 				#Units are deployed 12" away from the line that divides the two halves of the boards
 GRIDWIDTH = WIDTH / TILESIZE

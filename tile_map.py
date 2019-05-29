@@ -41,7 +41,7 @@ class Camera:
 
 		# Limit scrolling to map size
 		x = min(0, x)	# left
-		x = max(-(self.width - WIDTH), x)	#right
+		x = max(-(self.width - WIDTH), x)	# right; if x offset becomes smaller than this value, set it equal to this value instead 
 
 		y = min(0, y)	# top
 		y = max(-(self.height - HEIGHT), y)	# bottom

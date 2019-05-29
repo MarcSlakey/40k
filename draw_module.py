@@ -28,21 +28,24 @@ def draw_text(game, surface, text, font_name, size, color, x, y, align="nw"):
 
 def draw_info_text(game):
 	#General info text
-	draw_text(game, game.background, "Turn #{}: {} {}".format(game.turn_count, game.active_army.name, game.current_phase), game.generic_font, game.largeText, WHITE, WIDTH/2, 15, "center")
-	draw_text(game, game.background, "|HOME: reset game|", game.generic_font, game.mediumText, WHITE, WIDTH-(TILESIZE*2), 15, "e")
 	fps = int(game.clock.get_fps())
-	draw_text(game, game.background, "FPS: {}".format(fps), game.generic_font, game.mediumText, WHITE, 2*WIDTH/32, 15, "w")
-	draw_text(game, game.background, "Camera Offset: {},{}".format(game.camera.cam_rect.x, game.camera.cam_rect.y), game.generic_font, game.mediumText, WHITE, 4*WIDTH/32, 15, "w")	
+	draw_text(game, game.background, "FPS: {}".format(fps), game.generic_font, game.mediumText, WHITE, 2*BACKGROUND_W/32, 15, "w")
+	draw_text(game, game.background, "Camera Offset: {},{}".format(game.camera.cam_rect.x, game.camera.cam_rect.y), game.generic_font, game.mediumText, WHITE, 4*BACKGROUND_W/32, 15, "w")
+	draw_text(game, game.background, "Camera Dimensions: {},{}".format(game.camera.width, game.camera.height), game.generic_font, game.mediumText, WHITE, 4*BACKGROUND_W/32, 40, "w")
+	draw_text(game, game.background, "Turn #{}: {} {}".format(game.turn_count, game.active_army.name, game.current_phase), game.generic_font, game.largeText, WHITE, BACKGROUND_W/2, 15, "center")
+	draw_text(game, game.background, "Background Size: {},{}".format(BACKGROUND_W, BACKGROUND_H), game.generic_font, game.mediumText, WHITE, BACKGROUND_W-300, 15, "e")
+	draw_text(game, game.background, "Screen Size: {},{}".format(WIDTH, HEIGHT), game.generic_font, game.mediumText, WHITE, BACKGROUND_W-300, 40, "e")
+	draw_text(game, game.background, "|HOME: reset game|", game.generic_font, game.mediumText, WHITE, BACKGROUND_W-50, 15, "e")
 
 def draw_controls(game, lmb, mmb, rmb, spacebar, enter, shift_enter="N/A"):
 	#Controls Info Text	
-	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
-	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
-	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font, game.mediumText, WHITE, 20*WIDTH/32, HEIGHT+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|SHIFT+RETURN: "+str(enter)+"|", game.generic_font, game.mediumText, WHITE, 20*WIDTH/32, HEIGHT+game.background_y_offset-50, "w")
+	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+background_y_offset-80, "w")
+	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font, game.mediumText, WHITE, WIDTH/32, HEIGHT+background_y_offset-50, "w")
+	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font, game.mediumText, WHITE, 6*WIDTH/32, HEIGHT+background_y_offset-80, "w")
+	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+background_y_offset-80, "w")
+	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, game.mediumText, WHITE, 12*WIDTH/32, HEIGHT+background_y_offset-50, "w")
+	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font, game.mediumText, WHITE, 20*WIDTH/32, HEIGHT+background_y_offset-80, "w")
+	draw_text(game, game.background, "|SHIFT+RETURN: "+str(enter)+"|", game.generic_font, game.mediumText, WHITE, 20*WIDTH/32, HEIGHT+background_y_offset-50, "w")
 
 def draw_selected_model_indicators(game):
 	if game.selected_unit != None:

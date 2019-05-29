@@ -10,6 +10,7 @@ from os import path
 import random
 
 from settings import *
+import settings
 import event_handling
 import draw_module
 import buttons
@@ -48,20 +49,20 @@ class Game:
 		#WIDTH = self.displayInfo.current_w
 		#HEIGHT = self.displayInfo.current_h
 
-		self.background_x_offset = 0
-		self.background_y_offset = 200
-		self.screen_topleft_pos = (self.background_x_offset/2, self.background_y_offset/3)
+		
+		#Used to adjust mouse input, raycasting
+		self.screen_topleft_pos = (background_x_offset/2, background_y_offset/3)
 
 		#Fullscreen
 		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), FULLSCREEN)
 
 		#Windowed Borderless
-		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
-		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), NOFRAME)
+		os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
+		self.background = pygame.display.set_mode((BACKGROUND_W, BACKGROUND_H), NOFRAME)
 
 		#Windowed
-		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
-		self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), RESIZABLE)
+		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
+		#self.background = pygame.display.set_mode((WIDTH+self.background_x_offset, HEIGHT+self.background_y_offset), RESIZABLE)
 
 		self.screen = pygame.Surface((WIDTH, HEIGHT))
 		pygame.display.set_caption(TITLE)
@@ -807,15 +808,12 @@ class Game:
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*WIDTH/32, HEIGHT-5*TILESIZE, "w")
 
-		#Draws things like Turn Name/Counter, FPS, Camera Offset
-		draw_module.draw_info_text(self)
-
 		#Side Panel Info (Debug Info)
 		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, WIDTH-(TILESIZE*15), 4*TILESIZE, "w")
 		if self.selected_model != None:
 			self.draw_text("in_melee: {}".format(self.selected_model.in_melee), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 5*TILESIZE, "w")
 			self.draw_text("fought: {}".format(self.selected_model.fought), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 6*TILESIZE, "w")
-			self.draw_text("charged: {}".format(self.selected_model.charged), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 7*TILESIZE, "w")
+			self.draw_text("charged: {}".format(self.selected_model.unit.charged_this_turn), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 7*TILESIZE, "w")
 			self.draw_text("advanced: {}".format(self.selected_model.advanced), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 8*TILESIZE, "w")
 			self.draw_text("fell_back: {}".format(self.selected_model.fell_back), self.generic_font, self.smallText, WHITE, WIDTH-(TILESIZE*15), 9*TILESIZE, "w")
 
@@ -838,8 +836,14 @@ class Game:
 		#for model in self.all_models:
 		#	self.screen.blit(model.outline, model.rect.topleft)
 		#pygame.draw.circle(self.screen, YELLOW, (0,0), 25)
-		self.background.blit(self.screen, (self.screen_topleft_pos))
 		#pygame.draw.circle(self.background, YELLOW, (0,0), 25)
+
+		#Draw the screen on the background; crucial to displaying the actual game
+		self.background.blit(self.screen, (self.screen_topleft_pos))
+
+		#Draws things like Turn Name/Counter, FPS, Camera Offset
+		draw_module.draw_info_text(self)
+		
 		pygame.display.update()
 		
 	def show_start_screen(self):
