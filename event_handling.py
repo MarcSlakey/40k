@@ -176,7 +176,7 @@ def mass_selection(game):
 				print("Models selected:")
 				print(game.shooting_models)
 
-def core_events(game, keys, mods):
+def core_keydown_events(game, keys, mods):
 	if keys[pygame.K_F4]:
 		if mods & pygame.KMOD_ALT:
 			game.quit()
@@ -188,38 +188,46 @@ def core_events(game, keys, mods):
 		main.Game().show_start_screen()
 		main.Game().new()
 
-def movement_phase(game):
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
+def core_events(game, event):
+	if event.type == pygame.QUIT:
 			game.quit()
 
-		elif event.type == VIDEORESIZE:
-			#pass
-			#game.screen = pygame.display.set_mode(event.dict['size'], RESIZABLE)
-			game.background_w = event.w
-			game.background_h = event.h
+	elif event.type == VIDEORESIZE:
+		resize_surfaces(game, event)
 
-			game.screen_w = game.background_w - game.background_x_offset
-			game.screen_h = game.background_h - game.background_y_offset
 
-			old_background = game.background
-			old_screen = game.screen
+def resize_surfaces(game, event):
+	#game.screen = pygame.display.set_mode(event.dict['size'], RESIZABLE)
+	game.background_w = event.w
+	game.background_h = event.h
 
-			game.background = pygame.display.set_mode((game.background_w, game.background_h), RESIZABLE)
-			game.screen = pygame.Surface((game.screen_w, game.screen_h))
-			game.camera.update(game.camera_focus)
+	game.screen_w = game.background_w - game.background_x_offset
+	game.screen_h = game.background_h - game.background_y_offset
 
-			#game.background.blit(old_background, (0,0))
-			#game.background.blit(old_screen, (game.background_x_offset, game.background_y_offset))
+	old_background = game.background
+	old_screen = game.screen
 
-			#del old_background, old_screen
+	game.background = pygame.display.set_mode((game.background_w, game.background_h), RESIZABLE)
+	game.screen = pygame.Surface((game.screen_w, game.screen_h))
+	game.camera.update(game.camera_focus)
+
+	game.ui_scale = game.background_w/1920
+
+	#game.background.blit(old_background, (0,0))
+	#game.background.blit(old_screen, (game.background_x_offset, game.background_y_offset))
+
+	#del old_background, old_screen
+
+def movement_phase(game):
+	for event in pygame.event.get():
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 			
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if game.selected_model != None and keys[pygame.K_SPACE]:
 				game.reset_moves(game.selected_model)
@@ -258,15 +266,14 @@ def movement_phase(game):
 
 def shooting_phase(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				for model in game.shooting_models:
@@ -347,15 +354,14 @@ def shooting_phase(game):
 
 def wound_allocation(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_RETURN]:
 				pass
@@ -408,15 +414,14 @@ def wound_allocation(game):
 
 def charge_phase(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_RETURN]:
 				for unit in game.active_army.units:
@@ -501,15 +506,14 @@ def charge_phase(game):
 
 def overwatch(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				for model in game.shooting_models:
@@ -605,15 +609,14 @@ def overwatch(game):
 
 def charge_move(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if game.selected_model != None and keys[pygame.K_SPACE]:
 				game.reset_moves(game.selected_model)
@@ -655,15 +658,14 @@ def charge_move(game):
 
 def fight_phase_charging_units(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				game.clear_selections()
@@ -714,15 +716,14 @@ def fight_phase_charging_units(game):
 
 def fight_phase_charging_units(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				game.clear_selections()
@@ -773,15 +774,14 @@ def fight_phase_charging_units(game):
 
 def fight_phase_friendly_units(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				game.clear_selections()
@@ -860,15 +860,14 @@ def fight_phase_friendly_units(game):
 
 def fight_phase_enemy_units(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				game.clear_selections()
@@ -947,15 +946,14 @@ def fight_phase_enemy_units(game):
 
 def pile_in(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				if game.selected_model != None:
@@ -994,15 +992,14 @@ def pile_in(game):
 
 def fight_targeting(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				game.clear_melee_lists()
@@ -1060,15 +1057,14 @@ def fight_targeting(game):
 
 def consolidate(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				if game.selected_model != None:
@@ -1119,15 +1115,14 @@ def morale_phase(game):
 			game.change_phase("Morale Loss Allocation")
 
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				pass
@@ -1160,15 +1155,14 @@ def morale_phase(game):
 
 def morale_loss_allocation(game):
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game.quit()
+		core_events(game, event)
 
 		#Keyboard event handling
-		elif event.type == pygame.KEYDOWN:
+		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
 
-			core_events(game, keys, mods)
+			core_keydown_events(game, keys, mods)
 
 			if keys[pygame.K_SPACE]:
 				pass

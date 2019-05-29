@@ -69,6 +69,8 @@ class Game:
 		self.screen_w = self.background_w - self.background_x_offset
 		self.screen_h = self.background_h - self.background_y_offset
 
+		self.ui_scale = self.background_w/1920
+
 
 
 		#	!IMPORTANT!
