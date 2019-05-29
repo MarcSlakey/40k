@@ -69,12 +69,11 @@ class Button(object):
 		if self.align == "center":
 			self.outline.center = (self.x, self.y)
 
-		pygame.draw.rect(self.game.screen, WHITE, self.outline, 3)
-		self.game.screen.blit(self.text_surface, self.text_rect)
+		pygame.draw.rect(self.game.background, WHITE, self.outline, 3)
+		self.game.background.blit(self.text_surface, self.text_rect)
 
 	def mouse_over(self):
-		#pos = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-		pos = event_handling.get_adjusted_mouse_pos(self.game)
+		pos = pygame.mouse.get_pos()
 		if self.outline.collidepoint(pos):
 			return True
 		return False

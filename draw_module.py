@@ -36,19 +36,21 @@ def draw_info_text(game):
 	draw_text(game, game.background, "Camera Offset: {},{}".format(game.camera.cam_rect.x, game.camera.cam_rect.y), game.generic_font,  scale_text(game, game.mediumText), WHITE, 4*game.background_w/32, 15, "w")
 	draw_text(game, game.background, "Camera Dimensions: {},{}".format(game.camera.width, game.camera.height), game.generic_font,  scale_text(game, game.mediumText), WHITE, 4*game.background_w/32, 40, "w")
 	draw_text(game, game.background, "Turn #{}: {} {}".format(game.turn_count, game.active_army.name, game.current_phase), game.generic_font, scale_text(game, game.largeText), WHITE, game.background_w/2, 15, "center")
-	draw_text(game, game.background, "Background Size: {},{}".format(game.background_w, game.background_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, game.background_w-300, 15, "e")
-	draw_text(game, game.background, "Screen Size: {},{}".format(game.screen_w, game.screen_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, game.background_w-300, 40, "e")
+	draw_text(game, game.background, "Background Size: {},{}".format(game.background_w, game.background_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, 45*game.background_w/64, 15, "w")
+	draw_text(game, game.background, "Screen Size: {},{}".format(game.screen_w, game.screen_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, 45*game.background_w/64, 40, "w")
 	draw_text(game, game.background, "|HOME: reset game|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.background_w-50, 15, "e")
 
-def draw_controls(game, lmb, mmb, rmb, spacebar, enter, shift_enter="N/A"):
+def draw_controls(game, lmb="N/A", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A", shift_enter="N/A"):
 	#Controls Info Text	
-	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/32, game.screen_h+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/32, game.screen_h+game.background_y_offset-50, "w")
-	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 6*game.screen_w/32, game.screen_h+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/32, game.screen_h+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/32, game.screen_h+game.background_y_offset-50, "w")
-	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 20*game.screen_w/32, game.screen_h+game.background_y_offset-80, "w")
-	draw_text(game, game.background, "|SHIFT+RETURN: "+str(enter)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 20*game.screen_w/32, game.screen_h+game.background_y_offset-50, "w")
+	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-100, "w")
+	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-60, "w")
+	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-80, "w")
+	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-40, "w")
+	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-100, "w")
+	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-80, "w")
+	draw_text(game, game.background, "|SHIFT+RETURN: "+str(shift_enter)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-60, "w")
+	draw_text(game, game.background, "|HOME: reset game|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-40, "w")
+	draw_text(game, game.background, "|END: close game|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-20, "w")
 
 def draw_selected_model_indicators(game):
 	if game.selected_unit != None:

@@ -131,11 +131,11 @@ class Game:
 		self.charge_range = 0
 		self.ineligible_fight_units = []
 
-		self.toggle_radii_button = buttons.Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-1*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.reset_all_button = buttons.Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
-		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, self.screen_h-3*TILESIZE, 5*TILESIZE, 2*TILESIZE, "center")
+		self.toggle_radii_button = buttons.Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 62*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.reset_all_button = buttons.Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 56*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
 
 		self.camera = tile_map.Camera(self, self.map.width, self.map.height)
 		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
