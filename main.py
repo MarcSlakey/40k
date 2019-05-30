@@ -131,11 +131,11 @@ class Game:
 		self.charge_range = 0
 		self.ineligible_fight_units = []
 
-		self.toggle_radii_button = buttons.Button(self, "SHOW/HIDE RADII", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 62*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.reset_all_button = buttons.Button(self, "RESET ALL MOVES", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 56*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.charge_button = buttons.Button(self, "CONFIRM CHARGE TARGET", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.fight_button = buttons.Button(self, "FIGHT WITH THIS UNIT", self.generic_font, self.mediumText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.toggle_radii_button = buttons.Button(self, "TOGGLE RADII", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 62*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.reset_all_button = buttons.Button(self, "RESET ALL", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.charge_button = buttons.Button(self, "CHARGE TARGET", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		self.fight_button = buttons.Button(self, "FIGHT", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
 
 		self.camera = tile_map.Camera(self, self.map.width, self.map.height)
 		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
@@ -594,8 +594,10 @@ class Game:
 		self.screen.blit(text_surface, text_rect)
 
 	generic_font = 'freesansbold.ttf'
+	#generic_font = pygame.font.match_font('garamondbold')
 	#generic_font = pygame.font.match_font('freesansbold')
 	#castellar, rod, fangsong, ebrima
+	tinyText = 13
 	smallText = 17
 	mediumText = 20
 	largeText = 32
@@ -831,30 +833,6 @@ class Game:
 			self.draw_text("|RMB: N/A|", self.generic_font, self.mediumText, WHITE, (8*self.screen_w/32), self.screen_h-5*TILESIZE, "w")
 			self.draw_text("|SPACEBAR: N/A|", self.generic_font, self.mediumText, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 			self.draw_text("|RETURN: N/A|", self.generic_font, self.mediumText, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-
-		#Side Panel Info (Debug Info)
-		self.draw_text("SELECTED MODEL: {}".format(self.selected_model), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 4*TILESIZE, "w")
-		if self.selected_model != None:
-			self.draw_text("in_melee: {}".format(self.selected_model.in_melee), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 5*TILESIZE, "w")
-			self.draw_text("fought: {}".format(self.selected_model.fought), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 6*TILESIZE, "w")
-			self.draw_text("charged: {}".format(self.selected_model.unit.charged_this_turn), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 7*TILESIZE, "w")
-			self.draw_text("advanced: {}".format(self.selected_model.advanced), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 8*TILESIZE, "w")
-			self.draw_text("fell_back: {}".format(self.selected_model.fell_back), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 9*TILESIZE, "w")
-
-
-		if self.selected_unit == None:
-			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 15*TILESIZE, "w")
-		if self.selected_unit != None:
-			self.draw_text("SELECTED UNIT: {}".format(self.selected_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 15*TILESIZE, "w")
-			if self.current_phase == "Shooting Phase":
-				self.draw_text("# of models selected: {}".format(len(self.shooting_models)), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 17*TILESIZE, "w")
-			elif self.current_phase == "Fight Targeting":
-				self.draw_text("# of models selected: {}".format(len(self.fighting_models)), self.generic_font, self.smallText, WHITE, self.screen_w-(TILESIZE*15), 17*TILESIZE, "w")
-
-
-		self.draw_text("Target Model: {}".format(self.target_model), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 24*TILESIZE, "w")
-		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 25*TILESIZE, "w")
-		self.draw_text("Target Unit: {}".format(self.target_unit), self.generic_font, self.mediumText, WHITE, self.screen_w-(TILESIZE*15), 26*TILESIZE, "w")
 
 		#self.all_models.draw(self.screen)
 		#for model in self.all_models:

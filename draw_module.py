@@ -42,15 +42,61 @@ def draw_info_text(game):
 
 def draw_controls(game, lmb="N/A", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A", shift_enter="N/A"):
 	#Controls Info Text	
-	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-100, "w")
-	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-60, "w")
-	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-80, "w")
-	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.screen_w/64, game.background_h-40, "w")
-	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-100, "w")
-	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-80, "w")
-	draw_text(game, game.background, "|SHIFT+RETURN: "+str(shift_enter)+"|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-60, "w")
-	draw_text(game, game.background, "|HOME: reset game|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-40, "w")
-	draw_text(game, game.background, "|END: close game|", game.generic_font,  scale_text(game, game.mediumText), WHITE, 12*game.screen_w/64, game.background_h-20, "w")
+	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-100, "w")
+	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-60, "w")
+	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-80, "w")
+	draw_text(game, game.background, "|HOME: reset game|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-40, "w")
+	draw_text(game, game.background, "|END: close game|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-20, "w")
+	
+	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-100, "w")
+	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-80, "w")
+	draw_text(game, game.background, "|SHIFT+RETURN: "+str(shift_enter)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-60, "w")
+	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-40, "w")
+
+def draw_debug_info(game):
+	#Model Stats
+	x_align = 20
+	x_align2 = 23
+	draw_text(game, game.background, "|MODEL: {}|".format(game.selected_model), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*(x_align-1)/64, game.background_h-100, "w")
+	if game.selected_model != None:
+		draw_text(game, game.background, "M:  {}".format(game.selected_model.original_max_move/TILESIZE), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-80, "e")
+		draw_text(game, game.background, "Ld: {}".format(game.selected_model.leadership), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-80, "e")
+		draw_text(game, game.background, "WS: {}".format(game.selected_model.weapon_skill), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-65, "e")
+		draw_text(game, game.background, "BS: {}".format(game.selected_model.ballistic_skill), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-65, "e")
+		draw_text(game, game.background, "S: {}".format(game.selected_model.strength), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-50, "e")
+		draw_text(game, game.background, "T: {}".format(game.selected_model.toughness), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-50, "e")
+		draw_text(game, game.background, "Sv: {}".format(game.selected_model.save), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-35, "e")
+		draw_text(game, game.background, "Inv: {}".format(game.selected_model.invulnerable), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-35, "e")
+
+	#Side Panel Info (Debug Info)
+	x_align = 34
+	draw_text(game, game.background, "|SELECTED MODEL: {}|".format(game.selected_model), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+	if game.selected_model != None:
+		draw_text(game, game.background, "in_melee: {}".format(game.selected_model.in_melee), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
+		draw_text(game, game.background, "fought: {}".format(game.selected_model.fought), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-65, "w")
+		draw_text(game, game.background, "charged: {}".format(game.selected_model.unit.charged_this_turn), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
+		draw_text(game, game.background, "advanced: {}".format(game.selected_model.advanced), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-35, "w")
+		draw_text(game, game.background, "fell_back: {}".format(game.selected_model.fell_back), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-20, "w")
+
+	x_align = 41
+	if game.selected_unit == None:
+		draw_text(game, game.background, "|SELECTED UNIT: None|", game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+	if game.selected_unit != None:
+		draw_text(game, game.background, "|SELECTED UNIT|: {}".format(game.selected_unit.name), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+		draw_text(game, game.background, "# of recent deaths: {}".format(len(game.selected_unit.recent_deaths)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
+		draw_text(game, game.background, "# of shooters selected: {}".format(len(game.shooting_models)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-65, "w")
+		draw_text(game, game.background, "# of fighters selected: {}".format(len(game.fighting_models)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
+
+	x_align = 50
+	draw_text(game, game.background, "|Target Model: {}|".format(game.target_model), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+
+	x_align = 57
+	if game.target_unit == None:
+		draw_text(game, game.background, "|Target Unit: None|", game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+	if game.target_unit != None:
+		draw_text(game, game.background, "|Target Unit: {}|".format(game.target_unit.name), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+		draw_text(game, game.background, "# of recent deaths: {}".format(len(game.target_unit.recent_deaths)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
+	#draw_text(game, game.background, "Target Unit: {}".format(game.target_unit), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
 
 def draw_selected_model_indicators(game):
 	if game.selected_unit != None:
@@ -131,6 +177,7 @@ def movement_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
+	draw_debug_info(game)
 	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="progress to next phase")
 
 def shooting_phase(game):
@@ -153,6 +200,7 @@ def shooting_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text
+	draw_debug_info(game)
 	draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="progress to next phase")
 
 def wound_allocation(game):
@@ -171,6 +219,7 @@ def wound_allocation(game):
 	draw_text(game, game.screen, "{}Wound(s) to allocate!".format(game.unallocated_wounds), game.generic_font, game.largeText, YELLOW, game.screen_w/2, game.screen_h - 2*TILESIZE, "center")
 
 	#Controls Info Text
+	draw_debug_info(game)
 	draw_controls(game, lmb="allocate wound", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A")
 
 def charge_phase(game):
@@ -192,7 +241,8 @@ def charge_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="select charge target", spacebar="N/A", enter="progress to next phase")
+	draw_debug_info(game)
+	draw_controls(game, lmb="select model", mmb="N/A", rmb="select target", spacebar="N/A", enter="progress to next phase")
 
 def overwatch(game):
 	if game.selected_model != None:
@@ -214,6 +264,7 @@ def overwatch(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text
+	draw_debug_info(game)
 	draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="progress to next phase") 
 
 def charge_move(game):
@@ -233,6 +284,7 @@ def charge_move(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
+	draw_debug_info(game)
 	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="progress to next phase") 
 
 
@@ -252,5 +304,6 @@ def fight_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="N/A", spacebar="N/A", enter="progress to next Fight sub-phase", shift_enter="end the Fight Phase")
+	draw_debug_info(game)
+	draw_controls(game, lmb="select model", mmb="N/A", rmb="N/A", spacebar="N/A", enter="next Fight sub-phase", shift_enter="end Fight Phase")
 
