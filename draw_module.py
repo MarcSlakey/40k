@@ -55,9 +55,9 @@ def draw_controls(game, lmb="N/A", mmb="N/A", rmb="N/A", spacebar="N/A", enter="
 
 def draw_debug_info(game):
 	#Model Stats
-	x_align = 20
-	x_align2 = 23
-	draw_text(game, game.background, "|MODEL: {}|".format(game.selected_model), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*(x_align-1)/64, game.background_h-100, "w")
+	x_align = 25
+	x_align2 = 28
+	draw_text(game, game.background, "|MODEL: {}|".format(game.selected_model), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-100, "e")
 	if game.selected_model != None:
 		draw_text(game, game.background, "M:  {}".format(game.selected_model.original_max_move/TILESIZE), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-80, "e")
 		draw_text(game, game.background, "Ld: {}".format(game.selected_model.leadership), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-80, "e")
