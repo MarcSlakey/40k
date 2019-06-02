@@ -67,6 +67,7 @@ def draw_debug_info(game):
 		draw_text(game, game.background, "T: {}".format(game.selected_model.toughness), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-50, "e")
 		draw_text(game, game.background, "Sv: {}".format(game.selected_model.save), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-35, "e")
 		draw_text(game, game.background, "Inv: {}".format(game.selected_model.invulnerable), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-35, "e")
+		draw_text(game, game.background, "Wounds: {}".format(game.selected_model.wounds), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-20, "e")
 
 	#Side Panel Info (Debug Info)
 	x_align = 34

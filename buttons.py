@@ -48,6 +48,27 @@ class Button(object):
 
 		self.outline = pygame.Rect(self.x, self.y, self.text_rect.width + 10,self.text_rect.height + 10)
 
+	def move(self):
+		if align == "nw":
+			self.text_rect.topleft = (self.x, self.y)
+		if align == "ne":
+			self.text_rect.topright = (self.x, self.y)
+		if align == "sw":
+			self.text_rect.bottomleft = (self.x, self.y)
+		if align == "se":
+			self.text_rect.bottomright = (self.x, self.y)
+		if align == "n":
+			self.text_rect.midtop = (self.x, self.y)
+		if align == "s":
+			self.text_rect.midbottom = (self.x, self.y)
+		if align == "e":
+			self.text_rect.midright = (self.x, self.y)
+		if align == "w":
+			self.text_rect.midleft = (self.x, self.y)
+		if align == "center":
+			self.text_rect.center = (self.x, self.y)
+
+		self.outline = pygame.Rect(self.x, self.y, self.text_rect.width + 10,self.text_rect.height + 10)
 
 	def draw(self):
 		if self.align == "nw":

@@ -1,5 +1,10 @@
 """
 Inspired by the example found here: https://pastebin.com/krFBNK3a
+
+Personal notes: 
+Drawing the ray once it collides doesn't seem to change the los_check time.
+However, drawing the ray each time it increments quadruples the check time.
+Increasing scale_to_length increment amount from 1 to 30 only decreased the check time of a 10 man unit by about 16%.
 """
 
 import pygame
@@ -38,6 +43,9 @@ class Ray(object):
 			
 			background_shifted_rect_center = (self.adjusted_shooter_rect.center[0] + self.game.screen_topleft_pos[0], self.adjusted_shooter_rect.center[1] + self.game.screen_topleft_pos[1])
 			background_shifted_endpoint = (endpoint[0] + self.game.screen_topleft_pos[0], endpoint[1] + self.game.screen_topleft_pos[1])
+
+			#pygame.draw.line(self.game.background, WHITE, background_shifted_rect_center, background_shifted_endpoint)
+			#pygame.display.update()
 
 			if self.adjusted_target_rect.collidepoint(endpoint):
 				self.shooter.valid_shots.append(self.target)

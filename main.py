@@ -127,6 +127,7 @@ class Game:
 		self.target_unit = None
 		self.unallocated_wounds = 0
 		self.charging_unit = None
+		
 		self.charge_target_unit = None
 		self.charge_range = 0
 		self.ineligible_fight_units = []
@@ -356,21 +357,24 @@ class Game:
 			print("Move models into cohesion range or reset moves.")
 			return False
 
+	#Very slow process
+	#Range checking part must be fairly quick, since models with no enemies in range have extremely quick los_checks
 	def los_check(self, shooter):
-		#x = 1
 		self.target_model = None
 		self.target_unit = None
+		x = 0
 
 		for target in self.targets:
+			x += 1
+			#print("\nCheck #{}: Checking if {} is in range.".format(x, target.name))
 			shot_x = self.selected_model.x - target.x
 			shot_y = self.selected_model.y - target.y
 			shot_distance = sprite_module.find_hypotenuse(shot_x, shot_y)
 			if shot_distance <= self.selected_model.ranged_weapons[0].w_range:
+				#print("\nStarting ray cast.")
 				ray_casting.Ray(self, shooter, target, (shooter.x, shooter.y), (target.x, target.y)).cast()
-			#print("{}".format(x))
-			#x += 1
-		#print("\n")
-		#print(shooter.valid_shots)
+				#print("\nEnd of ray cast.")
+
 
 	def melee_ratio(self, sprite_1, sprite_2):
 		ratio = (sprite_1.radius + sprite_2.radius + TILESIZE)/(sprite_1.radius + sprite_2.radius)
@@ -851,8 +855,9 @@ class Game:
 	def show_start_screen(self):
 		self.screen.fill(BLACK)
 		self.draw_text("40k Pygame Adaptation", pygame.font.match_font('castellar'), 80, YELLOW, self.screen_w/2, self.screen_h*1/4, "center")
-		self.draw_text("Please see the readme/wiki for game rules", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*4/8, "center")
-		self.draw_text("Press any key to start...", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*5/8, "center")
+		self.draw_text("Please see the readme/wiki for game rules and", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*4/8, "center")
+		self.draw_text("look at the command line window for game info.", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*5/8, "center")
+		self.draw_text("Press any key to start", self.generic_font, 40, WHITE, self.screen_w/2, self.screen_h*7/8, "center")
 		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()
