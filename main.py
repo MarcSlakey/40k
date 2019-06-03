@@ -563,15 +563,6 @@ class Game:
 		for y in range(0, self.screen_h, TILESIZE):		#draws horizontal lines
 			pygame.draw.line(self.screen, BLACK, (0, y), (self.screen_w, y))
 
-	#Total Unit Cohesion Checker
-	def draw_cohesion_indicator(self):
-		pygame.draw.circle(self.screen, RED, (int(23*self.screen_w/32), int(self.screen_h-5*TILESIZE)), 15, 0)	
-		unit_cohesions = []
-		for sprite in self.selectable_models:
-			unit_cohesions.append(sprite.cohesion)
-		if all(unit_cohesions):
-			pygame.draw.circle(self.screen, GREEN, (int(23*self.screen_w/32), int(self.screen_h-5*TILESIZE)), 15, 0)
-
 	#Text constructor from https://www.youtube.com/watch?v=MJ2GLVA7kaU
 	def draw_text(self, text, font_name, size, color, x, y, align="nw"):
 		font = pygame.font.Font(font_name, size)
@@ -648,53 +639,7 @@ class Game:
 			draw_module.fight_phase(self)
 
 		elif self.current_phase == "Pile In":
-			#Model base drawing/coloring
-			if self.selected_unit != None:
-				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
-
-			if self.selected_model != None:
-				#Selected model indicator
-				pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-				
-				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
-
-				if self.show_radii == True:
-					#Remaining pile in move radius
-					if self.selected_model.pile_in_move >= 1:
-						pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, int(self.selected_model.pile_in_move), 1)
-
-					#Melee radius (one inch)
-					for sprite in self.targets:
-						pygame.draw.circle(self.screen, RED, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
-
-					#Melee fight radius (one inch)
-					for sprite in self.selected_unit.models:
-						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, ORANGE, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
-
-					#Cohesion radius (two inches)	
-					for sprite in self.selected_model.unit.models:
-						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, GREEN, self.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
-
-			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
-
-			#Buttons
-			self.reset_all_button.draw()
-			self.reset_all_button.fill()
-
-			self.toggle_radii_button.draw()
-			self.toggle_radii_button.fill()
-
-			#Controls Info Text	
-			self.draw_text("|LMB: select model|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			self.draw_text("|MMB: N/A|", self.generic_font, self.mediumText, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
-			self.draw_text("|RMB: move model|", self.generic_font, self.mediumText, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			self.draw_text("|SPACEBAR: reset selected model's move|", self.generic_font, self.mediumText, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			self.draw_text("|RETURN: progress to next phase|", self.generic_font, self.mediumText, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.pile_in(self)
 
 		elif self.current_phase == "Fight Targeting":
 			#Model base drawing/coloring
@@ -730,7 +675,7 @@ class Game:
 					pygame.draw.circle(self.screen, BLUE, self.camera.apply(model).center, int((model.radius)/2), 0)
 
 			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
+			draw_module.draw_cohesion_indicator(self)
 
 			#Buttons
 			self.toggle_radii_button.draw()
@@ -779,7 +724,7 @@ class Game:
 							pygame.draw.circle(self.screen, GREEN, self.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
 
 			#Draws large semi-circle cohesion indicator
-			self.draw_cohesion_indicator()	
+			draw_module.draw_cohesion_indicator(self)
 
 			#Buttons
 			self.reset_all_button.draw()
