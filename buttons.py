@@ -2,6 +2,13 @@ import pygame
 from settings import *
 import event_handling
 
+def define_buttons(game):
+	game.toggle_radii_button = Button(game, "TOGGLE RADII", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 62*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.reset_all_button = Button(game, "RESET ALL", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.attack_button = Button(game, "ATTACK", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.charge_button = Button(game, "CHARGE TARGET", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.fight_button = Button(game, "FIGHT", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+
 class Button(object):
 	""" Basic button constructor class
 	
@@ -27,28 +34,6 @@ class Button(object):
 		self.text_surface = self.font.render(self.text, True, self.color)
 		self.text_rect = self.text_surface.get_rect()
 		self.game.buttons.append(self)
-		if align == "nw":
-			self.text_rect.topleft = (self.x, self.y)
-		if align == "ne":
-			self.text_rect.topright = (self.x, self.y)
-		if align == "sw":
-			self.text_rect.bottomleft = (self.x, self.y)
-		if align == "se":
-			self.text_rect.bottomright = (self.x, self.y)
-		if align == "n":
-			self.text_rect.midtop = (self.x, self.y)
-		if align == "s":
-			self.text_rect.midbottom = (self.x, self.y)
-		if align == "e":
-			self.text_rect.midright = (self.x, self.y)
-		if align == "w":
-			self.text_rect.midleft = (self.x, self.y)
-		if align == "center":
-			self.text_rect.center = (self.x, self.y)
-
-		self.outline = pygame.Rect(self.x, self.y, self.text_rect.width + 10,self.text_rect.height + 10)
-
-	def move(self):
 		if align == "nw":
 			self.text_rect.topleft = (self.x, self.y)
 		if align == "ne":

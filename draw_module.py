@@ -54,8 +54,8 @@ def draw_controls(game, lmb="N/A", mmb="N/A", rmb="N/A", spacebar="N/A", enter="
 	draw_text(game, game.background, "|SHIFT+RETURN: "+str(shift_enter)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-60, "w")
 	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-40, "w")
 
-#Currently expensive to draw: takes anywhere from 7-17 FPS to constantly draw this block depending on whether a model is selected
-def draw_debug_info(game):
+#Costs about 3 FPS to constantly draw this
+def draw_model_stats(game):
 	#Model Stats
 	x_align = 25
 	x_align2 = 28
@@ -71,6 +71,8 @@ def draw_debug_info(game):
 		draw_text(game, game.background, "Inv: {}".format(game.selected_model.invulnerable), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-35, "e")
 		draw_text(game, game.background, "Wounds: {}".format(game.selected_model.wounds), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-20, "e")
 
+#Currently expensive to draw: takes anywhere from 7-14 FPS to constantly draw this block depending on whether a model is selected
+def draw_debug_info(game):
 	#Side Panel Info (Debug Info)
 	x_align = 34
 	draw_text(game, game.background, "|SELECTED MODEL: {}|".format(game.selected_model), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
@@ -201,6 +203,7 @@ def movement_phase(game):
 
 	#Controls Info Text	
 	draw_debug_info(game)
+	draw_model_stats(game)
 	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase")
 
 def shooting_phase(game):

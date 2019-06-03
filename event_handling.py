@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import main
 import sprite_module
+import buttons
 from settings import *
 import settings
 
@@ -212,6 +213,8 @@ def resize_surfaces(game, event):
 	game.camera.update(game.camera_focus)
 
 	game.ui_scale = game.background_w/1920
+
+	buttons.define_buttons(game)
 
 	#game.background.blit(old_background, (0,0))
 	#game.background.blit(old_screen, (game.background_x_offset, game.background_y_offset))

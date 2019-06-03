@@ -132,12 +132,9 @@ class Game:
 		self.charge_range = 0
 		self.ineligible_fight_units = []
 
-		self.toggle_radii_button = buttons.Button(self, "TOGGLE RADII", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 62*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.reset_all_button = buttons.Button(self, "RESET ALL", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.attack_button = buttons.Button(self, "ATTACK", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.charge_button = buttons.Button(self, "CHARGE TARGET", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-		self.fight_button = buttons.Button(self, "FIGHT", self.generic_font, self.tinyText, WHITE,  self.screen_w/2, 58*self.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+		buttons.define_buttons(self)
 
+		
 		self.camera = tile_map.Camera(self, self.map.width, self.map.height)
 		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
 		
