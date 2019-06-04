@@ -112,7 +112,8 @@ def draw_cohesion_indicator(game):
 	if all(unit_cohesions):
 		pygame.draw.circle(game.background, GREEN, (int(game.background_w/2), int(game.screen_topleft_pos[1]-15)), 15, 0)
 
-#Draws the green, yellow, and cyan circles on models when a model/unit is selected.
+#Draws the green, yellow, and cyan circles 
+#These are used in almost all phases to indicate which models/units are currently selected.
 def draw_selected_model_indicators(game):
 	if game.selected_unit != None:
 		for model in game.selected_unit.models:
@@ -122,75 +123,84 @@ def draw_selected_model_indicators(game):
 	if game.selected_model.cohesion:
 		pygame.draw.circle(game.screen, GREEN, game.camera.apply(game.selected_model).center, game.selected_model.radius, 0)
 
+#Draws the yellow circles that indicate valid targets for shooting/fighting.
+#Used in Shooting phase, Wound allocation, Overwatch
 def draw_shooting_target_indicators(game):
-	#Used in Shooting phase, Wound allocation, Overwatch
-	#Targets in LOS
 	if game.selected_unit != None:
 		if len(game.selected_unit.valid_shots) > 0:
 			for model in game.selected_unit.valid_shots:
 				pygame.draw.circle(game.screen, YELLOW, game.camera.apply(model).center, model.radius, 0)
 
+#Draws the orange circles that indicate which unit is currently targeted.
 def draw_target_unit_indicator(game):
 	if game.target_unit != None:
 		for model in game.target_unit.models:
 			pygame.draw.circle(game.screen, ORANGE, game.camera.apply(model).center, model.radius, 0)
 
+#Draws a blue dots on models in a given unit that are currently selected for shooting.
 def draw_blue_dot_selections(game, model):
 	pygame.draw.circle(game.screen, BLUE, game.camera.apply(model).center, int((model.radius)/2), 0)
 
 def draw_radii(game, weapon_range=False, move_radius=False, enemy_melee_radius=False, target_melee_radius=False, selected_melee_radius=False, 
 				cohesion_radius=False, charge_move_radius=False, max_charge_move_radius=False, pile_in_move_radius=False):
-	#Weapon range radius
-	if weapon_range == True:
-		pygame.draw.circle(game.screen, RED, game.camera.apply(game.selected_model).center, int(game.selected_model.ranged_weapons[0].w_range), 1)
+	if game.show_radii == True:
+		#Weapon range radius
+		if weapon_range == True:
+			pygame.draw.circle(game.screen, RED, game.camera.apply(game.selected_model).center, int(game.selected_model.ranged_weapons[0].w_range), 1)
 
-	#Remaining move radius
-	if move_radius == True:
-		if game.selected_model.max_move >= 1:
-			pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.selected_model.max_move), 1)
+		#Remaining move radius
+		if move_radius == True:
+			if game.selected_model.max_move >= 1:
+				pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.selected_model.max_move), 1)
 
-	#Enemy Melee radius (one inch)
-	if enemy_melee_radius == True:
-		for sprite in game.targets:
-			pygame.draw.circle(game.screen, RED, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+		#Enemy Melee radius (one inch)
+		if enemy_melee_radius == True:
+			for sprite in game.targets:
+				pygame.draw.circle(game.screen, RED, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
 
-	#Target melee radius
-	if target_melee_radius == True:
-		if game.target_unit != None:
-			for sprite in game.target_unit.models:
-				pygame.draw.circle(game.screen, ORANGE, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+		#Target melee radius
+		if target_melee_radius == True:
+			if game.target_unit != None:
+				for sprite in game.target_unit.models:
+					pygame.draw.circle(game.screen, ORANGE, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
 
-	if selected_melee_radius == True:
-		for sprite in game.selected_unit.models:
-			if sprite != game.selected_model:
-				pygame.draw.circle(game.screen, ORANGE, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+		if selected_melee_radius == True:
+			for sprite in game.selected_unit.models:
+				if sprite != game.selected_model:
+					pygame.draw.circle(game.screen, ORANGE, game.camera.apply(sprite).center, sprite.true_melee_radius, 1)
 
-	#Cohesion radius (two inches)
-	if cohesion_radius == True:
-		for sprite in game.selected_model.unit.models:
-			if sprite != game.selected_model:
-				pygame.draw.circle(game.screen, GREEN, game.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
+		#Cohesion radius (two inches)
+		if cohesion_radius == True:
+			for sprite in game.selected_model.unit.models:
+				if sprite != game.selected_model:
+					pygame.draw.circle(game.screen, GREEN, game.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
 
-	#Remaining charge move radius
-	if charge_move_radius == True:
-		if game.selected_model.charge_move > 1:
-			pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.selected_model.charge_move), 1)
+		#Remaining charge move radius
+		if charge_move_radius == True:
+			if game.selected_model.charge_move > 1:
+				pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.selected_model.charge_move), 1)
 
-	if max_charge_move_radius == True:
-		if game.selected_model.charge_move == 0:
-			pygame.draw.circle(game.screen, RED, game.camera.apply(game.selected_model).center, 12*TILESIZE, 1)
+		#Shows the maximum possible charge range
+		if max_charge_move_radius == True:
+			if game.selected_model.charge_move == 0:
+				pygame.draw.circle(game.screen, RED, game.camera.apply(game.selected_model).center, 12*TILESIZE, 1)
 
-	if pile_in_move_radius == True:
-		if game.selected_model.pile_in_move >= 1:
-			pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.selected_model.pile_in_move), 1)
+		if pile_in_move_radius == True:
+			if game.selected_model.pile_in_move >= 1:
+				pygame.draw.circle(game.screen, YELLOW, game.camera.apply(game.selected_model).center, int(game.selected_model.pile_in_move), 1)
 
+
+"""
+Below, each phase has its own draw function that is called when that phase is the current_phase.
+This could probably be organized much more efficiently in the future,
+	but for now they've at least been improved by calling generalized functions
+	like draw_selected_model_indicators().
+"""
 def movement_phase(game):
 	#Model base drawing/coloring
 	if game.selected_model != None:
 		draw_selected_model_indicators(game)
-
-		if game.show_radii == True:
-			draw_radii(game, weapon_range=True, move_radius=True, enemy_melee_radius=True, cohesion_radius=True)
+		draw_radii(game, weapon_range=True, move_radius=True, enemy_melee_radius=True, cohesion_radius=True)
 
 	draw_cohesion_indicator(game)	
 
@@ -204,15 +214,15 @@ def movement_phase(game):
 	#Controls Info Text	
 	draw_debug_info(game)
 	draw_model_stats(game)
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase")
+	if game.show_controls == True:
+		draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase")
 
 def shooting_phase(game):
 	if game.selected_model != None:
 		draw_selected_model_indicators(game)
 		draw_shooting_target_indicators(game)
 		draw_target_unit_indicator(game)
-		if game.show_radii == True:
-			draw_radii(game, weapon_range=True)
+		draw_radii(game, weapon_range=True)
 		
 	if len(game.shooting_models) > 0:
 		for model in game.shooting_models:
@@ -227,15 +237,15 @@ def shooting_phase(game):
 
 	#Controls Info Text
 	draw_debug_info(game)
-	draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="next phase")
+	if game.show_controls == True:
+		draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="next phase")
 
 def wound_allocation(game):
 	if game.selected_model != None:
 		draw_selected_model_indicators(game)
 		draw_shooting_target_indicators(game)
 		draw_target_unit_indicator(game)
-		if game.show_radii == True:
-			draw_radii(game, weapon_range=True)
+		draw_radii(game, weapon_range=True)
 
 	#Buttons
 	game.toggle_radii_button.draw()
@@ -246,15 +256,14 @@ def wound_allocation(game):
 
 	#Controls Info Text
 	draw_debug_info(game)
-	draw_controls(game, lmb="allocate wound", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A")
+	if game.show_controls == True:
+		draw_controls(game, lmb="allocate wound", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A")
 
 def charge_phase(game):
 	if game.selected_model != None:
 		draw_selected_model_indicators(game)
 		draw_target_unit_indicator(game)
-
-		if game.show_radii == True:
-			draw_radii(game, enemy_melee_radius=True, cohesion_radius=True, max_charge_move_radius=True)
+		draw_radii(game, enemy_melee_radius=True, cohesion_radius=True, max_charge_move_radius=True)
 
 	#Draws circle cohesion indicator
 	draw_cohesion_indicator(game)	
@@ -268,15 +277,15 @@ def charge_phase(game):
 
 	#Controls Info Text	
 	draw_debug_info(game)
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="select target", spacebar="N/A", enter="next phase")
+	if game.show_controls == True:
+		draw_controls(game, lmb="select model", mmb="N/A", rmb="select target", spacebar="N/A", enter="next phase")
 
 def overwatch(game):
 	if game.selected_model != None:
 		draw_selected_model_indicators(game)
 		draw_shooting_target_indicators(game)
 		draw_target_unit_indicator(game)
-		if game.show_radii == True:
-			draw_radii(game, weapon_range=True)
+		draw_radii(game, weapon_range=True)
 
 	if len(game.shooting_models) > 0:
 		for model in game.shooting_models:
@@ -291,13 +300,13 @@ def overwatch(game):
 
 	#Controls Info Text
 	draw_debug_info(game)
-	draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="next phase") 
+	if game.show_controls == True:
+		draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="next phase") 
 
 def charge_move(game):
 	if game.selected_model != None:
 		draw_selected_model_indicators(game)
-		if game.show_radii == True:
-			draw_radii(game, weapon_range=True, cohesion_radius=True, charge_move_radius=True, enemy_melee_radius=True)
+		draw_radii(game, weapon_range=True, cohesion_radius=True, charge_move_radius=True, enemy_melee_radius=True)
 
 	#Draws circle cohesion indicator
 	draw_cohesion_indicator(game)	
@@ -311,7 +320,8 @@ def charge_move(game):
 
 	#Controls Info Text	
 	draw_debug_info(game)
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase") 
+	if game.show_controls == True:
+		draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase") 
 
 
 def fight_phase(game):
@@ -331,14 +341,13 @@ def fight_phase(game):
 
 	#Controls Info Text	
 	draw_debug_info(game)
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="N/A", spacebar="N/A", enter="next Fight sub-phase", shift_enter="end Fight Phase")
+	if game.show_controls == True:
+		draw_controls(game, lmb="select model", mmb="N/A", rmb="N/A", spacebar="N/A", enter="next Fight sub-phase", shift_enter="end Fight Phase")
 
 def pile_in(game):
 	if game.selected_model != None:
 		draw_selected_model_indicators(game)
-
-		if game.show_radii == True:
-			draw_radii(game, enemy_melee_radius=True, cohesion_radius=True, pile_in_move_radius=True, selected_melee_radius=True)
+		draw_radii(game, enemy_melee_radius=True, cohesion_radius=True, pile_in_move_radius=True, selected_melee_radius=True)
 
 	draw_cohesion_indicator(game)
 
@@ -351,5 +360,6 @@ def pile_in(game):
 
 	#Controls Info Text	
 	draw_debug_info(game)
-	draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase")
+	if game.show_controls == True:
+		draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase")
 

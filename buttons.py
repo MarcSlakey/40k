@@ -2,6 +2,7 @@ import pygame
 from settings import *
 import event_handling
 
+#This happens once with a new game and is performed again each time the window is resized.
 def define_buttons(game):
 	game.toggle_radii_button = Button(game, "TOGGLE RADII", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 62*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
 	game.reset_all_button = Button(game, "RESET ALL", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")

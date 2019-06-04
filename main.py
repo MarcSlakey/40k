@@ -119,6 +119,7 @@ class Game:
 		self.focus = pygame.sprite.Group()
 		self.buttons = []
 		self.show_radii = True
+		self.show_controls = False
 		self.selected_model = None
 		self.selected_unit = None
 		self.shooting_models = []
@@ -133,7 +134,6 @@ class Game:
 		self.ineligible_fight_units = []
 
 		buttons.define_buttons(self)
-
 		
 		self.camera = tile_map.Camera(self, self.map.width, self.map.height)
 		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
