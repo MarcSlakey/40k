@@ -212,8 +212,6 @@ def movement_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_debug_info(game)
-	draw_model_stats(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase")
 
@@ -236,7 +234,6 @@ def shooting_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text
-	draw_debug_info(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="next phase")
 
@@ -255,7 +252,6 @@ def wound_allocation(game):
 	draw_text(game, game.screen, "{}Wound(s) to allocate!".format(game.unallocated_wounds), game.generic_font, game.largeText, YELLOW, game.screen_w/2, game.screen_h - 2*TILESIZE, "center")
 
 	#Controls Info Text
-	draw_debug_info(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="allocate wound", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A")
 
@@ -276,7 +272,6 @@ def charge_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_debug_info(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="select model", mmb="N/A", rmb="select target", spacebar="N/A", enter="next phase")
 
@@ -299,7 +294,6 @@ def overwatch(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text
-	draw_debug_info(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="select model", mmb="select entire unit", rmb="select target", spacebar="deselect shooters", enter="next phase") 
 
@@ -319,7 +313,6 @@ def charge_move(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_debug_info(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase") 
 
@@ -340,7 +333,6 @@ def fight_phase(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_debug_info(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="select model", mmb="N/A", rmb="N/A", spacebar="N/A", enter="next Fight sub-phase", shift_enter="end Fight Phase")
 
@@ -359,7 +351,6 @@ def pile_in(game):
 	game.toggle_radii_button.fill()
 
 	#Controls Info Text	
-	draw_debug_info(game)
 	if game.show_controls == True:
 		draw_controls(game, lmb="select model", mmb="N/A", rmb="move model", spacebar="reset move", enter="next phase")
 
