@@ -792,7 +792,7 @@ class Game:
 		#Draws things like Turn Name/Counter, FPS, Camera Offset
 		draw_module.draw_info_text(self)
 		#draw_module.draw_debug_info(self)
-		#draw_module.draw_model_stats(self)
+		draw_module.draw_model_stats(self)
 		
 		pygame.display.update()
 		

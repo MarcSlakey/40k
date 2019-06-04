@@ -38,7 +38,6 @@ def draw_info_text(game):
 	draw_text(game, game.background, "Turn #{}: {} {}".format(game.turn_count, game.active_army.name, game.current_phase), game.generic_font, scale_text(game, game.largeText), WHITE, game.background_w/2, 15, "center")
 	draw_text(game, game.background, "Background Size: {},{}".format(game.background_w, game.background_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, 45*game.background_w/64, 15, "w")
 	draw_text(game, game.background, "Screen Size: {},{}".format(game.screen_w, game.screen_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, 45*game.background_w/64, 40, "w")
-	draw_text(game, game.background, "|HOME: reset game|", game.generic_font,  scale_text(game, game.mediumText), WHITE, game.background_w-50, 15, "e")
 
 #Currently expensive to draw: takes about 11 FPS to constantly draw this block
 def draw_controls(game, lmb="N/A", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A", shift_enter="N/A"):
@@ -54,7 +53,7 @@ def draw_controls(game, lmb="N/A", mmb="N/A", rmb="N/A", spacebar="N/A", enter="
 	draw_text(game, game.background, "|SHIFT+RETURN: "+str(shift_enter)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-60, "w")
 	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-40, "w")
 
-#Costs about 3 FPS to constantly draw this
+#Costs about 9 FPS to constantly draw this
 def draw_model_stats(game):
 	#Model Stats
 	x_align = 25
