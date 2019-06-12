@@ -5,6 +5,7 @@ import sprite_module
 import buttons
 from settings import *
 import settings
+import selection_box
 
 def intersection(a, b):
 	#c = []
@@ -240,6 +241,12 @@ def movement_phase(game):
 					game.clear_selections()
 					game.refresh_moves()
 					game.change_phase("Shooting Phase")
+
+			elif keys[pygame.K_KP0]:
+				if game.selection_box == None:
+					game.selection_box = selection_box.SelectionBox(game, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+				elif game.selection_box != None:
+					game.selection_box.finish()
 
 		#Mouse event handling
 		elif event.type == pygame.MOUSEBUTTONUP:

@@ -134,6 +134,8 @@ class Game:
 		self.ineligible_fight_units = []
 
 		buttons.define_buttons(self)
+
+		self.selection_box = None
 		
 		self.camera = tile_map.Camera(self, self.map.width, self.map.height)
 		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
@@ -552,6 +554,8 @@ class Game:
 	def update(self):
 		self.camera.update(self.camera_focus)
 		self.all_sprites.update()
+		if self.selection_box != None:
+			self.selection_box.update()
 
 	#Draws reference grid
 	def draw_grid(self):

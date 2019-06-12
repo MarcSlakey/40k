@@ -203,6 +203,9 @@ def movement_phase(game):
 
 	draw_cohesion_indicator(game)	
 
+	if game.selection_box != None:
+		game.selection_box.draw()
+
 	#Buttons
 	game.reset_all_button.draw()
 	game.reset_all_button.fill()
