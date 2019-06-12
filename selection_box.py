@@ -7,8 +7,8 @@ class SelectionBox(object):
 	"""docstring for SelectionBox"""
 	def __init__(self, game, x, y):
 		self.game = game
-		self.x = x
-		self.y = y
+		self.x = x - game.screen_topleft_pos[0]
+		self.y = y - game.screen_topleft_pos[1]
 		self.rect = pygame.Rect(x, y, 1, 1)
 
 	def get_adjusted_mouse_pos(self, game):
