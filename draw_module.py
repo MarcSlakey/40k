@@ -6,101 +6,116 @@ def scale_text(game, font_size):
 	return int(game.ui_scale * font_size)
 
 def draw_text(game, surface, text, font_name, size, color, x, y, align="nw"):
-		font = pygame.font.Font(font_name, size)
-		text_surface = font.render(text, True, color)
-		text_rect = text_surface.get_rect()
-		if align == "nw":
-			text_rect.topleft = (x, y)
-		if align == "ne":
-			text_rect.topright = (x, y)
-		if align == "sw":
-			text_rect.bottomleft = (x, y)
-		if align == "se":
-			text_rect.bottomright = (x, y)
-		if align == "n":
-			text_rect.midtop = (x, y)
-		if align == "s":
-			text_rect.midbottom = (x, y)
-		if align == "e":
-			text_rect.midright = (x, y)
-		if align == "w":
-			text_rect.midleft = (x, y)
-		if align == "center":
-			text_rect.center = (x, y)
-		surface.blit(text_surface, text_rect)
+	"""Generic text constructor from https://www.youtube.com/watch?v=MJ2GLVA7kaU
+
+	Creates a surface and rect, draws text to it, and blits this surface onto the chosen surface
+
+	Keyword arguments:
+	game - pygame game object
+	surface - pygame surface object on which to draw
+	text - the text to be drawn
+	font_name - font choice for drawn text in single quotes
+	size - numeric size value
+	color - RGB color code, for example (255,255,255)
+	x - x coordinate on the provided surface argument for where the text should be drawn
+	y - y coordinate on the provided surface argument for where the text should be drawn
+	align - defines the anchor point for the text rect
+	"""
+	font = pygame.font.Font(font_name, size)
+	text_surface = font.render(text, True, color)
+	text_rect = text_surface.get_rect()
+	if align == "nw":
+		text_rect.topleft = (x, y)
+	if align == "ne":
+		text_rect.topright = (x, y)
+	if align == "sw":
+		text_rect.bottomleft = (x, y)
+	if align == "se":
+		text_rect.bottomright = (x, y)
+	if align == "n":
+		text_rect.midtop = (x, y)
+	if align == "s":
+		text_rect.midbottom = (x, y)
+	if align == "e":
+		text_rect.midright = (x, y)
+	if align == "w":
+		text_rect.midleft = (x, y)
+	if align == "center":
+		text_rect.center = (x, y)
+	surface.blit(text_surface, text_rect)
 
 def draw_info_text(game):
 	#General info text
 	fps = int(game.clock.get_fps())
-	draw_text(game, game.background, "FPS: {}".format(fps), game.generic_font,  scale_text(game, game.mediumText), WHITE, 2*game.background_w/32, 15, "w")
-	draw_text(game, game.background, "Camera Offset: {},{}".format(game.camera.cam_rect.x, game.camera.cam_rect.y), game.generic_font,  scale_text(game, game.mediumText), WHITE, 4*game.background_w/32, 15, "w")
-	draw_text(game, game.background, "Camera Dimensions: {},{}".format(game.camera.width, game.camera.height), game.generic_font,  scale_text(game, game.mediumText), WHITE, 4*game.background_w/32, 40, "w")
-	draw_text(game, game.background, "Turn #{}: {} {}".format(game.turn_count, game.active_army.name, game.current_phase), game.generic_font, scale_text(game, game.largeText), WHITE, game.background_w/2, 15, "center")
-	draw_text(game, game.background, "Background Size: {},{}".format(game.background_w, game.background_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, 45*game.background_w/64, 15, "w")
-	draw_text(game, game.background, "Screen Size: {},{}".format(game.screen_w, game.screen_h), game.generic_font,  scale_text(game, game.mediumText), WHITE, 45*game.background_w/64, 40, "w")
+	draw_text(game, game.background, "FPS: {}".format(fps), BASIC_FONT,  scale_text(game, MEDIUM_TEXT), WHITE, 2*game.background_w/32, 15, "w")
+	draw_text(game, game.background, "Camera Offset: {},{}".format(game.camera.cam_rect.x, game.camera.cam_rect.y), BASIC_FONT,  scale_text(game, MEDIUM_TEXT), WHITE, 4*game.background_w/32, 15, "w")
+	draw_text(game, game.background, "Camera Dimensions: {},{}".format(game.camera.width, game.camera.height), BASIC_FONT,  scale_text(game, MEDIUM_TEXT), WHITE, 4*game.background_w/32, 40, "w")
+	draw_text(game, game.background, "Turn #{}: {} {}".format(game.turn_count, game.active_army.name, game.current_phase), BASIC_FONT, scale_text(game, LARGE_TEXT), WHITE, game.background_w/2, 15, "center")
+	draw_text(game, game.background, "Background Size: {},{}".format(game.background_w, game.background_h), BASIC_FONT,  scale_text(game, MEDIUM_TEXT), WHITE, 45*game.background_w/64, 15, "w")
+	draw_text(game, game.background, "Screen Size: {},{}".format(game.screen_w, game.screen_h), BASIC_FONT,  scale_text(game, MEDIUM_TEXT), WHITE, 45*game.background_w/64, 40, "w")
 
 #Currently expensive to draw: takes about 11 FPS to constantly draw this block
 def draw_controls(game, lmb="N/A", mmb="N/A", rmb="N/A", spacebar="N/A", enter="N/A", shift_enter="N/A"):
 	#Controls Info Text	
-	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-100, "w")
-	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-60, "w")
-	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-80, "w")
-	draw_text(game, game.background, "|HOME: reset game|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-40, "w")
-	draw_text(game, game.background, "|END: close game|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w/128, game.background_h-20, "w")
+	draw_text(game, game.background, "|LMB: "+str(lmb)+"|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w/128, game.background_h-100, "w")
+	draw_text(game, game.background, "|MMB: "+str(mmb)+"|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w/128, game.background_h-60, "w")
+	draw_text(game, game.background, "|RMB: "+str(rmb)+"|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w/128, game.background_h-80, "w")
+	draw_text(game, game.background, "|HOME: reset game|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w/128, game.background_h-40, "w")
+	draw_text(game, game.background, "|END: close game|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w/128, game.background_h-20, "w")
 	
-	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-100, "w")
-	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-80, "w")
-	draw_text(game, game.background, "|SHIFT+RETURN: "+str(shift_enter)+"|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-60, "w")
-	draw_text(game, game.background, "|ARROW KEYS: move camera|", game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*15/128, game.background_h-40, "w")
+	draw_text(game, game.background, "|SPACEBAR: "+str(spacebar)+"|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*15/128, game.background_h-100, "w")
+	draw_text(game, game.background, "|RETURN: "+str(enter)+"|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*15/128, game.background_h-80, "w")
+	draw_text(game, game.background, "|SHIFT+RETURN: "+str(shift_enter)+"|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*15/128, game.background_h-60, "w")
+	draw_text(game, game.background, "|ARROW KEYS: move camera|", BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*15/128, game.background_h-40, "w")
 
 #Costs about 9 FPS to constantly draw this
 def draw_model_stats(game):
 	#Model Stats
 	x_align = 25
 	x_align2 = 28
-	draw_text(game, game.background, "|MODEL: {}|".format(game.selected_model), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-100, "e")
+	draw_text(game, game.background, "|MODEL: {}|".format(game.selected_model), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align2/64, game.background_h-100, "e")
 	if game.selected_model != None:
-		draw_text(game, game.background, "M:  {}".format(game.selected_model.original_max_move/TILESIZE), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-80, "e")
-		draw_text(game, game.background, "Ld: {}".format(game.selected_model.leadership), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-80, "e")
-		draw_text(game, game.background, "WS: {}".format(game.selected_model.weapon_skill), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-65, "e")
-		draw_text(game, game.background, "BS: {}".format(game.selected_model.ballistic_skill), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-65, "e")
-		draw_text(game, game.background, "S: {}".format(game.selected_model.strength), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-50, "e")
-		draw_text(game, game.background, "T: {}".format(game.selected_model.toughness), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-50, "e")
-		draw_text(game, game.background, "Sv: {}".format(game.selected_model.save), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align/64, game.background_h-35, "e")
-		draw_text(game, game.background, "Inv: {}".format(game.selected_model.invulnerable), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-35, "e")
-		draw_text(game, game.background, "Wounds: {}".format(game.selected_model.wounds), game.generic_font, scale_text(game, game.smallText), WHITE, game.background_w*x_align2/64, game.background_h-20, "e")
+		draw_text(game, game.background, "M:  {}".format(game.selected_model.original_max_move/TILESIZE), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align/64, game.background_h-80, "e")
+		draw_text(game, game.background, "Ld: {}".format(game.selected_model.leadership), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align2/64, game.background_h-80, "e")
+		draw_text(game, game.background, "WS: {}".format(game.selected_model.weapon_skill), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align/64, game.background_h-65, "e")
+		draw_text(game, game.background, "BS: {}".format(game.selected_model.ballistic_skill), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align2/64, game.background_h-65, "e")
+		draw_text(game, game.background, "S: {}".format(game.selected_model.strength), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align/64, game.background_h-50, "e")
+		draw_text(game, game.background, "T: {}".format(game.selected_model.toughness), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align2/64, game.background_h-50, "e")
+		draw_text(game, game.background, "Sv: {}".format(game.selected_model.save), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align/64, game.background_h-35, "e")
+		draw_text(game, game.background, "Inv: {}".format(game.selected_model.invulnerable), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align2/64, game.background_h-35, "e")
+		draw_text(game, game.background, "Wounds: {}".format(game.selected_model.wounds), BASIC_FONT, scale_text(game, SMALL_TEXT), WHITE, game.background_w*x_align2/64, game.background_h-20, "e")
 
 #Currently expensive to draw: takes anywhere from 7-14 FPS to constantly draw this block depending on whether a model is selected
 def draw_debug_info(game):
 	#Side Panel Info (Debug Info)
 	x_align = 34
-	draw_text(game, game.background, "|SELECTED MODEL: {}|".format(game.selected_model), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+	draw_text(game, game.background, "|SELECTED MODEL: {}|".format(game.selected_model), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
 	if game.selected_model != None:
-		draw_text(game, game.background, "in_melee: {}".format(game.selected_model.in_melee), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
-		draw_text(game, game.background, "fought: {}".format(game.selected_model.fought), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-65, "w")
-		draw_text(game, game.background, "charged: {}".format(game.selected_model.unit.charged_this_turn), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
-		draw_text(game, game.background, "advanced: {}".format(game.selected_model.advanced), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-35, "w")
-		draw_text(game, game.background, "fell_back: {}".format(game.selected_model.fell_back), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-20, "w")
+		draw_text(game, game.background, "in_melee: {}".format(game.selected_model.in_melee), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
+		draw_text(game, game.background, "fought: {}".format(game.selected_model.fought), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-65, "w")
+		draw_text(game, game.background, "charged: {}".format(game.selected_model.unit.charged_this_turn), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
+		draw_text(game, game.background, "advanced: {}".format(game.selected_model.advanced), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-35, "w")
+		draw_text(game, game.background, "fell_back: {}".format(game.selected_model.fell_back), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-20, "w")
 
 	x_align = 41
 	if game.selected_unit == None:
-		draw_text(game, game.background, "|SELECTED UNIT: None|", game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+		draw_text(game, game.background, "|SELECTED UNIT: None|", BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
 	if game.selected_unit != None:
-		draw_text(game, game.background, "|SELECTED UNIT|: {}".format(game.selected_unit.name), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
-		draw_text(game, game.background, "# of recent deaths: {}".format(len(game.selected_unit.recent_deaths)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
-		draw_text(game, game.background, "# of shooters selected: {}".format(len(game.shooting_models)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-65, "w")
-		draw_text(game, game.background, "# of fighters selected: {}".format(len(game.fighting_models)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
+		draw_text(game, game.background, "|SELECTED UNIT|: {}".format(game.selected_unit.name), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+		draw_text(game, game.background, "# of recent deaths: {}".format(len(game.selected_unit.recent_deaths)), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
+		draw_text(game, game.background, "# of shooters selected: {}".format(len(game.shooting_models)), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-65, "w")
+		draw_text(game, game.background, "# of fighters selected: {}".format(len(game.fighting_models)), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
 
 	x_align = 50
-	draw_text(game, game.background, "|Target Model: {}|".format(game.target_model), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+	draw_text(game, game.background, "|Target Model: {}|".format(game.target_model), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
 
 	x_align = 57
 	if game.target_unit == None:
-		draw_text(game, game.background, "|Target Unit: None|", game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+		draw_text(game, game.background, "|Target Unit: None|", BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
 	if game.target_unit != None:
-		draw_text(game, game.background, "|Target Unit: {}|".format(game.target_unit.name), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
-		draw_text(game, game.background, "# of recent deaths: {}".format(len(game.target_unit.recent_deaths)), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
-	#draw_text(game, game.background, "Target Unit: {}".format(game.target_unit), game.generic_font, scale_text(game, game.tinyText), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
+		draw_text(game, game.background, "|Target Unit: {}|".format(game.target_unit.name), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-100, "w")
+		draw_text(game, game.background, "# of recent deaths: {}".format(len(game.target_unit.recent_deaths)), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-80, "w")
+	#draw_text(game, game.background, "Target Unit: {}".format(game.target_unit), BASIC_FONT, scale_text(game, TINY_TEXT), WHITE, game.background_w*x_align/64, game.background_h-50, "w")
 
 #Total Unit Cohesion Checker
 def draw_cohesion_indicator(game):
@@ -248,7 +263,7 @@ def wound_allocation(game):
 	game.toggle_radii_button.fill()
 
 	#Unallocated wound counter
-	draw_text(game, game.screen, "{}Wound(s) to allocate!".format(game.unallocated_wounds), game.generic_font, game.largeText, YELLOW, game.screen_w/2, game.screen_h - 2*TILESIZE, "center")
+	draw_text(game, game.screen, "{}Wound(s) to allocate!".format(game.unallocated_wounds), BASIC_FONT, LARGE_TEXT, YELLOW, game.screen_w/2, game.screen_h - 2*TILESIZE, "center")
 
 	#Controls Info Text
 	if game.show_controls == True:

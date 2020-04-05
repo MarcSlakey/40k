@@ -14,6 +14,15 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 ORANGE = (255, 150, 0)
 
+BASIC_FONT = 'freesansbold.ttf'
+#generic_font = pygame.font.match_font('garamondbold')
+#generic_font = pygame.font.match_font('freesansbold')
+#castellar, rod, fangsong, ebrima
+TINY_TEXT = 13 # was tinyText
+SMALL_TEXT = 17 # was smallText
+MEDIUM_TEXT = 20 # was mediumText
+LARGE_TEXT = 32 # was largeText
+
 
 TILESIZE = 25 	#Should always represent 1" in gameplay; for reference: 25.4 mm / inch
 				#Standard battlefield size is 4' x 6' (48 tiles x 72 tiles) (1200 x 1800 pixels)

@@ -4,11 +4,11 @@ import event_handling
 
 #This happens once with a new game and is performed again each time the window is resized.
 def define_buttons(game):
-	game.toggle_radii_button = Button(game, "TOGGLE RADII", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 62*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.reset_all_button = Button(game, "RESET ALL", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.attack_button = Button(game, "ATTACK", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.charge_button = Button(game, "CHARGE TARGET", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.fight_button = Button(game, "FIGHT", game.generic_font, game.tinyText, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.toggle_radii_button = Button(game, "TOGGLE RADII", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 62*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.reset_all_button = Button(game, "RESET ALL", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.attack_button = Button(game, "ATTACK", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.charge_button = Button(game, "CHARGE TARGET", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	game.fight_button = Button(game, "FIGHT", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
 
 class Button(object):
 	""" Basic button constructor class
