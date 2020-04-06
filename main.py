@@ -72,7 +72,8 @@ class Game:
 
 		# !IMPORTANT!
 		#Used to adjust mouse input, raycasting
-		self.screen_topleft_pos = (self.background_x_offset/2, self.background_y_offset/3)
+		self.screen_topleft_pos = (
+			self.background_x_offset/2, self.background_y_offset/3)
 
 		#Fullscreen
 		#self.background = pygame.display.set_mode((self.screen_w+self.background_x_offset, self.screen_h+self.background_y_offset), FULLSCREEN)
@@ -83,7 +84,8 @@ class Game:
 
 		# Windowed
 		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
-		self.background = pygame.display.set_mode((self.background_w, self.background_h), RESIZABLE)
+		self.background = pygame.display.set_mode(
+			(self.background_w, self.background_h), RESIZABLE)
 
 		self.screen = pygame.Surface((self.screen_w, self.screen_h))
 		pygame.display.set_caption(self.title)
@@ -95,7 +97,8 @@ class Game:
 		self.img_dir = path.join(self.game_folder, 'img')
 		self.map = tile_map.Map(path.join(self.game_folder, 'realistic_map.txt'))
 
-		self.spritesheet = sprite_module.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
+		self.spritesheet = sprite_module.Spritesheet(
+			path.join(self.img_dir, 'hyptosis_sprites.png'))
 
 	# Initialize a new game
 	def new(self):
@@ -133,7 +136,9 @@ class Game:
 		buttons.define_buttons(self)
 		
 		self.camera = tile_map.Camera(self, self.map.width, self.map.height)
-		self.camera_focus = sprite_module.Focus(self, self.map.width/2, self.map.height/2, self.map.width, self.map.height)
+		self.camera_focus = sprite_module.Focus(
+			self, self.map.width/2, self.map.height/2, 
+			self.map.width, self.map.height)
 		
 		#Initialize army, unit objects
 		self.army1 = army_module.create_army1(self)
@@ -165,7 +170,8 @@ class Game:
 					model.unit = self.army1.units[1]
 					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Test Gun'))
 					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('CCW'))
-					model.image = pygame.image.load(path.join(self.img_dir, 'Templar 6.png')).convert()
+					model.image = pygame.image.load(
+						path.join(self.img_dir, 'Templar 6.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
@@ -174,9 +180,12 @@ class Game:
 					model = data_creation.create_model_by_name('Dreadnought', self, col, row)
 					self.army1.units[2].add_model(model)
 					model.unit = self.army1.units[2]
-					model.add_ranged_weapon(data_creation.create_ranged_weapon_by_name('Assault Cannon'))
-					model.add_melee_weapon(data_creation.create_melee_weapon_by_name('Dreadnought Combat Weapon'))
-					model.image = pygame.image.load(path.join(self.img_dir, 'dreadnaught 3.png')).convert()
+					model.add_ranged_weapon(
+						data_creation.create_ranged_weapon_by_name('Assault Cannon'))
+					model.add_melee_weapon(
+						data_creation.create_melee_weapon_by_name('Dreadnought Combat Weapon'))
+					model.image = pygame.image.load(
+						path.join(self.img_dir, 'dreadnaught 3.png')).convert()
 					model.image.set_colorkey(WHITE)
 					model.rect = model.image.get_rect()
 					model.outline = sprite_module.get_outline(model.image)
@@ -304,7 +313,9 @@ class Game:
 		self.previous_phase = self.current_phase
 		self.current_phase = new_phase
 		print("\n------Changing phase from [{}] to [{}].------".format(self.previous_phase, new_phase))
-		if new_phase in ("Fight Phase: Charging Units", "Fight Phase: Friendly Units", "Fight Phase: Enemy Units"):
+		if new_phase in (
+				"Fight Phase: Charging Units", "Fight Phase: Friendly Units", 
+				"Fight Phase: Enemy Units"):
 			self.fight_subphase = new_phase
 			print("\n(Fight Subphase is now [{}].)".format(self.fight_subphase))
 
@@ -378,13 +389,15 @@ class Game:
 	#Only used by unit_wide_melee_check()
 	def direct_melee_check(self, sprite):
 		for target_model in self.targets:
-			if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target_model))(sprite, target_model):
+			if pygame.sprite.collide_circle_ratio(
+					self.melee_ratio(sprite, target_model))(sprite, target_model):
 				sprite.enemies_within_melee.append(target_model)
 				sprite.combined_melee.append(target_model)
 
 		for squadmate in sprite.unit.models:
 			if squadmate != sprite:
-				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, squadmate))(sprite, squadmate):
+				if pygame.sprite.collide_circle_ratio(
+						self.melee_ratio(sprite, squadmate))(sprite, squadmate):
 					sprite.squadmates_within_melee.append(squadmate)
 
 	#Populates a sprite's combined_melee list with the enemies_within_melee of each member of its unit
@@ -417,7 +430,8 @@ class Game:
 	def charge_success(self):
 		for sprite in self.charging_unit.models:
 			for target in self.charge_target_unit.models:
-				if pygame.sprite.collide_circle_ratio(self.melee_ratio(sprite, target))(sprite, target):
+				if pygame.sprite.collide_circle_ratio(
+						self.melee_ratio(sprite, target))(sprite, target):
 					for model in self.charging_unit.models:
 						model.in_melee = True
 					for model in self.charge_target_unit.models:
@@ -484,7 +498,8 @@ class Game:
 		if len(unit.models) > 0 and len(unit.recent_deaths) > 0:
 			roll = random.randint(1,6)
 			result = roll + len(unit.recent_deaths)
-			print("[{}] had {} recent deaths and rolled {}, so highest unit leadership must be {} or higher to pass".format(unit.name, len(unit.recent_deaths), roll, result))
+			print("[{}] had {} recent deaths and rolled {}, so highest unit leadership must be {} or higher to pass".format(
+				unit.name, len(unit.recent_deaths), roll, result))
 			print("   Highest leadership in unit is {}".format(leadership))
 			unit.recent_deaths.clear()
 			if result > leadership: 
@@ -595,7 +610,9 @@ class Game:
 		elif self.current_phase == "Charge Move":	
 			draw_module.charge_move(self)
 
-		elif self.current_phase in ("Fight Phase: Charging Units", "Fight Phase: Friendly Units", "Fight Phase: Enemy Units"):
+		elif self.current_phase in (
+				"Fight Phase: Charging Units", "Fight Phase: Friendly Units", 
+				"Fight Phase: Enemy Units"):
 			draw_module.fight_phase(self)
 
 		elif self.current_phase == "Pile In":
@@ -610,29 +627,41 @@ class Game:
 			#Model base drawing/coloring
 			if self.selected_model != None and self.selected_unit != None:
 				#Selected model indicator
-				pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
+				pygame.draw.circle(
+					self.screen, GREEN, self.camera.apply(self.selected_model).center, 
+					self.selected_model.radius, 0)
 
 				if len(self.selected_unit.valid_model_targets) > 0:
 					for model in self.selected_unit.valid_model_targets:
-						pygame.draw.circle(self.screen, YELLOW, self.camera.apply(model).center, model.radius, 0)
+						pygame.draw.circle(
+							self.screen, YELLOW, self.camera.apply(model).center, 
+							model.radius, 0)
 
 				if self.target_unit != None:
 					for model in self.target_unit.models:
-						pygame.draw.circle(self.screen, ORANGE, self.camera.apply(model).center, model.radius, 0)
+						pygame.draw.circle(
+							self.screen, ORANGE, self.camera.apply(model).center, 
+							model.radius, 0)
 
 				if self.show_radii == True:
 					#Melee radius (one inch)
 					for sprite in self.targets:
-						pygame.draw.circle(self.screen, RED, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+						pygame.draw.circle(
+							self.screen, RED, self.camera.apply(sprite).center, 
+							sprite.true_melee_radius, 1)
 
 					#Melee fight radius (one inch)
 					for sprite in self.selected_unit.models:
 						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, ORANGE, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+							pygame.draw.circle(
+								self.screen, ORANGE, self.camera.apply(sprite).center, 
+								sprite.true_melee_radius, 1)
 				
 			if len(self.fighting_models) > 0:
 				for model in self.fighting_models:
-					pygame.draw.circle(self.screen, BLUE, self.camera.apply(model).center, int((model.radius)/2), 0)
+					pygame.draw.circle(
+						self.screen, BLUE, self.camera.apply(model).center, 
+						int((model.radius)/2), 0)
 
 			#Draws large semi-circle cohesion indicator
 			draw_module.draw_cohesion_indicator(self)
@@ -645,43 +674,66 @@ class Game:
 			self.attack_button.fill()
 
 			#Controls Info Text	
-			draw_module.draw_text(self, self.screen, "|LMB: select model|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RMB: select target|", BASIC_FONT, MEDIUM_TEXT, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|SPACEBAR: deselect all models|", BASIC_FONT, MEDIUM_TEXT, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RETURN: progress to next phase|", BASIC_FONT, MEDIUM_TEXT, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|LMB: select model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RMB: select target|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|SPACEBAR: deselect all models|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RETURN: progress to next phase|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Consolidate":
 			#Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
-					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
+					pygame.draw.circle(
+						self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
 
 			if self.selected_model != None:
 				#Selected model indicator
-				pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
+				pygame.draw.circle(
+					self.screen, YELLOW, self.camera.apply(self.selected_model).center, 
+					self.selected_model.radius, 0)
 				
 				if self.selected_model.cohesion:
-					pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
+					pygame.draw.circle(
+						self.screen, GREEN, self.camera.apply(self.selected_model).center, 
+						self.selected_model.radius, 0)
 		
 				if self.show_radii == True:
 					#Remaining consolidate move radius
 					if self.selected_model.consolidate_move >= 1:
-						pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, int(self.selected_model.consolidate_move), 1)
+						pygame.draw.circle(
+							self.screen, YELLOW, self.camera.apply(self.selected_model).center, 
+							int(self.selected_model.consolidate_move), 1)
 
 					#Melee radius (one inch)
 					for sprite in self.targets:
-						pygame.draw.circle(self.screen, RED, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+						pygame.draw.circle(
+							self.screen, RED, self.camera.apply(sprite).center, 
+							sprite.true_melee_radius, 1)
 
 					#Melee fight radius (one inch)
 					for sprite in self.selected_unit.models:
 						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, ORANGE, self.camera.apply(sprite).center, sprite.true_melee_radius, 1)
+							pygame.draw.circle(
+								self.screen, ORANGE, self.camera.apply(sprite).center, 
+								sprite.true_melee_radius, 1)
 
 					#Cohesion radius (two inches)	
 					for sprite in self.selected_model.unit.models:
 						if sprite != self.selected_model:
-							pygame.draw.circle(self.screen, GREEN, self.camera.apply(sprite).center, sprite.true_cohesion_radius, 1)
+							pygame.draw.circle(
+								self.screen, GREEN, self.camera.apply(sprite).center, 
+								sprite.true_cohesion_radius, 1)
 
 			#Draws large semi-circle cohesion indicator
 			draw_module.draw_cohesion_indicator(self)
@@ -694,11 +746,21 @@ class Game:
 			self.toggle_radii_button.fill()
 
 			#Controls Info Text	
-			draw_module.draw_text(self, self.screen, "|LMB: select model|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RMB: move model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|SPACEBAR: reset selected model's move|", BASIC_FONT, MEDIUM_TEXT, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RETURN: progress to next phase|", BASIC_FONT, MEDIUM_TEXT, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|LMB: select model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RMB: move model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|SPACEBAR: reset selected model's move|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RETURN: progress to next phase|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Morale Phase":
 			#Model base drawing/coloring
@@ -713,11 +775,21 @@ class Game:
 			#Buttons
 
 			#Controls Info Text	
-			draw_module.draw_text(self, self.screen, "|LMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RMB: N/A", BASIC_FONT, MEDIUM_TEXT, WHITE, 6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|SPACEBAR: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RETURN: progress to next phase|", BASIC_FONT, MEDIUM_TEXT, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|LMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RMB: N/A", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				6*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|SPACEBAR: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RETURN: progress to next phase|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Morale Loss Allocation":
 			#Model base drawing/coloring
@@ -728,20 +800,34 @@ class Game:
 			#Model base drawing/coloring
 			if self.selected_model != None:
 				#Selected model indicator
-				pygame.draw.circle(self.screen, GREEN, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
+				pygame.draw.circle(
+					self.screen, GREEN, self.camera.apply(self.selected_model).center, 
+					self.selected_model.radius, 0)
 
 			#Buttons
 
 			#Unallocated wound counter
 			if self.selected_unit != None:
-				draw_module.draw_text(self, self.screen, "{} morale losses to allocate.".format(self.selected_unit.morale_losses), BASIC_FONT, LARGE_TEXT, YELLOW, self.screen_w/2, self.screen_h - 2*TILESIZE, "center")
+				draw_module.draw_text(
+					self, self.screen, "{} morale losses to allocate.".format(self.selected_unit.morale_losses), 
+					BASIC_FONT, LARGE_TEXT, YELLOW, self.screen_w/2, self.screen_h - 2*TILESIZE, "center")
 
 			#Controls Info Text
-			draw_module.draw_text(self, self.screen, "|LMB: allocate morale loss to model|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, self.screen_w/32, self.screen_h-4*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, (8*self.screen_w/32), self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|SPACEBAR: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
-			draw_module.draw_text(self, self.screen, "|RETURN: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|LMB: allocate morale loss to model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|MMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				self.screen_w/32, self.screen_h-4*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				(8*self.screen_w/32), self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|SPACEBAR: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				12*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
+			draw_module.draw_text(
+				self, self.screen, "|RETURN: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
+				24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		#self.all_models.draw(self.screen)
 		#for model in self.all_models:
@@ -761,19 +847,33 @@ class Game:
 		
 	def show_start_screen(self):
 		self.screen.fill(BLACK)
-		draw_module.draw_text(self, self.screen, "40k Pygame Adaptation", pygame.font.match_font('castellar'), 80, YELLOW, self.screen_w/2, self.screen_h*1/4, "center")
-		draw_module.draw_text(self, self.screen, "Please see the readme/wiki for game rules and", BASIC_FONT, 40, WHITE, self.screen_w/2, self.screen_h*4/8, "center")
-		draw_module.draw_text(self, self.screen, "look at the command line window for game info.", BASIC_FONT, 40, WHITE, self.screen_w/2, self.screen_h*5/8, "center")
-		draw_module.draw_text(self, self.screen, "Press any key to start", BASIC_FONT, 40, WHITE, self.screen_w/2, self.screen_h*7/8, "center")
+		draw_module.draw_text(
+			self, self.screen, "40k Pygame Adaptation", pygame.font.match_font('castellar'),
+			80, YELLOW, self.screen_w/2, self.screen_h*1/4, "center")
+		draw_module.draw_text(
+			self, self.screen, "Please see the readme/wiki for game rules and", BASIC_FONT,
+			40, WHITE, self.screen_w/2, self.screen_h*4/8, "center")
+		draw_module.draw_text(
+			self, self.screen, "look at the command line window for game info.", BASIC_FONT,
+			40, WHITE, self.screen_w/2, self.screen_h*5/8, "center")
+		draw_module.draw_text(
+			self, self.screen, "Press any key to start", BASIC_FONT, 40, WHITE, self.screen_w/2,
+			self.screen_h*7/8, "center")
 		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()
 
 	def show_game_over_screen(self):
 		self.screen.fill(BLACK)
-		draw_module.draw_text(self, self.screen, "Victory!", pygame.font.match_font('castellar'), 80, GREEN, self.screen_w/2, self.screen_h*1/4, "center")
-		draw_module.draw_text(self, self.screen, "All targets eliminated", BASIC_FONT, 40, WHITE, self.screen_w/2, self.screen_h*2/4, "center")
-		draw_module.draw_text(self, self.screen, "Press any key to start a new game", BASIC_FONT, 40, WHITE, self.screen_w/2, self.screen_h*3/4, "center")
+		draw_module.draw_text(
+			self, self.screen, "Victory!", pygame.font.match_font('castellar'), 80, GREEN, 
+			self.screen_w/2, self.screen_h*1/4, "center")
+		draw_module.draw_text(
+			self, self.screen, "All targets eliminated", BASIC_FONT, 40, WHITE, 
+			self.screen_w/2, self.screen_h*2/4, "center")
+		draw_module.draw_text(
+			self, self.screen, "Press any key to start a new game", BASIC_FONT, 40, WHITE, 
+			self.screen_w/2, self.screen_h*3/4, "center")
 		self.background.blit(self.screen, (50,50))
 		pygame.display.flip()
 		self.wait_for_key()
