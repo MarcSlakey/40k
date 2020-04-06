@@ -15,7 +15,9 @@ def intersection(a, b):
 	return c
 
 def get_adjusted_mouse_pos(game):
-	return (pygame.mouse.get_pos()[0]-game.screen_topleft_pos[0], pygame.mouse.get_pos()[1]-game.screen_topleft_pos[1])
+	return (
+		pygame.mouse.get_pos()[0]-game.screen_topleft_pos[0], 
+		pygame.mouse.get_pos()[1]-game.screen_topleft_pos[1])
 
 def model_selection(game):
 	for model in game.selectable_models:
@@ -105,7 +107,9 @@ def multiple_selection(game):
 
 				else:
 					print("\nChosen model not in same unit as currently selected shooting models.")
-					print("Please choose a different model or reset shooting models selection with the spacebar.")
+					print(
+						"Please choose a different model or reset "\
+						"shooting models selection with the spacebar.")
 					return
 		if x == 0:
 			game.shooting_models.clear()
@@ -144,7 +148,8 @@ def multiple_melee_selection(game):
 					print("\nSelected model: [{}]".format(game.selected_model))
 					print("Selected unit: [{}]".format(game.selected_unit.name))
 					print("# of models selected: {}".format(len(game.fighting_models)))
-					game.selected_unit.melee_unit_targets = intersection(game.selected_unit.melee_unit_targets, game.selected_model.melee_unit_targets)
+					game.selected_unit.melee_unit_targets = intersection(
+						game.selected_unit.melee_unit_targets, game.selected_model.melee_unit_targets)
 					game.selected_unit.valid_model_targets.clear()
 					for target_unit in game.selected_unit.melee_unit_targets:
 						for target_model in target_unit.models:
@@ -208,7 +213,8 @@ def resize_surfaces(game, event):
 	old_background = game.background
 	old_screen = game.screen
 
-	game.background = pygame.display.set_mode((game.background_w, game.background_h), RESIZABLE)
+	game.background = pygame.display.set_mode(
+		(game.background_w, game.background_h), RESIZABLE)
 	game.screen = pygame.Surface((game.screen_w, game.screen_h))
 	game.camera.update(game.camera_focus)
 
@@ -225,7 +231,7 @@ def movement_phase(game):
 	for event in pygame.event.get():
 		core_events(game, event)
 
-		#Keyboard event handling
+		# Keyboard event handling
 		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
@@ -241,7 +247,7 @@ def movement_phase(game):
 					game.refresh_moves()
 					game.change_phase("Shooting Phase")
 
-		#Mouse event handling
+		# Mouse event handling
 		elif event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
 				if game.reset_all_button.mouse_over():
@@ -264,8 +270,10 @@ def movement_phase(game):
 			elif event.button == 3: #RMB
 				if game.selected_model != None:
 					if game.selected_model.in_melee != True:
-						game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
-						game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
+						game.selected_model.dest_x = (
+							get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0])
+						game.selected_model.dest_y = (
+							get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1])
 
 def shooting_phase(game):
 	for event in pygame.event.get():
@@ -295,7 +303,7 @@ def shooting_phase(game):
 					for weapon in model.ranged_weapons:
 						weapon.fired = False
 
-		#Mouse event handling
+		# Mouse event handling
 		elif event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:	#LMB
 				if game.toggle_radii_button.mouse_over():
@@ -306,7 +314,8 @@ def shooting_phase(game):
 						if game.target_unit != None:
 							for model in game.target_unit.models:
 								if model.in_melee == True:
-									print('\nCannot shoot at [{}] because it is locked in melee with friendly units.'.format(game.target_unit.name))
+									print('\nCannot shoot at [{}] because it is '\
+									'locked in melee with friendly units.'.format(game.target_unit.name))
 									return
 							for model in game.shooting_models:
 								model.attack_with_ranged_weapon(game.target_unit)
@@ -327,7 +336,8 @@ def shooting_phase(game):
 					multiple_selection(game)
 					if len(game.shooting_models) > 0:
 						game.los_check(game.selected_model)
-						game.selected_unit.valid_shots = intersection(game.selected_unit.valid_shots, game.selected_model.valid_shots)
+						game.selected_unit.valid_shots = intersection(
+							game.selected_unit.valid_shots, game.selected_model.valid_shots)
 
 			elif event.button == 2: #Middle mouse button
 				game.shooting_models.clear()
@@ -340,7 +350,8 @@ def shooting_phase(game):
 					for model in game.shooting_models:
 						if model != game.selected_model:
 							game.los_check(model)
-							game.selected_unit.valid_shots = intersection(game.selected_unit.valid_shots, model.valid_shots)
+							game.selected_unit.valid_shots = intersection(
+								game.selected_unit.valid_shots, model.valid_shots)
 				print("\nLOS checks complete.")
 
 			elif event.button == 3:	#RMB
@@ -359,7 +370,7 @@ def wound_allocation(game):
 	for event in pygame.event.get():
 		core_events(game, event)
 
-		#Keyboard event handling
+		# Keyboard event handling
 		if event.type == pygame.KEYDOWN:
 			keys = pygame.key.get_pressed()
 			mods = pygame.key.get_mods()
@@ -369,7 +380,7 @@ def wound_allocation(game):
 			if keys[pygame.K_RETURN]:
 				pass
 
-		#Mouse event handling
+		# Mouse event handling
 		elif event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
 				if game.toggle_radii_button.mouse_over():
@@ -435,7 +446,7 @@ def charge_phase(game):
 				
 		#Mouse event handling
 		elif event.type == pygame.MOUSEBUTTONUP:
-			if event.button == 1:	#LMB ; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
+			if event.button == 1:	#LMB; Mouse event.buttom refers to interger values: 1(left), 2(middle), 3(right), 4(scrl up), 5(scrl down)
 				if game.reset_all_button.mouse_over():
 					for model in game.selectable_models:
 						game.reset_moves(model)
@@ -447,7 +458,8 @@ def charge_phase(game):
 					if game.selected_model != None and game.target_model != None:
 						for item in game.selected_unit.charge_attempt_list:
 							if item == game.target_unit:
-								print("\nA charge against this target has already been attempted by the selected unit on this turn.")
+								print("\nA charge against this target has already been "\
+									"attempted by the selected unit on this turn.")
 								print("Select a different charge target.")
 								return
 						
@@ -581,7 +593,8 @@ def overwatch(game):
 					multiple_selection(game)
 					if len(game.shooting_models) > 0:
 						game.los_check(game.selected_model)
-						game.selected_unit.valid_shots = intersection(game.selected_unit.valid_shots, game.selected_model.valid_shots)
+						game.selected_unit.valid_shots = intersection(
+							game.selected_unit.valid_shots, game.selected_model.valid_shots)
 
 			elif event.button == 2: #Middle mouse button
 				game.shooting_models.clear()
@@ -592,7 +605,8 @@ def overwatch(game):
 					game.selected_unit.valid_shots = game.selected_model.valid_shots
 					for model in game.shooting_models:
 						game.los_check(model)
-						game.selected_unit.valid_shots = intersection(game.selected_unit.valid_shots, model.valid_shots)
+						game.selected_unit.valid_shots = intersection(
+							game.selected_unit.valid_shots, model.valid_shots)
 
 			elif event.button == 3:	#RMB
 				if len(game.shooting_models) > 0:
@@ -656,8 +670,10 @@ def charge_move(game):
 
 			elif event.button == 3: #RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
-					game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
+					game.selected_model.dest_x = (
+						get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0])
+					game.selected_model.dest_y = (
+						get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1])
 
 def fight_phase_charging_units(game):
 	for event in pygame.event.get():
@@ -990,8 +1006,10 @@ def pile_in(game):
 
 			elif event.button == 3:	#RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
-					game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
+					game.selected_model.dest_x = (
+						get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0])
+					game.selected_model.dest_y = (
+						get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1])
 
 def fight_targeting(game):
 	for event in pygame.event.get():
@@ -1103,8 +1121,10 @@ def consolidate(game):
 
 			elif event.button == 3:	#RMB
 				if game.selected_model != None:
-					game.selected_model.dest_x = get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0]
-					game.selected_model.dest_y = get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1]
+					game.selected_model.dest_x = (
+						get_adjusted_mouse_pos(game)[0] - game.camera.cam_rect.topleft[0])
+					game.selected_model.dest_y = (
+						get_adjusted_mouse_pos(game)[1] - game.camera.cam_rect.topleft[1])
 
 def morale_phase(game):
 	for unit in game.active_army.units:
@@ -1205,7 +1225,8 @@ def morale_loss_allocation(game):
 								game.change_phase("Morale Phase")
 
 						else:
-							print("\nChosen model not a valid target, please choose a model in the current unit that needs to allocate morale losses.")
+							print("\nChosen model not a valid target, please choose "\
+								"a model in the current unit that needs to allocate morale losses.")
 
 			elif event.button == 2: #Middle mouse button
 				pass
