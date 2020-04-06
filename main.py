@@ -25,8 +25,6 @@ import ui
 
 data_creation.get_workbook_data()
 
-#Load game graphics
-
 def intersection(a, b):
 	#c = []
 	#for target in a:
@@ -36,13 +34,15 @@ def intersection(a, b):
 	return c
 
 class Game:
-	#Initialize program, game window, etc.
+
+	"""Initialize program, game window, etc."""
+
 	def __init__(self):
 		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(25) + "," + str(25)
 		pygame.init() 
 		#pygame.mixer.init()
 
-		#Creates a "video display information object"
+		# Creates a "video display information object"
 		# current_w/h gets width/height of the either the current video mode or the desktop mode depending
 		#	on whether it was called before or after pygame.display.set_mode(...)
 		#self.displayInfo = pygame.display.Info()
@@ -59,8 +59,8 @@ class Game:
 		#background_w = 1920
 		#background_h = 1080
 
-		#	!IMPORTANT!
-		#Used in draw_module and in main to define the important screen_topleft_pos
+		# !IMPORTANT!
+		# Used in draw_module and in main to define the important screen_topleft_pos
 		self.background_x_offset = 50
 		self.background_y_offset = 200
 
@@ -140,15 +140,15 @@ class Game:
 			self, self.map.width/2, self.map.height/2, 
 			self.map.width, self.map.height)
 		
-		#Initialize army, unit objects
+		# Initialize army, unit objects
 		self.army1 = army_module.create_army1(self)
 		self.army2 = army_module.create_army2(self)
 		
 		self.active_army = self.army1
 		self.inactive_army = self.army2
 
-		#Create models and wall sprites from map.txt
-		for row, tiles in enumerate(self.map.data):		#enumerate gets the index as well as the value
+		# Create models and wall sprites from map.txt
+		for row, tiles in enumerate(self.map.data):		# enumerate gets the index as well as the value
 			for col, tile in enumerate(tiles):
 				if tile == '1':
 					sprite_module.Wall(self, col, row)
@@ -247,11 +247,11 @@ class Game:
 
 		self.run()
 
-	#Main Game Loop
 	def run(self):
+		"""Main Game Loop"""
 		self.playing = True
 		while self.playing:
-			# Keep loop running at the right speed; defaults unit is milliseconds, converted here to seconds
+			"""Keeps loop running at the right speed; defaults unit is milliseconds, converted here to seconds"""
 			dt = self.clock.tick(FPS)/1000
 			self.events()			
 			self.update()
@@ -262,9 +262,12 @@ class Game:
 		pygame.quit()
 		sys.exit()
 
-	#Switches active army. Meant to be used at the end of the last phase (morale phase). Turn count incremented here
-	#Also checks for whether either of the armies has been destroyed.
 	def change_active(self):
+		"""
+		Switches active army and increments turn count.
+		Meant to be used at the end of the last phase (morale phase). 
+		Also checks for whether either of the armies has been destroyed.
+		"""
 		if self.active_army == self.army1:
 			self.active_army = self.army2
 			self.inactive_army = self.army1
@@ -288,8 +291,8 @@ class Game:
 		if len(self.targets) == 0 or len(self.selectable_models) == 0:
 			self.playing = False
 
-	#Repopulates the selectable_models and target sprite groups according to current active_army
 	def reset_active(self):
+		"""Repopulates the selectable_models and target sprite groups according to current active_army"""
 		if self.active_army == self.army1:
 			active_army = self.army1
 			inactive_army = self.army2
@@ -319,8 +322,8 @@ class Game:
 			self.fight_subphase = new_phase
 			print("\n(Fight Subphase is now [{}].)".format(self.fight_subphase))
 
-	#Sets sprites back to their starting positions when the spacebar is pressed
 	def reset_moves(self, model):
+		"""Sets sprites back to their starting positions when the spacebar is pressed"""
 		if model.x != model.original_pos[0] or model.y != model.original_pos[1]:
 			#print("\nSprite at ({},{}) resetting to original_pos = ({},{})".format(model.x, model.y, model.original_pos[0], model.original_pos[1]))
 			#print("Max_move before reset: {}".format(model.max_move))
@@ -362,9 +365,13 @@ class Game:
 			print("Move models into cohesion range or reset moves.")
 			return False
 
-	#Very slow process
-	#Range checking part must be fairly quick, since models with no enemies in range have extremely quick los_checks
 	def los_check(self, shooter):
+		"""
+		Casts a ray from the shooter to each target that is within range of the shooter's weapon.
+		If the ray collides with the target it gets added to the shooter's valid shots list.
+		Very slow process; range checking part must be fairly quick, since models 
+			with no enemies in range have extremely quick los_checks.
+		"""
 		self.target_model = None
 		self.target_unit = None
 		x = 0
@@ -385,9 +392,11 @@ class Game:
 		ratio = (sprite_1.radius + sprite_2.radius + TILESIZE)/(sprite_1.radius + sprite_2.radius)
 		return ratio
 
-	#Populates a given sprite's "enemies_within_melee" and "squadmates_within_melee"
-	#Only used by unit_wide_melee_check()
 	def direct_melee_check(self, sprite):
+		"""
+		Populates a given sprite's "enemies_within_melee" and "squadmates_within_melee".
+		Only used by unit_wide_melee_check().
+		"""
 		for target_model in self.targets:
 			if pygame.sprite.collide_circle_ratio(
 					self.melee_ratio(sprite, target_model))(sprite, target_model):
@@ -400,17 +409,23 @@ class Game:
 						self.melee_ratio(sprite, squadmate))(sprite, squadmate):
 					sprite.squadmates_within_melee.append(squadmate)
 
-	#Populates a sprite's combined_melee list with the enemies_within_melee of each member of its unit
-	#Only used by unit_wide_melee_check()
 	def combined_melee_check(self, sprite):
+		"""
+		Populates a sprite's combined_melee list with the enemies_within_melee 
+		of each member of its unit. Only used by unit_wide_melee_check().
+		"""
 		for squadmate in sprite.squadmates_within_melee:
 			for target_model in squadmate.enemies_within_melee:
 				sprite.combined_melee.append(target_model)
 
-	#Runs direct_melee_check and combined_melee_check for every member of a selected unit.
-	#Should be run when a model in a unit is selected for the first time. If subsequent models are selected from the same unit this does not need to run again.
-	#Has to be run because even if only one model is attacking, that model's whole unit must run these melee checks to determine what that model can attack.
 	def unit_wide_melee_check(self, sprite):
+		"""
+		Runs direct_melee_check and combined_melee_check for every member of a selected unit.
+		Should be run when a model in a unit is selected for the first time. 
+		If subsequent models are selected from the same unit this does not need to run again.
+		Has to be run because even if only one model is attacking, that model's whole unit 
+		must run these melee checks to determine what that model can attack.
+		"""
 		print("\nRunning unit-wide melee checks, please wait...")
 		for model in sprite.unit.models:
 			self.direct_melee_check(model)
@@ -425,9 +440,11 @@ class Game:
 					print("Added a unit to a model's melee_unit_targets")
 		print("\nMelee checks complete.")
 
-	#Defines whether or not a charge has succeeded based on melee collision
-	#	Sets relevant sprite.in_melee flag to True if the charge succeeds
 	def charge_success(self):
+		"""
+		Defines whether or not a charge has succeeded based on melee collision
+		Sets relevant sprite.in_melee flag to True if the charge succeeds
+		"""
 		for sprite in self.charging_unit.models:
 			for target in self.charge_target_unit.models:
 				if pygame.sprite.collide_circle_ratio(
@@ -515,8 +532,8 @@ class Game:
 				highest_leadership = model.leadership
 		return highest_leadership
 
-	#Game Loop - Event Handling
-	#The bulk of the game logic is defined here. 
+	# Game Loop - Event Handling
+	# The bulk of the game logic is defined here. 
 	def events(self):
 		if self.current_phase == "Movement Phase":
 			event_handling.movement_phase(self)
@@ -560,19 +577,19 @@ class Game:
 		elif self.current_phase == "Morale Loss Allocation":
 			event_handling.morale_loss_allocation(self)
 
-	#Game Loop - Update
+	# Game Loop - Update
 	def update(self):
 		self.camera.update(self.camera_focus)
 		self.all_sprites.update()
 
-	#Draws reference grid
+	# Draws reference grid
 	def draw_grid(self):
 		for x in range(0, self.screen_w, TILESIZE):		#draws horizontal lines
 			pygame.draw.line(self.screen, BLACK, (x, 0), (x, self.screen_h))
 		for y in range(0, self.screen_h, TILESIZE):		#draws horizontal lines
 			pygame.draw.line(self.screen, BLACK, (0, y), (self.screen_w, y))
 
-	#Game Loop - Draw
+	# Game Loop - Draw
 	def draw(self):
 		self.background.fill(BLACK)
 		self.screen.fill(LIGHTGREY)	
@@ -582,14 +599,14 @@ class Game:
 			textSurface = font.render(text, True, WHITE)
 			return textSurface, textSurface.get_rect()
 		
-		#Essential modification (camera.apply) that allows camera movement through changed sprite locations
-		#Draws all sprites explicitly.
+		# Essential modification (camera.apply) that allows camera movement through changed sprite locations
+		# Draws all sprites explicitly.
 		for sprite in self.all_sprites:
 			if sprite != self.camera_focus:
 				self.screen.blit(sprite.image, self.camera.apply(sprite))
 
-		#Draws the outline of all model sprites.
-		#for model in self.all_models:
+		# Draws the outline of all model sprites.
+		# for model in self.all_models:
 		#	self.screen.blit(model.outline, self.camera.apply(model))
 			
 		if self.current_phase == "Movement Phase":	
@@ -619,14 +636,14 @@ class Game:
 			draw_module.pile_in(self)
 
 		elif self.current_phase == "Fight Targeting":
-			#Model base drawing/coloring
+			# Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
 
-			#Model base drawing/coloring
+			# Model base drawing/coloring
 			if self.selected_model != None and self.selected_unit != None:
-				#Selected model indicator
+				# Selected model indicator
 				pygame.draw.circle(
 					self.screen, GREEN, self.camera.apply(self.selected_model).center, 
 					self.selected_model.radius, 0)
@@ -644,13 +661,13 @@ class Game:
 							model.radius, 0)
 
 				if self.show_radii == True:
-					#Melee radius (one inch)
+					# Melee radius (one inch)
 					for sprite in self.targets:
 						pygame.draw.circle(
 							self.screen, RED, self.camera.apply(sprite).center, 
 							sprite.true_melee_radius, 1)
 
-					#Melee fight radius (one inch)
+					# Melee fight radius (one inch)
 					for sprite in self.selected_unit.models:
 						if sprite != self.selected_model:
 							pygame.draw.circle(
@@ -663,17 +680,17 @@ class Game:
 						self.screen, BLUE, self.camera.apply(model).center, 
 						int((model.radius)/2), 0)
 
-			#Draws large semi-circle cohesion indicator
+			# Draws large semi-circle cohesion indicator
 			draw_module.draw_cohesion_indicator(self)
 
-			#Buttons
+			# Buttons
 			self.toggle_radii_button.draw()
 			self.toggle_radii_button.fill()
 
 			self.attack_button.draw()
 			self.attack_button.fill()
 
-			#Controls Info Text	
+			# Controls Info Text	
 			draw_module.draw_text(
 				self, self.screen, "|LMB: select model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
 				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
@@ -691,14 +708,14 @@ class Game:
 				24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Consolidate":
-			#Model base drawing/coloring
+			# Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(
 						self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
 
 			if self.selected_model != None:
-				#Selected model indicator
+				# Selected model indicator
 				pygame.draw.circle(
 					self.screen, YELLOW, self.camera.apply(self.selected_model).center, 
 					self.selected_model.radius, 0)
@@ -709,43 +726,43 @@ class Game:
 						self.selected_model.radius, 0)
 		
 				if self.show_radii == True:
-					#Remaining consolidate move radius
+					# Remaining consolidate move radius
 					if self.selected_model.consolidate_move >= 1:
 						pygame.draw.circle(
 							self.screen, YELLOW, self.camera.apply(self.selected_model).center, 
 							int(self.selected_model.consolidate_move), 1)
 
-					#Melee radius (one inch)
+					# Melee radius (one inch)
 					for sprite in self.targets:
 						pygame.draw.circle(
 							self.screen, RED, self.camera.apply(sprite).center, 
 							sprite.true_melee_radius, 1)
 
-					#Melee fight radius (one inch)
+					# Melee fight radius (one inch)
 					for sprite in self.selected_unit.models:
 						if sprite != self.selected_model:
 							pygame.draw.circle(
 								self.screen, ORANGE, self.camera.apply(sprite).center, 
 								sprite.true_melee_radius, 1)
 
-					#Cohesion radius (two inches)	
+					# Cohesion radius (two inches)	
 					for sprite in self.selected_model.unit.models:
 						if sprite != self.selected_model:
 							pygame.draw.circle(
 								self.screen, GREEN, self.camera.apply(sprite).center, 
 								sprite.true_cohesion_radius, 1)
 
-			#Draws large semi-circle cohesion indicator
+			# Draws large semi-circle cohesion indicator
 			draw_module.draw_cohesion_indicator(self)
 
-			#Buttons
+			# Buttons
 			self.reset_all_button.draw()
 			self.reset_all_button.fill()
 
 			self.toggle_radii_button.draw()
 			self.toggle_radii_button.fill()
 
-			#Controls Info Text	
+			# Controls Info Text	
 			draw_module.draw_text(
 				self, self.screen, "|LMB: select model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
 				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
@@ -763,18 +780,18 @@ class Game:
 				24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Morale Phase":
-			#Model base drawing/coloring
+			# Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
 
 			if self.selected_model != None:
-				#Selected model indicator
+				# Selected model indicator
 				pygame.draw.circle(self.screen, YELLOW, self.camera.apply(self.selected_model).center, self.selected_model.radius, 0)
 
-			#Buttons
+			# Buttons
 
-			#Controls Info Text	
+			# Controls Info Text	
 			draw_module.draw_text(
 				self, self.screen, "|LMB: N/A|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
 				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
@@ -792,27 +809,27 @@ class Game:
 				24*self.screen_w/32, self.screen_h-5*TILESIZE, "w")
 
 		elif self.current_phase == "Morale Loss Allocation":
-			#Model base drawing/coloring
+			# Model base drawing/coloring
 			if self.selected_unit != None:
 				for model in self.selected_unit.models:
 					pygame.draw.circle(self.screen, CYAN, self.camera.apply(model).center, model.radius, 0)
 
-			#Model base drawing/coloring
+			# Model base drawing/coloring
 			if self.selected_model != None:
-				#Selected model indicator
+				# Selected model indicator
 				pygame.draw.circle(
 					self.screen, GREEN, self.camera.apply(self.selected_model).center, 
 					self.selected_model.radius, 0)
 
-			#Buttons
+			# Buttons
 
-			#Unallocated wound counter
+			# Unallocated wound counter
 			if self.selected_unit != None:
 				draw_module.draw_text(
 					self, self.screen, "{} morale losses to allocate.".format(self.selected_unit.morale_losses), 
 					BASIC_FONT, LARGE_TEXT, YELLOW, self.screen_w/2, self.screen_h - 2*TILESIZE, "center")
 
-			#Controls Info Text
+			# Controls Info Text
 			draw_module.draw_text(
 				self, self.screen, "|LMB: allocate morale loss to model|", BASIC_FONT, MEDIUM_TEXT, WHITE, 
 				self.screen_w/32, self.screen_h-5*TILESIZE, "w")
@@ -835,10 +852,11 @@ class Game:
 		#pygame.draw.circle(self.screen, YELLOW, (0,0), 25)
 		#pygame.draw.circle(self.background, YELLOW, (0,0), 25)
 
-		#Draw the screen on the background; crucial to displaying the actual game
+		# !Draw the screen on the background! 
+		# Crucial to displaying the actual game
 		self.background.blit(self.screen, (self.screen_topleft_pos))
 
-		#Draws things like Turn Name/Counter, FPS, Camera Offset
+		# Draws things like Turn Name/Counter, FPS, Camera Offset
 		draw_module.draw_info_text(self)
 		#draw_module.draw_debug_info(self)
 		draw_module.draw_model_stats(self)

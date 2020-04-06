@@ -70,7 +70,9 @@ class Model(pygame.sprite.Sprite):
 
 	"""
 	
-	def __init__(self, game, x, y, name, move, weapon_skill, ballistic_skill, strength, toughness, wounds, attacks, leadership, save, invulnerable, radius):
+	def __init__(
+			self, game, x, y, name, move, weapon_skill, ballistic_skill, strength, toughness, 
+			wounds, attacks, leadership, save, invulnerable, radius):
 		self.groups = [game.all_sprites, game.all_models]	
 		pygame.sprite.Sprite.__init__(self, self.groups)			# always needed for basic sprite functionality
 		self.game = game
