@@ -13,11 +13,15 @@ def find_hypotenuse(x, y):
 	hypotenuse = sqrt(x*x + y*y)
 	return hypotenuse
 
-#Taken from: https://www.reddit.com/r/pygame/comments/1jcdeg/how_would_i_draw_the_outline_of_an_image_that_is/
 def get_outline(image, color = BLACK):
-    """Returns an outlined image of the same size.  the image argument must
-    either be a convert surface with a set colorkey, or a convert_alpha
-    surface. color is the color which the outline will be drawn."""
+    """Returns an outlined image of the same size. 
+
+	Taken from: https://www.reddit.com/r/pygame/comments/1jcdeg/how_would_i_draw_the_outline_of_an_image_that_is/ 
+
+	The image argument must either be a convert surface with a set colorkey, 
+	or a convert_alpha surface. color is the color which the outline will be 
+	drawn.
+	"""
     rect = image.get_rect()
     mask = pygame.mask.from_surface(image)
     outline = mask.outline()
@@ -28,7 +32,7 @@ def get_outline(image, color = BLACK):
     return outline_image
 
 class Spritesheet:
-	# utility class for loading and parsing spritesheets
+	"""Utility class for loading and parsing spritesheets"""
 	def __init__(self, filename):
 		self.spritesheet = pygame.image.load(filename).convert()
 
@@ -40,35 +44,35 @@ class Spritesheet:
 
 class Model(pygame.sprite.Sprite):
 
-	""" Model class
-	
-	Model sprite object. Basic game unit used to represent a single tabletop model. 
+	"""
+	Model sprite object.
+	Basic game unit used to represent a single tabletop model. 
 
 	Attributes:
-		game: game to which this sprite belongs
-		name: string name of sprite
-		groups: sets the list of groups that contain this sprite
-		image:
-		rect:
-		x: spawn coordinates; allows initializing with a tile number which is then converted to pixels
-		y: same as above
-		rect.center: the location of the sprite's center point
-		original_pos: tuple to store the sprite's start of turn location
-		radius: represents the model's base in the tabletop game
-		dest_x: stores mouse click location during movements
-		dest_y: same as above
-		shot_dest_x: placeholder attribute that allows crude shooting; should probably be in a different class later
-		shot_dest_y: same as above
-		weapon_range: same as above
-		max_move: a model's moves are subtracted from this value during the move phase
-		original_max_move: tuple; stores the max_move so it can be reset 
-		charge_move: distance the model can move during charge phase. This is rolled (D6) each time a new charge is declared.
+		game - game to which this sprite belongs
+		name - string name of sprite
+		groups - sets the list of groups that contain this sprite
+		image - image to be used in game
+		rect - pygame object used to move the sprite around
+		x - x spawn coordinate; allows initializing with a tile number which is then converted to pixels
+		y - same as above
+		rect.center - the location of the sprite's rect's center point
+		original_pos - tuple to store the sprite's start of turn location
+		radius - represents the model's base in the tabletop game
+		dest_x - stores mouse click location during movements
+		dest_y - same as above
+		shot_dest_x - placeholder attribute that allows crude shooting; should probably be in a different class later
+		shot_dest_y - same as above
+		weapon_range - same as above
+		max_move - a model's moves are subtracted from this value during the move phase
+		original_max_move - tuple; stores the max_move so it can be reset 
+		charge_move - distance the model can move during charge phase. This is rolled (D6) each time a new charge is declared.
 
 	"""
 	
 	def __init__(self, game, x, y, name, move, weapon_skill, ballistic_skill, strength, toughness, wounds, attacks, leadership, save, invulnerable, radius):
 		self.groups = [game.all_sprites, game.all_models]	
-		pygame.sprite.Sprite.__init__(self, self.groups)			#always needed for basic sprite functionality
+		pygame.sprite.Sprite.__init__(self, self.groups)			# always needed for basic sprite functionality
 		self.game = game
 		#image_surf = pygame.image.load(path.join(self.game.img_dir, 'marine_bolter_cropped.png')).convert()
 		#self.image = pygame.transform.scale(image_surf, (26, 35))
@@ -76,17 +80,17 @@ class Model(pygame.sprite.Sprite):
 		self.image.set_colorkey(WHITE)
 		self.outline = None
 		self.rect = self.image.get_rect()
-		self.radius = radius 		#represents the model's base size
+		self.radius = radius 		# represents the model's base size
 
-		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			#the coefficient by which the radius can be multiplied to achieve the base radius + 1/2 inch
-		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius 		#the coefficient by which the radius can be multiplied to achieve the base radius + 1/2 inch
-		self.melee_radius = int(self.radius * self.melee_ratio)				#gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
-		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	#the "true" 1" melee radius, used for display purposes
+		self.melee_ratio = (self.radius + TILESIZE/2)/self.radius 			# the coefficient by which the radius can be multiplied to achieve the base radius + 1/2 inch
+		self.true_melee_ratio = (self.radius + TILESIZE)/self.radius 		# the coefficient by which the radius can be multiplied to achieve the base radius + 1/2 inch
+		self.melee_radius = int(self.radius * self.melee_ratio)				# gives half the melee radius (1/2 inch) to each sprite to simulate 1" melee radius
+		self.true_melee_radius = int(self.radius * self.true_melee_ratio) 	# the "true" 1" melee radius, used for display purposes
 
-		self.cohesion_ratio = (self.radius + TILESIZE)/self.radius 			#the coefficient by which the radius can be mulitplied to achieve the base radius + one inch
+		self.cohesion_ratio = (self.radius + TILESIZE)/self.radius 			# the coefficient by which the radius can be mulitplied to achieve the base radius + one inch
 		self.true_cohesion_ratio = (self.radius + 2*TILESIZE)/self.radius
-		self.cohesion_radius = int(self.radius * self.cohesion_ratio)		#gives half the cohesion radius (1 inch) to each sprite to simulate 2" cohesion radius
-		self.true_cohesion_radius = int(self.radius * self.true_cohesion_ratio) #the "true" 2" cohesion radius
+		self.cohesion_radius = int(self.radius * self.cohesion_ratio)		# gives half the cohesion radius (1 inch) to each sprite to simulate 2" cohesion radius
+		self.true_cohesion_radius = int(self.radius * self.true_cohesion_ratio) # the "true" 2" cohesion radius
 		
 		self.vx, self.vy = (0, 0)
 		self.x = x * TILESIZE

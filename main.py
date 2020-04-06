@@ -49,8 +49,6 @@ class Game:
 		#self.screen_w = self.displayInfo.current_w
 		#self.screen_h = self.displayInfo.current_h
 
-
-
 		self.title = "40k pygame"
 
 		#self.screen_w = 1920
@@ -72,19 +70,18 @@ class Game:
 		self.ui_scale = self.background_w/1920
 
 
-
-		#	!IMPORTANT!
+		# !IMPORTANT!
 		#Used to adjust mouse input, raycasting
 		self.screen_topleft_pos = (self.background_x_offset/2, self.background_y_offset/3)
 
 		#Fullscreen
 		#self.background = pygame.display.set_mode((self.screen_w+self.background_x_offset, self.screen_h+self.background_y_offset), FULLSCREEN)
 
-		#Windowed Borderless
+		# Windowed Borderless
 		#os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
 		#self.background = pygame.display.set_mode((self.background_w, self.background_h), NOFRAME)
 
-		#Windowed
+		# Windowed
 		os.environ['SDL_VIDEO_WINDOW_POS'] = str(5) + "," + str(30)
 		self.background = pygame.display.set_mode((self.background_w, self.background_h), RESIZABLE)
 
@@ -100,7 +97,7 @@ class Game:
 
 		self.spritesheet = sprite_module.Spritesheet(path.join(self.img_dir, 'hyptosis_sprites.png'))
 
-	#Initialize a new game
+	# Initialize a new game
 	def new(self):
 		print("\nNEW GAME START\n")
 		self.load_data()

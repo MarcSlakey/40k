@@ -2,17 +2,52 @@ import pygame
 from settings import *
 import event_handling
 
-#This happens once with a new game and is performed again each time the window is resized.
 def define_buttons(game):
-	game.toggle_radii_button = Button(game, "TOGGLE RADII", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 62*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.reset_all_button = Button(game, "RESET ALL", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.attack_button = Button(game, "ATTACK", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.charge_button = Button(game, "CHARGE TARGET", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
-	game.fight_button = Button(game, "FIGHT", BASIC_FONT, TINY_TEXT, WHITE,  game.background_w/2, 58*game.background_h/64, 5*TILESIZE, 2*TILESIZE, "center")
+	"""Called on new game creation as well as whenever the window is resized."""
+
+	game.toggle_radii_button = Button(
+		game, "TOGGLE RADII", BASIC_FONT, TINY_TEXT, WHITE, 
+		game.background_w/2, 62*game.background_h/64, 
+		5*TILESIZE, 2*TILESIZE, "center")
+	game.reset_all_button = Button(
+		game, "RESET ALL", BASIC_FONT, TINY_TEXT, WHITE, 
+		game.background_w/2, 58*game.background_h/64, 
+		5*TILESIZE, 2*TILESIZE, "center")
+	game.attack_button = Button(
+		game, "ATTACK", BASIC_FONT, TINY_TEXT, WHITE, 
+		game.background_w/2, 58*game.background_h/64, 
+		5*TILESIZE, 2*TILESIZE, "center")
+	game.charge_button = Button(
+		game, "CHARGE TARGET", BASIC_FONT, TINY_TEXT, WHITE,
+		game.background_w/2, 58*game.background_h/64, 
+		5*TILESIZE, 2*TILESIZE, "center")
+	game.fight_button = Button(
+		game, "FIGHT", BASIC_FONT, TINY_TEXT, WHITE, 
+		game.background_w/2, 58*game.background_h/64, 
+		5*TILESIZE, 2*TILESIZE, "center")
 
 class Button(object):
-	""" Basic button constructor class
-	
+	"""
+	Basic button constructor class.
+
+	Parameters:
+	game - pygame game object
+	text - the text to be drawn
+	font_name - font choice for drawn text in single quotes
+	size - numeric size value
+	color - RGB color code, for example (255,255,255)
+	x - x coordinate on the provided surface argument for where the text should be drawn
+	y - y coordinate on the provided surface argument for where the text should be drawn
+	width - 
+	height - 
+	align - defines the anchor point for the text rect
+	font - 
+	text_surface - Creates a new Surface with the specified text rendered on it. 
+				   Pygame provides no way to directly draw text on an existing Surface.
+				   Instead you must use Font.render() to create an image (Surface) of the text, 
+				   then blit this image onto another Surface.
+	text_rect -
+
 	"""
 
 	def __init__(self, game, text, font_name, size, color, x, y, width, height, align="nw"):
@@ -27,12 +62,8 @@ class Button(object):
 		self.height = height
 		self.align  = align
 		self.font = pygame.font.Font(font_name, size)
-		"""
-		This creates a new Surface with the specified text rendered on it. 
-		pygame provides no way to directly draw text on an existing Surface: 
-		instead you must use Font.render() to create an image (Surface) of the text, then blit this image onto another Surface.
-		"""
 		self.text_surface = self.font.render(self.text, True, self.color)
+		
 		self.text_rect = self.text_surface.get_rect()
 		self.game.buttons.append(self)
 		if align == "nw":
